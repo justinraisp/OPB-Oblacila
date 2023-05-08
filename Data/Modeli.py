@@ -12,7 +12,7 @@ class Artikel:
     GroessenTyp: str = field(default="")
     PCPack: int = field(default=0)
     PCCarton: int = field(defatul=0)
-    WeightKG: int = field(default=0)
+    WeightKG: float = field(default=0)
     Status: str = field(default="")
     EAN: int = field(default=0)
     ManufacturerSKU: str = field(default="")

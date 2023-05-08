@@ -1,5 +1,7 @@
 import pandas as pd
+from Data.Database import Repo
 
+repo = Repo()
 
 
 SKU_list = pd.read_excel("tabele/Artikli.xlsx", sheet_name=1)
