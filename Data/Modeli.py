@@ -2,53 +2,110 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Artikel:
-    SKU: int = field(default=0)
-    Style: str = field(default="")
-    Manufacturer: str = field(default="")
-    Name: str = field(default="")
-    Colour: str = field(default="")
-    Size: str = field(default="")
-    Farbtyp: str = field(default="")
-    GroessenTyp: str = field(default="")
-    PCPack: int = field(default=0)
-    PCCarton: int = field(defatul=0)
-    WeightKG: float = field(default=0)
-    Status: str = field(default="")
-    EAN: int = field(default=0)
-    ManufacturerSKU: str = field(default="")
+    sku: str = field(default="")
+    proizvalajcev_sku: str = field(default="")
 
 @dataclass
-class StyleList:
-    Style: str = field(default="")
-    Name1: str = field(default="")
-    Name2: str = field(default="")
-    MaterialDescription: str = field(default="")
-    ProductDescription: str = field(default="")
-    CataloguePage: str = field(default="")
-    OrientationPrice: str = field(default="")
-    ItemCode: int = field(default=0)
-    Origin: str = field(default="")
-    Status: str = field(default="")
-    Categories: str = field(default="")
+class Barva:
+    koda_barve: int = field(default=0)
+    ime_barve: str = field(default="")
+    sortirni_red_barve: int = field(default=0)
 
 
 @dataclass
-class Colour:
-    ColourCode: int = field(default=0)
-    ColourName: str = field(default="")
-    SortOrder: int = field(default=0)
+class Barvne_lastnosti: 
+    koda_proizvajalca: str = field(default="")
+    ime_barve: str = field(default="")
+    cmyk: str = field(default="")
 
 @dataclass
-class Size:
-    SizeCode: str = field(default="")
-    SizeName: str = field(default="")
+class Barvni_tip:
+    sku: str = field(default="")
+    tip_barve: str = field(default="")
 
 @dataclass
-class ColourTemplate:
-    ManufName: str = field(default="")
-    ManufCode: str = field(default="")
-    ColourName: str = field(default="")
-    CMYK: str = field(default="")
-    RGB: str = field(default="")
+class Cena:
+    stil: str = field(default="")
+    cena: float = field(default="")
 
+@dataclass
+class Drzava_izvora:
+    stil: str = field(default="")
+    izvor: str = field(default="")
 
+@dataclass
+class Ean:
+    sku: str = field(default="")
+    europska_stevilka_artikla: int = field(default=0)
+
+@dataclass
+class Firma:
+    ime_proizvajalca: str = field(default="")
+    koda_proizvajalca: int = field(default=0)
+
+@dataclass
+class Je_barve:
+    sku: str = field(default="")
+    barva: str = field(default="")
+
+@dataclass
+class Je_firme:
+    sku: str = field(default="")
+    koda_proizvajalca: int = field(default=0)
+
+@dataclass
+class Je_stila:
+    sku: str = field(default="")
+    stil: str = field(default="")
+
+@dataclass
+class Kolicina_v_kartonu:
+    sku: str = field(default="")
+    stevilo_v_kartonu: int = field(default=0)
+
+@dataclass
+class Kolicina_v_paketu:
+    sku: str = field(default="")
+    stevilo_v_paketu: int = field(default=0)
+
+@dataclass
+class Opis_anglescina:
+    stil: str = field(default="")
+    ime_anglescina: str = field(default="")
+    opis_materiala_anglescina: str = field(default="")
+    opis_artikla_anglescina: str = field(default="")
+
+@dataclass
+class Status:
+    sku: str = field(default="")
+    status: str = field(default="")
+
+@dataclass
+class Stil:
+    stil: str = field(default="")
+    ime_1: str = field(default="")
+
+@dataclass
+class Stran_kataloga:
+    stil: str = field(default="")
+    stran_kataloga: str = field(default="")
+
+@dataclass
+class Teza:
+    sku: str = field(default="")
+    teza: float = field(default=0)
+
+@dataclass
+class Velikost:
+    sku: str = field(default="")
+    velikost: str = field(default="")
+
+@dataclass
+class Velikostni_tip:
+    sku: str = field(default="")
+    tip_velikosti: str = field(default="")
+
+@dataclass
+class Vrsta_produkta:
+    stil: str = field(default="")
+    vrsta: str = field(default="")
