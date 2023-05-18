@@ -106,3 +106,5 @@ CREATE table Vrsta_produkta(
     stil TEXT,
     vrsta TEXT
 );
+
+DROP table artikel

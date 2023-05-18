@@ -109,3 +109,10 @@ class Velikostni_tip:
 class Vrsta_produkta:
     stil: str = field(default="")
     vrsta: str = field(default="")
+
+@dataclass
+class Uporabnik:
+    username: str = field(default="")
+    role: str = field(default="")
+    password_hash: str = field(default="")
+    last_login: str = field(default="")
