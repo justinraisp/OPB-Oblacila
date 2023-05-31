@@ -6,6 +6,12 @@ class Artikel:
     proizvalajcev_sku: str = field(default="")
 
 @dataclass
+class ArtikelDto:
+    sku: str = field(default="")
+    proizvalajcev_sku: str = field(default="")
+    status: str = field(default="")    
+
+@dataclass
 class Barva:
     koda_barve: int = field(default=0)
     ime_barve: str = field(default="")
