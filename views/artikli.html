@@ -186,3 +186,17 @@
 
 </body>
 </html>
+
+<form action="/dodaj-igralca/" method="POST">
+        <div class="input-field">
+          <input type="text" name="ime" id="text">
+          <label for="text" class="border-bottom-white"> Ime igralca </label>
+          % if "ime" in napaka:
+          <span class="helper-text yellow-text text-lighten-3">{{napaka["ime"]}}</span>
+
+          % end
+        </div>
+        <button type="submit" class="btn-large light-green lighten-2 waves-effect">
+          <h6><b>DODAJ</b> </h6>
+        </button>
+      </form>

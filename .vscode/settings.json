@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "C:\\Users\\matic\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none"
+}

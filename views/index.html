@@ -1,0 +1,260 @@
+%import math
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+        integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <title>Index</title>
+</head>
+<style>
+
+/* Hide the default checkbox */
+.custom-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+/* Style the custom checkbox container */
+.custom-checkbox {
+  display: flex;
+  align-items: center; /* Align the text with the checkbox */
+  cursor: pointer; /* Show the pointer cursor on hover */
+  margin-bottom: 10px; /* Optional: Add some spacing between each checkbox */
+}
+
+/* Style the custom checkbox */
+.custom-checkbox .checkmark {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 1px solid hsl(171, 80%, 41%);;
+  position: relative;
+  margin-right: 8px; /* Optional: Add some spacing between checkbox and text */
+}
+
+/* Add a tick symbol using a pseudo-element when the checkbox is checked */
+.custom-checkbox input[type="checkbox"]:checked + .checkmark::before {
+  content: "\2713"; /* Unicode for checkmark symbol */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: #fff; /* Color of the checkmark when checked */
+}
+
+/* Customize the background color when the checkbox is checked */
+.custom-checkbox input[type="checkbox"]:checked + .checkmark {
+  background-color: hsl(171, 100%, 41%);; /* Red background when checked */
+  border-color: white; /* Red border color when checked */
+}
+
+/* Style the text when hovered */
+.custom-checkbox:hover {
+  text-decoration: underline; /* Underline the text on hover */
+}
+
+
+
+    .btn:hover {
+
+        background-color: hsl(171, 80%, 41%);
+        color: white;
+        border-color: hsl(171, 100%, 41%);
+
+    }
+
+    .btn {
+
+        background-color: white;
+        color: hsl(171, 100%, 41%);
+        border-color: hsl(171, 100%, 41%);
+    }
+
+    .vrstica:hover {
+        background-color: hsl(171, 100%, 41%);
+    }
+</style>
+
+<body>
+
+    <div class="container is-max">
+
+        <div class="block">
+
+        </div>
+
+        <section class="hero is-primary">
+            <div class="hero-body">
+                <form action="/poizvedba/" method="POST">
+
+
+
+                    <div class="field has-addons">
+                        <label for="" class="label">
+
+                        </label>
+                        <p class="control" style="width: 100% ;">
+                            <input type="text" name="iskanje" class="input is-primary" placeholder="Išči...">
+                        </p>
+                        <p class="control">
+                            <button type="submit" class="button" href=""style="backgrond-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </p>
+
+                    </div>
+
+
+                
+
+
+                <div class="table-container">
+                    <table class="table" style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
+                        % k = 0
+                        % for i in range(6):
+                        <tr >
+                            % for j in range(6):
+                            <td >
+                                % if k <= 32: 
+
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" name={{filtri2[k]}} >
+                                    
+                                    <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
+                                    {{filtri1[k]}}
+                                  </label>
+
+
+
+
+                              
+
+                                % end
+                            </td>
+                            % if j != 5:
+                            % k = k+1
+                            % end
+                            % end
+                        </tr>
+                        %k = k+1 
+                        % end
+                    </table>
+                </div>
+
+            </form>
+
+            </div>
+
+            
+
+        </section>
+
+        
+
+
+        <div class="table-container" style="padding-top:25px">
+
+            <table class="table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>EAN</th>
+                        <th>Proizvajalec</th>
+                        <th>Poreklo</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="vrstica">
+                        <th>93719848</th>
+                        <th>Falken Ross</th>
+                        <th>GER</th>
+                    </tr>
+                    <tr class="vrstica">
+                        <th>2028746429</th>
+                        <th>Fruit of the loom</th>
+                        <th>CHI</th>
+                    </tr>
+                    <tr class="vrstica">
+                        <th>2329111</th>
+                        <th>James Nicholson</th>
+                        <th>USA</th>
+                    </tr>
+                    <tr class="vrstica">
+                        <th>567890322</th>
+                        <th>Eurowear</th>
+                        <th>SLO</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
+        <div class="block" style="padding-top: 50px;">
+            <nav class="pagination is-centered">
+
+                
+                <a href="" class="pagination-previous btn" disabled>
+                    Prejšnja stran
+                </a>
+
+
+
+
+
+
+
+                <ul class="pagination-list is-primary">
+                    <li>
+                        <a href="" class="pagination-link is-current btn"
+                            style="background-color:hsl(171, 100%, 41%);border-color: hsl(171,100%, 41%);">
+                            1
+                        </a>
+
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                    </li>
+
+                    <a href="" class="pagination-link  btn">
+                        2
+                    </a>
+
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                    </li>
+
+                    <a href="" class="pagination-link btn">
+                        3
+                    </a>
+                    </li>
+                </ul>
+
+                <a href="" class="pagination-next btn">
+                    Naslednja stran
+                </a>
+
+            </nav>
+        </div>
+
+
+
+    </div>
+ 
+
+
+</body>
+
+</html>
