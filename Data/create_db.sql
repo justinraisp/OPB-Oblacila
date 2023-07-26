@@ -1,3 +1,4 @@
+-- Active: 1678360579861@@baza.fmf.uni-lj.si@5432@opb2023_maticm
 CREATE table Artikel(
     sku SERIAL PRIMARY KEY, 
     proizvajalcev_sku TEXT

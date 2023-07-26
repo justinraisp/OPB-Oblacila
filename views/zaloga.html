@@ -13,7 +13,7 @@
         integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <title>Index</title>
+    <title>Zaloga</title>
 </head>
 <style>
 
@@ -90,18 +90,39 @@
     <div class="container is-max">
 
         <div class="block">
+            <nav class="navbar is-transparent">
 
+              
+                <div id="navbarExampleTransparentExample" class="navbar-menu">
+                  <div class="navbar-start">
+                    
+                    <a class="navbar-item" href="/">
+                      Artikli
+                    </a>
+                    <a class="navbar-item" href="/zaloga/" style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
+                        Zaloga
+                      </a>
+                  </div>
+              
+                  
+                </div>
+              </nav>
         </div>
 
         <section class="hero is-primary">
             <div class="hero-body">
-                <form action="/poizvedba/" method="POST">
+                
+                <form action="/poizvedba-zaloga/" method="POST">
 
 
 
                     <div class="field has-addons">
                         <label for="" class="label">
-
+                            <p class="control">
+                                <button class="button" href=""style="backgrond-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
+                                    Dodaj novo zalogo
+                                </button>
+                            </p>
                         </label>
                         <p class="control" style="width: 100% ;">
                             <input type="text" name="iskanje" class="input is-primary" placeholder="Išči...">
@@ -111,7 +132,7 @@
                                 <i class="fas fa-search"></i>
                             </button>
                         </p>
-
+                        
                     </div>
 
 
@@ -167,6 +188,7 @@
             <table class="table" style="width:100%">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>EAN</th>
                         <th>Proizvajalec</th>
                         <th>Poreklo</th>
@@ -174,22 +196,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="vrstica">
+                    <tr class="vrstica" >
+                        <th style="width: 50px;"    >
+                            <a class="button is-small fa fa-trash" href="/zaloga/izbrisi?EAN=93719848" aria-hidden="true" style="color: red;"></a>
+                        </th>
                         <th>93719848</th>
                         <th>Falken Ross</th>
                         <th>GER</th>
                     </tr>
                     <tr class="vrstica">
+                        <th></th>
                         <th>2028746429</th>
                         <th>Fruit of the loom</th>
                         <th>CHI</th>
                     </tr>
                     <tr class="vrstica">
+                        <th></th>
                         <th>2329111</th>
                         <th>James Nicholson</th>
                         <th>USA</th>
                     </tr>
                     <tr class="vrstica">
+                        <th></th>
                         <th>567890322</th>
                         <th>Eurowear</th>
                         <th>SLO</th>
@@ -203,7 +231,7 @@
 
 
 
-        <div class="block" style="padding-top: 50px;">
+        <div class="block" style="padding-top: 50px; padding-bottom: 50px">
             <nav class="pagination is-centered">
 
                 
