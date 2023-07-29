@@ -39,7 +39,8 @@ T = TypeVar(
     Velikost,
     Velikostni_tip,
     Vrsta_produkta,
-    Uporabnik
+    Uporabnik,
+    UporabnikDto
     )
 
 class Repo:

@@ -116,9 +116,31 @@ class Vrsta_produkta:
     stil: str = field(default="")
     vrsta: str = field(default="")
 
+
 @dataclass
 class Uporabnik:
     username: str = field(default="")
     role: str = field(default="")
     password_hash: str = field(default="")
     last_login: str = field(default="")
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> 'Uporabnik':
+        return cls(
+            username=data.get('username'),
+            role=data.get('role'),
+            password_hash=data.get('password_hash'),
+            last_login=data.get('last_login')
+        )
+    @classmethod
+    def to_dict(self) -> dict[str, str]:
+        return {
+            'username': self.username,
+            'role': self.role,
+            'password_hash': self.password_hash,
+            'last_login': self.last_login
+        }
+
+@dataclass
+class UporabnikDto:
+    username: str = field(default="")
+    role: str = field(default="")

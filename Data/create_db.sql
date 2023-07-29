@@ -108,4 +108,10 @@ CREATE table Vrsta_produkta(
     vrsta TEXT
 );
 
+CREATE table Uporabnik(
+    username STRING,
+    rola STRING,
+    geslo TEXT
+);
+
 DROP table artikel
