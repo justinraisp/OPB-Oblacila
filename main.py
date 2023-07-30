@@ -34,6 +34,8 @@ def cookie_required(f):
 @bottle.route("/")
 @cookie_required
 def prikaz_strani_artikel():
+    artikli = repo.dobi_gen(Artikel)
+    print(artikli)
     return bottle.template("artikli.html",filtri1=filtri1,filtri2=filtri2)
 
 @bottle.route("/zaloga/")
@@ -645,10 +647,12 @@ def prijava():
     """
     username = request.forms.get('username')
     password = request.forms.get('password')
-
-    if not auth.obstaja_uporabnik(username):
-        return template("prijava.html", napaka="Uporabnik s tem imenom ne obstaja")
-
+    try:
+        if not auth.obstaja_uporabnik(username):
+            return template("prijava.html", napaka="Uporabnik s tem imenom ne obstaja")
+    except Exception as e:
+            return template("prijava.html", napaka="Uporabnik s tem imenom ne obstaja")
+    
     prijava = auth.prijavi_uporabnika(username, password)
     if prijava:
         response.set_cookie("uporabnik", username)

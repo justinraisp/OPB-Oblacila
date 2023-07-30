@@ -19,10 +19,8 @@ class AuthService:
     def obstaja_uporabnik(self, uporabnik: str) -> bool:
         print(uporabnik)
         user = self.repo.dobi_gen_id(Uporabnik, uporabnik, id_col="username")
-
         try:
             user = self.repo.dobi_gen_id(Uporabnik, uporabnik, id_col="username")
-            print(user)
             return True
         except:
             return False
@@ -35,11 +33,13 @@ class AuthService:
         geslo_bytes = geslo.encode('utf-8')
         # Ustvarimo hash iz gesla, ki ga je vnesel uporabnik
         succ = bcrypt.checkpw(geslo_bytes, user.password_hash.encode('utf-8'))
-
+        #print("To je pred" + str(user))
         if succ:
             # popravimo last login time
             user.last_login = date.today().isoformat()
-            self.repo.posodobi_gen(user, id_col="username")
+            #self.repo.posodobi_gen(user, id_col="username")
+            # zaenkrat spustimo last login time
+            #print("To je po" + str(user))
             return UporabnikDto(username=user.username, role=user.role)
         
         return False

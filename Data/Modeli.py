@@ -2,8 +2,24 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Artikel:
+    id: int = field(default=0)  # Assuming id is an integer, and default is 0
     sku: str = field(default="")
-    proizvalajcev_sku: str = field(default="")
+    proizvajalcev_sku: str = field(default="")
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> 'Artikel':
+        return cls(
+            id=int(data.get('id', 0)),  # Convert id to int
+            sku=data.get('sku'),
+            proizvajalcev_sku=data.get('proizvajalcev_sku')
+        )
+
+    @classmethod
+    def to_dict(self) -> dict[str, str]:
+        return {
+            'sku': self.sku,
+            'proizvajalcev_sku': self.proizvajalcev_sku
+        }
 
 @dataclass
 class ArtikelDto:

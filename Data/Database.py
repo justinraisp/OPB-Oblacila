@@ -51,18 +51,24 @@ class Repo:
 
 
     def dobi_gen(self, typ: Type[T], take=10, skip=0) -> List[T]:
-        """ 
-        Generična metoda, ki za podan vhodni dataclass vrne seznam teh objektov iz baze.
+        """Generična metoda, ki za podan vhodni dataclass vrne seznam teh objektov iz baze.
         Predpostavljamo, da je tabeli ime natanko tako kot je ime posameznemu dataclassu.
         """
-
 
         # ustvarimo sql select stavek, kjer je ime tabele typ.__name__ oz. ime razreda
         tbl_name = typ.__name__
         sql_cmd = f'''SELECT * FROM {tbl_name} LIMIT {take} OFFSET {skip};'''
         self.cur.execute(sql_cmd)
-        return [typ.from_dict(d) for d in self.cur.fetchall()]
-    
+
+        # Assuming the database columns are named id, sku, and proizvajalcev_sku
+        columns = ['id', 'sku', 'proizvajalcev_sku']
+
+        # Map the fetched data to a list of dictionaries, where each dictionary represents a row
+        fetched_data = [dict(zip(columns, row)) for row in self.cur.fetchall()]
+
+        # Use the from_dict method to create Artikel objects from the fetched data
+        return [typ.from_dict(data) for data in fetched_data]
+
     def dobi_gen_id(self, typ: Type[T], id: int | str, id_col = "id") -> T:
         """
         Generična metoda, ki vrne dataclass objekt pridobljen iz baze na podlagi njegovega idja.

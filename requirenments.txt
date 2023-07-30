@@ -2,3 +2,4 @@ pandas
 Data
 bottle
 bcrypt
+psycopg2
