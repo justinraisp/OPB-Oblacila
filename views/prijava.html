@@ -98,33 +98,41 @@
   <section class="hero is-primary">
     <div class="hero-body">
 
-      <div class="title">PRIJAVA</div>
+      <div class="title">Prijava</div>
 
       <form action="{{url('prijava')}}" method="POST" style="width:60%">
 
 
-        <div class="form-group" >
+        
+<div style="padding-bottom: 10px;">
+
 
 
               <label for="username" class="title is-5">Uporabniško ime:</label>
             
-              <input type="input"  class="form-control input is-primary" name="username"
+              <input type="input"  class="form-control input is-primary"  name="username"
                 placeholder="Vnesi uporabniško ime">
+              </div>
 
 
+        
 
-        </div>
-
-        <div class="form-group" style="padding-bottom: 10px;padding-top: 20px;">
+        
           <label for="password" class="title is-5">Geslo:</label>
           <input type="password" class="form-control input is-primary" name="password" placeholder="Geslo">
-        </div>
+        
+<div style="padding-top: 10px;">
 
-        <button type="submit" class="button" style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">Prijava</button>
 
+        <button type="submit" class="button is-medium" style="float:right ;background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;"> Prijava</button>
+      </div>
       </form>
 
-      % if napaka:
+      % if napaka!="Potrebna je prijava!":
+      <div class="notification is-warning" style="width: 30%;">
+        <p class="opozorilo">{{napaka}}</p>
+      </div>
+      % else:
       <p class="opozorilo">{{napaka}}</p>
       % end
 

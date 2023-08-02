@@ -98,14 +98,23 @@
 
 
             <form action="{{url('registracija')}}" method="post">
-                <div>
+                <div style="padding-bottom: 10px;">
                     <label for="username" class="title is-5">Uporabniško ime:</label>
-                    <input type="text" id="username" class="input is-primary" required>
+                    <input type="text" id="username"  class="input is-primary" required>
                 </div>
-                <div>
+                
+                <div style="padding-bottom: 10px;">
+                    <label for="password" class="title is-5">Geslo:</label>
+                    <input type="password" class="input is-primary" id="password" name="password" required>
+                </div>
+                <div style="padding-bottom: 10px;">
+                    <label for="confirm_password" class="title is-5">Potrdi geslo:</label>
+                    <input type="password" class="input is-primary" id="confirm_password" name="confirm_password" required>
+                </div>
+                <div style="padding-bottom: 10px;">
                     <p>
                         <label for="role" class="title is-5">Rola:</label>
-                        <div class="select">
+                        <div class="select is-primary">
                             <select id="role" name="role" required>
                                 <option value="admin">Admin</option>
                                 <option value="guest">Guest</option>
@@ -116,20 +125,15 @@
                     
                 </div>
                 <div>
-                    <label for="password">Geslo</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div>
-                    <label for="confirm_password">Potrdi geslo</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required>
-                </div>
-                <div>
-                    <input type="submit" value="Registracija">
+                    <input class="button is-medium" style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ; float: right;" type="submit" value="Registracija">
                 </div>
             </form>
             
             % if napaka:
+            <div class="notification is-warning" style="width: 30%;">
             <p class="opozorilo">{{napaka}}</p>
+            </div>
+            
             % end
 
 
