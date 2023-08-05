@@ -1,5 +1,5 @@
 import bottle
-from bottleext import get, post, run, request, template, redirect, static_file, url, response
+from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
 
 
 from Data.Database import Repo
@@ -39,23 +39,23 @@ def prikaz_strani_artikel():
     return bottle.template("artikli.html",filtri1=filtri1,filtri2=filtri2)
 
 @bottle.route("/zaloga/")
-
+@cookie_required
 def prikaz_strani_zaloga():
     return bottle.template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
 
 @bottle.route("/dodaj-zalogo/")
-
+@cookie_required
 def prikaz_strani_zaloga():
-    return bottle.template("dodaj-zalogo.html",filtri1=filtri1,filtri2=filtri2)
+    return template_user("dodaj-zalogo.html",filtri1=filtri1,filtri2=filtri2)
 
 @bottle.route("/zaloga/izbrisi")
-
+@cookie_required
 def izbrisi_zalogo():
     EAN = bottle.request.query.EAN
     return bottle.template("izbrisi.html",EAN=EAN)
 
 @bottle.post("/zaloga/tocno-izbrisi")
-
+@cookie_required
 def tocno_kaj_izbrisi_zalogo():
     EAN = bottle.request.query.EAN
     try:
@@ -75,7 +75,7 @@ def tocno_kaj_izbrisi_zalogo():
 
 
 @bottle.post("/zaloga/dodaj")
-
+@cookie_required
 def tocno_kaj_izbrisi_zalogo():
     try:
         EAN = int(bottle.request.forms["EAN"]);
@@ -97,7 +97,7 @@ def tocno_kaj_izbrisi_zalogo():
     return bottle.template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
 
 @bottle.post("/poizvedba/")
-
+@cookie_required
 def poizvedba():
     try:
         iskanje = bottle.request.forms["iskanje"];
@@ -271,7 +271,7 @@ def poizvedba():
     bottle.redirect("/")
 
 @bottle.post("/poizvedba-zaloga/")
-
+@cookie_required
 def poizvedba_zaloga():
     try:
         iskanje = bottle.request.forms["iskanje"];
@@ -445,7 +445,7 @@ def poizvedba_zaloga():
     bottle.redirect("/zaloga/")
 
 @bottle.post("/poizvedba-dodaj/")
-
+@cookie_required
 def poizvedba_dodaj():
     try:
         iskanje = bottle.request.forms["iskanje"];

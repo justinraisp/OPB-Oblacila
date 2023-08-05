@@ -123,6 +123,7 @@
 
         <section class="hero is-primary">
             <div class="hero-body">
+                %if rola == 'admin':
                 <form action="/zaloga/dodaj" method="POST">
 
 
@@ -155,6 +156,9 @@
                     </div>
 
                 </form>
+                %else:
+                <p> Nimate dovoljenja za ogled te strani</p>
+            %end
         </section>
 
         <div class="block">
