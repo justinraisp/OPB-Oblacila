@@ -621,23 +621,19 @@ def poizvedba_dodaj():
 
 @get('/registracija')
 def registracija():
-    # You can set 'napaka' to None if it's not needed in this context
+
     return template("registracija.html", napaka=None)
 
 @post('/registracija')
 def registracija_post():
-    # Here you can handle the form submission and registration logic
-    # For example, you can access form data like this:
+
     username = request.forms.get('username')
     role = request.forms.get('role')
     password = request.forms.get('password')
     confirm_password = request.forms.get('confirm_password')
 
-    # Add your registration logic here and check for any errors
     auth.dodaj_uporabnika(username,role,password)
-    # If registration is successful, you can redirect the user to the login page
 
-    # For example:
     return template("prijava.html", napaka=None)
 @post('/prijava')
 def prijava():
