@@ -34,14 +34,13 @@ def cookie_required(f):
 @bottle.route("/")
 @cookie_required
 def prikaz_strani_artikel():
-    artikli = repo.dobi_gen(Artikel)
-    print(artikli)
-    return bottle.template("artikli.html",filtri1=filtri1,filtri2=filtri2)
+    artikli = repo.dobi_gen(Artikli)
+    return template("artikli.html",filtri1=filtri1,filtri2=filtri2, artikli=artikli)
 
 @bottle.route("/zaloga/")
 @cookie_required
 def prikaz_strani_zaloga():
-    return bottle.template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
+    return template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
 
 @bottle.route("/dodaj-zalogo/")
 @cookie_required
@@ -52,7 +51,7 @@ def prikaz_strani_zaloga():
 @cookie_required
 def izbrisi_zalogo():
     EAN = bottle.request.query.EAN
-    return bottle.template("izbrisi.html",EAN=EAN)
+    return template("izbrisi.html",EAN=EAN)
 
 @bottle.post("/zaloga/tocno-izbrisi")
 @cookie_required
@@ -71,7 +70,7 @@ def tocno_kaj_izbrisi_zalogo():
     except UnicodeError:
         stevilo_paketov = 0
     #izbrisi iz zaloge
-    return bottle.template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
+    return template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
 
 
 @bottle.post("/zaloga/dodaj")
@@ -94,7 +93,7 @@ def tocno_kaj_izbrisi_zalogo():
     except UnicodeError:
         stevilo_paketov = 0
     #dodaj v zalogo
-    return bottle.template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
+    return template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
 
 @bottle.post("/poizvedba/")
 @cookie_required

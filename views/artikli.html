@@ -1,4 +1,5 @@
 %import math
+%from dataclasses import fields
 <html>
 
 <head>
@@ -185,33 +186,20 @@
             <table class="table" style="width:100%">
                 <thead>
                     <tr>
-                        <th>EAN</th>
-                        <th>Proizvajalec</th>
-                        <th>Poreklo</th>
-
+                    %for atribut in fields(artikli[0]):
+                        <th>{{atribut.name}}</th>
+                    %end
                     </tr>
                 </thead>
                 <tbody>
+                    %for artikel in artikli:
                     <tr class="vrstica">
-                        <th>93719848</th>
-                        <th>Falken Ross</th>
-                        <th>GER</th>
+                        %for atribut in fields(artikli[0]):
+                        % k = atribut.name
+                        <td> {{getattr(artikel, atribut.name)}}</td>
+                        %end
                     </tr>
-                    <tr class="vrstica">
-                        <th>2028746429</th>
-                        <th>Fruit of the loom</th>
-                        <th>CHI</th>
-                    </tr>
-                    <tr class="vrstica">
-                        <th>2329111</th>
-                        <th>James Nicholson</th>
-                        <th>USA</th>
-                    </tr>
-                    <tr class="vrstica">
-                        <th>567890322</th>
-                        <th>Eurowear</th>
-                        <th>SLO</th>
-                    </tr>
+                    %end
                 </tbody>
             </table>
         </div>

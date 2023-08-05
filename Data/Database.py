@@ -9,7 +9,7 @@ from re import sub
 import Data.auth as auth
 from datetime import date
 #from dataclasses_json import dataclass_json
-
+from dataclasses import fields
 import dataclasses
 # Ustvarimo generično TypeVar spremenljivko. Dovolimo le naše entitene, ki jih imamo tudi v bazi
 # kot njene vrednosti. Ko dodamo novo entiteno, jo moramo dodati tudi v to spremenljivko.
@@ -61,7 +61,9 @@ class Repo:
         self.cur.execute(sql_cmd)
 
         # Assuming the database columns are named id, sku, and proizvajalcev_sku
-        columns = ['id', 'sku', 'proizvajalcev_sku']
+        columns = []
+        for atribut in fields(typ):
+            columns += [atribut.name]
 
         # Map the fetched data to a list of dictionaries, where each dictionary represents a row
         fetched_data = [dict(zip(columns, row)) for row in self.cur.fetchall()]

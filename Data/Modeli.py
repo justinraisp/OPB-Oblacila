@@ -1,4 +1,66 @@
 from dataclasses import dataclass, field
+from dataclasses_json import dataclass_json
+
+@dataclass
+class Artikli:
+    id: int = field(default=0)
+    sku: str = field(default="")
+    style: str = field(default="")
+    manufacturer: str = field(default="")
+    name: str = field(default="")
+    colour: str = field(default="")
+    size: str = field(default="")
+    farbtyp: str = field(default="")
+    goressentyp: str = field(default="")
+    pcpack: int = field(default=0)
+    pccarton: int = field(default=0)
+    weightkg: str = field(default=0)
+    status: str = field(default="")
+    packshot: str = field(default="")
+    ean: str = field(default="")
+    manufacturersku: str = field(default="")
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> 'Artikli':
+        return cls(
+            id=int(data.get('id', 0)),
+            sku=data.get('sku', ''),
+            style=data.get('style', ''),
+            manufacturer=data.get('manufacturer', ''),
+            name=data.get('name', ''),
+            colour=data.get('colour', ''),
+            size=data.get('size', ''),
+            farbtyp=data.get('farbtyp', ''),
+            goressentyp=data.get('goressentyp', ''),
+            pcpack=int(data.get('pcpack', 0)),
+            pccarton=int(data.get('pccarton', 0)),
+            weightkg=data.get('weightkg', '0'),
+            status=data.get('status', ''),
+            packshot=data.get('packshot', ''),
+            ean=data.get('ean', ''),
+            manufacturersku=data.get('manufacturersku', '')
+        )
+
+    def to_dict(self) -> dict[str, str]:
+        return {
+            'id': str(self.id),
+            'sku': self.sku,
+            'style': self.style,
+            'manufacturer': self.manufacturer,
+            'name': self.name,
+            'colour': self.colour,
+            'size': self.size,
+            'farbtyp': self.farbtyp,
+            'goressentyp': self.goressentyp,
+            'pcpack': str(self.pcpack),
+            'pccarton': str(self.pccarton),
+            'weightkg': self.weightkg,
+            'status': self.status,
+            'packshot': self.packshot,
+            'ean': self.ean,
+            'manufacturersku': self.manufacturersku
+        }
+
 
 @dataclass
 class Artikel:
