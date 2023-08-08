@@ -128,10 +128,12 @@
       </div>
       </form>
 
-      % if napaka!="Potrebna je prijava!":
+      % if napaka != "Potrebna je prijava!":
+      % if napaka != None :
       <div class="notification is-warning" style="width: 30%;">
         <p class="opozorilo">{{napaka}}</p>
       </div>
+      % end
       % else:
       <p class="opozorilo">{{napaka}}</p>
       % end

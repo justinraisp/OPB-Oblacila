@@ -108,11 +108,19 @@
                         <a class="navbar-item" href="/">
                             Artikli
                         </a>
-                        <a class="navbar-item" href="/zaloga/">
+                        % if rola == "admin" :
+                        <a class="navbar-item" href="/zaloga/" style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
                             Zaloga
-                        </a>
-                        Odjava
-                    </a>
+                          </a>
+                        % else :
+                        <a class="navbar-item" href="/kosarica/">
+                            <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                            Košarica
+                          </a>
+                          % end
+                        <a class="navbar-item" href="/odjava">
+                            Odjava
+                          </a>
                     </div>
 
 
@@ -195,31 +203,32 @@
                         <table class="table"
                             style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
                             % k = 0
-                            % for i in range(6):
-                            <tr>
+                            % for i in range(4):
+                            <tr >
                                 % for j in range(6):
-                                <td>
-                                    % if k <= 32: 
+                                <td >
+                                    % if k <= 18: 
+    
                                     <label class="custom-checkbox">
-                                        <input type="checkbox" name={{filtri2[k]}}>
-
+                                        <input type="checkbox" name={{filtri2[k]}} >
+                                        
                                         <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
                                         {{filtri1[k]}}
-                                        </label>
-
-
-
-
-
-
-                                        % end
+                                      </label>
+    
+    
+    
+    
+                                  
+    
+                                    % end
                                 </td>
                                 % if j != 5:
                                 % k = k+1
                                 % end
                                 % end
                             </tr>
-                            %k = k+1
+                            %k = k+1 
                             % end
                         </table>
                     </div>

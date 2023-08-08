@@ -109,13 +109,13 @@
                             Artikli
                         </a>
                         % if rola == "admin" :
-                    <a class="navbar-item" href="/zaloga/" style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
+                    <a class="navbar-item" href="/zaloga/">
                         Zaloga
                       </a>
                     % else :
-                    <a class="navbar-item" href="/kosarica">
-                        <i class="fa fa-shopping-basket" aria-hidden="true"></i>
-                        Košarica
+                    <a class="navbar-item" href="/kosarica/" style="color: hsl(171, 100%, 41%); ">
+                        
+                        <p style="text-decoration: underline hsl(171, 100%, 41%);">Košarica</p>    <i class="fa fa-shopping-basket" aria-hidden="true" style="padding-left: 5px;"></i>
                       </a>
                       % end
                         <a class="navbar-item" href="/odjava">
@@ -128,64 +128,6 @@
             </nav>
         </div>
 
-        <section class="hero is-primary">
-            <div class="hero-body">
-                <h1 class="title is-2">Artikel: {{EAN}}</h1>
-
-                <form action={{"/zaloga/tocno-izbrisi?EAN="+ EAN}} method=" POST">
-
-
-
-
-                    <div class="field has-addons">
-
-
-
-                        <div class="control" style="width:33%">
-                            <input class="input is-primary" type="text" name="stevilo_kartonov"
-                                placeholder="Koliko kartonov artiklov ste odstranili iz zaloge?">
-                        </div>
-
-                        <div class="control" style="width:33%">
-                            <input class="input is-primary" type="text" name="stevilo_paketov"
-                                placeholder="Koliko paketov artiklov ste odstranili iz zaloge?">
-                        </div>
-
-                        <div class="control" style="width:33%">
-                            <input class="input is-primary" type="text" name="stevilo"
-                                placeholder="Koliko artiklov ste odstranili iz zaloge?">
-                        </div>
-                        <p class="control">
-                            <button type="submit" class="button" href=""
-                                style="backgrond-color:white;color:red;border-color: hsl(171, 80%, 41%) ;">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </p>
-                    </div>
-
-
-                </form>
-
-                <div class="columns" style="padding-bottom: 0px;">
-                    <p class="column is-4" style="text-align: center;"> Število kartonov: 6</p>
-                    <p class="column is-3" style="text-align: center;"> Število paketov: 63</p>
-                    <p class="column is-3" style="text-align: center;"> Število artiklov: 600</p>
-                    <p class="column is-2" style="text-align: center;"> Skupaj: 1000</p>
-                </div>
-
-                <div class="columns" style="padding-top: 0px;">
-                    <p class="column is-4" style="text-align: center;"> artikli/karton: 60</p>
-                    <p class="column is-3" style="text-align: center;"> artikli/paket: 6</p>
-                    
-                </div>
-          
-
-
-            </div>
-
-
-
-        </section>
 
 
 </body>

@@ -19,6 +19,9 @@ auth = AuthService(repo)
 filtri1 = ["SKU", "Proizvajalčev SKU","Stil","Tip barve","Tip velikosti","Barva","Koda barve","Ime barve", "Sortirni red barve","Koda proizvajalca","CMYK","RGB","Evropska številka artikla","Ime proizvajalca","Število v paketu","Število v kartonu","Velikost","Status","Teža","Ime","Ime (Nemščina)","Ime (Angleščina)","Ime (Češčina)","Opis materiala (Nemščina)","Opis materiala (Angleščina)","Opis materiala (Češčina)","Opis artikla (Angleščina)","Opis artikla (Nemščina)","Opis artikla (Češčina)","Stran kataloga","Cena","Izvor","Vrsta" ]
 filtri2 = [ "SKU","proizvajalcev_SKU","stil","tip_barve","tip_velikosti","barva","koda_barve","ime_barve","sortirni_red_barve","koda_proizvajalca","CMYK","RGB","evropska_stevilka_artikla","ime_proizvajalca","stevilo_v_paketu","stevilo_v_kartonu","velikost","status","teza","ime","ime_nemscina","ime_anglescina","ime_cescina","opis_materiala_nemscina","opis_materiala_anglescina","opis_materiala_cescina","opis_artikla_anglescina","opis_artikla_nemscina","opis_artikla_cescina","stran_kataloga","cena","izvor","vrsta"]
 
+filtri11 = [ "Proizvajalčev SKU","Tip barve","Tip velikosti","Koda barve", "Sortirni red barve","Koda proizvajalca","CMYK","RGB","Evropska številka artikla","Število v paketu","Število v kartonu","Teža","Ime (Nemščina)","Ime (Češčina)","Opis materiala (Nemščina)","Opis materiala (Češčina)","Opis artikla (Nemščina)","Opis artikla (Češčina)","Stran kataloga" ]
+filtri22 = [ "proizvajalcev_SKU","tip_barve","tip_velikosti","koda_barve","sortirni_red_barve","koda_proizvajalca","CMYK","RGB","evropska_stevilka_artikla","stevilo_v_paketu","stevilo_v_kartonu","teza","ime","ime_nemscina","ime_cescina","opis_materiala_nemscina","opis_materiala_cescina","opis_artikla_nemscina","opis_artikla_cescina","stran_kataloga"]
+
 def cookie_required(f):
     """
     Dekorator, ki zahteva veljaven piškotek. Če piškotka ni, uporabnika preusmeri na stran za prijavo.
@@ -35,27 +38,62 @@ def cookie_required(f):
 @cookie_required
 def prikaz_strani_artikel():
     artikli = repo.dobi_gen(Artikli)
-    return template("artikli.html",filtri1=filtri1,filtri2=filtri2, artikli=artikli)
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    rola= request.get_cookie("rola")
+    print(rola)
+    return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola)
+
+
+@bottle.route("/kosarica/")
+@cookie_required
+def prikaz_strani_artikel():
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    
+
+    artikli = repo.dobi_gen(Artikli)
+    
+    rola= request.get_cookie("rola")
+    print(rola)
+    return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola)
 
 @bottle.route("/zaloga/")
 @cookie_required
 def prikaz_strani_zaloga():
-    return template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    rola= request.get_cookie("rola")
+    print(rola)
+    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola)
 
 @bottle.route("/dodaj-zalogo/")
 @cookie_required
 def prikaz_strani_zaloga():
-    return template_user("dodaj-zalogo.html",filtri1=filtri1,filtri2=filtri2)
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    rola= request.get_cookie("rola")
+    
+    print(rola)
+    return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22)
 
 @bottle.route("/zaloga/izbrisi")
 @cookie_required
 def izbrisi_zalogo():
     EAN = bottle.request.query.EAN
-    return template("izbrisi.html",EAN=EAN)
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    rola= request.get_cookie("rola")
+    print(rola)
+    return template("izbrisi.html",EAN=EAN,rola=rola)
 
 @bottle.post("/zaloga/tocno-izbrisi")
 @cookie_required
 def tocno_kaj_izbrisi_zalogo():
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    rola= request.get_cookie("rola")
+    print(rola)
     EAN = bottle.request.query.EAN
     try:
         stevilo = int(bottle.request.forms["stevilo"]);
@@ -70,12 +108,16 @@ def tocno_kaj_izbrisi_zalogo():
     except UnicodeError:
         stevilo_paketov = 0
     #izbrisi iz zaloge
-    return template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
+    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola)
 
 
 @bottle.post("/zaloga/dodaj")
 @cookie_required
 def tocno_kaj_izbrisi_zalogo():
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    rola= request.get_cookie("rola")
+    print(rola)
     try:
         EAN = int(bottle.request.forms["EAN"]);
     except UnicodeError:
@@ -93,7 +135,7 @@ def tocno_kaj_izbrisi_zalogo():
     except UnicodeError:
         stevilo_paketov = 0
     #dodaj v zalogo
-    return template("zaloga.html",filtri1=filtri1,filtri2=filtri2)
+    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola )
 
 @bottle.post("/poizvedba/")
 @cookie_required
@@ -630,6 +672,8 @@ def registracija_post():
     role = request.forms.get('role')
     password = request.forms.get('password')
     confirm_password = request.forms.get('confirm_password')
+    # if role == "admin":
+    #    return template("potrditev.html", napaka=None)
 
     auth.dodaj_uporabnika(username,role,password)
 
@@ -652,12 +696,17 @@ def prijava():
     if prijava:
         response.set_cookie("uporabnik", username)
         response.set_cookie("rola", prijava.role)
+        rola= request.get_cookie("rola")
+        uporabnik = request.get_cookie("uporabnik")
+        print(uporabnik)
+        print(rola)
         
         # redirect v večino primerov izgleda ne deluje
         # redirect(url('index'))
 
         # Uporabimo kar template, kot v sami "index" funkciji
-        return template('artikli.html', filtri1=filtri1, filtri2=filtri2)
+        artikli = repo.dobi_gen(Artikli)
+        return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola)
         
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
@@ -667,7 +716,7 @@ def odjava():
     """
     Odjavi uporabnika iz aplikacije. Pobriše piškotke o uporabniku in njegovi roli.
     """
-    
+
     response.delete_cookie("uporabnik")
     response.delete_cookie("rola")
     
