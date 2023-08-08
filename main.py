@@ -22,6 +22,7 @@ filtri2 = [ "SKU","proizvajalcev_SKU","stil","tip_barve","tip_velikosti","barva"
 filtri11 = [ "Proizvajalčev SKU","Tip barve","Tip velikosti","Koda barve", "Sortirni red barve","Koda proizvajalca","CMYK","RGB","Evropska številka artikla","Število v paketu","Število v kartonu","Teža","Ime (Nemščina)","Ime (Češčina)","Opis materiala (Nemščina)","Opis materiala (Češčina)","Opis artikla (Nemščina)","Opis artikla (Češčina)","Stran kataloga" ]
 filtri22 = [ "proizvajalcev_SKU","tip_barve","tip_velikosti","koda_barve","sortirni_red_barve","koda_proizvajalca","CMYK","RGB","evropska_stevilka_artikla","stevilo_v_paketu","stevilo_v_kartonu","teza","ime","ime_nemscina","ime_cescina","opis_materiala_nemscina","opis_materiala_cescina","opis_artikla_nemscina","opis_artikla_cescina","stran_kataloga"]
 
+
 def cookie_required(f):
     """
     Dekorator, ki zahteva veljaven piškotek. Če piškotka ni, uporabnika preusmeri na stran za prijavo.

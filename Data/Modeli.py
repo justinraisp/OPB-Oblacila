@@ -1,6 +1,26 @@
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
+
+@dataclass
+class Kosarica:
+    uporabnik: str = field(default="")
+    izdelki: dict = field(default_factory=dict())
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'Kosarica':
+        return cls(
+            uporabnik=data.get('uporabnik', ''),
+            izdelki=data.get('izdelki', {})
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            'uporabnik': self.uporabnik,
+            'izdelki': self.izdelki
+        }
+
+
 @dataclass
 class Glavna:
     id: int = field(default=0)

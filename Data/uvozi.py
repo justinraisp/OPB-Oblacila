@@ -24,6 +24,9 @@ def uvozi_csv(pot, ime):
     # uvozimo podatke v to isto tabelo
     repo.df_to_sql_insert(df, ime, use_camel_case=True)
 
+#repo.ustvari_tabelo_kosarica()
+
+
 #uvozi_csv("tabele/artikel.txt", "Artikel")
 #uvozi_csv("tabele/barva.txt", "Barva")
 #uvozi_csv("tabele/barvne_lastnosti.txt", "Barvne_lastnosti")

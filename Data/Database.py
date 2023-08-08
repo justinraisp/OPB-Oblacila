@@ -1,12 +1,13 @@
 # uvozimo psycopg2
+import json
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE) # se znebimo problemov s šumniki
 
 from typing import List, TypeVar, Type, Callable, Any
-from Data.Modeli import *
+from Modeli import *
 from pandas import DataFrame
 from re import sub
-import Data.auth as auth
+import auth as auth
 from datetime import date
 #from dataclasses_json import dataclass_json
 from dataclasses import fields
@@ -19,6 +20,7 @@ import dataclasses
 
 T = TypeVar(
     "T",
+    Glavna,
     Artikel,
     Barva,
     Barvne_lastnosti,
@@ -40,7 +42,8 @@ T = TypeVar(
     Velikostni_tip,
     Vrsta_produkta,
     Uporabnik,
-    UporabnikDto
+    UporabnikDto,
+    Kosarica
     )
 
 class Repo:
@@ -362,6 +365,42 @@ class Repo:
             """)
 
         return [id for id in artikli]
+    
+
+    def ustvari_tabelo_kosarica(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS kosarica (
+            id SERIAL PRIMARY KEY,
+            Uporabnik TEXT NOT NULL,
+            Izdelki JSONB
+        );
+        """
+        self.cur.execute(sql)
+        self.conn.commit()
+        print("Tabela 'kosarica' ustvarjena ali že obstaja.")
+
+
+
+    def kosarica_shrani(self,izdelki):
+        self.cur.execute("SELECT * FROM kosarica WHERE uporabnik_id = %s;", (self.uporabnik,))
+        trenutna = self.cur.fetchone()
+
+        if trenutna:
+            self.cur.execute("UPDATE kosarica SET izdelki = %s WHERE uporabnik = %s;", (json.dumps(self.izdelki), self.uporabnik))
+        else:
+            self.cur.execute("INSERT INTO kosarice (uporabnik_id, izdelki) VALUES (%s, %s);", (self.uporabnik, json.dumps(self.izdelki)))
+
+        self.conn.commit()
+        
+    def kosarica_nalozi(self, uporabnik_id):
+        self.cur.execute("SELECT izdelki FROM kosarice WHERE uporabnik_id = %s;", (uporabnik_id,))
+        row = self.cur.fetchone()
+
+        if row:
+            kosarica_data = json.loads(row[0])
+            return Kosarica.from_dict(kosarica_data)
+        else:
+            return None
            
 
 
