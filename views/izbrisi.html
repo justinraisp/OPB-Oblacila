@@ -1,0 +1,185 @@
+%import math
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+        integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <title>Artikli</title>
+</head>
+<style>
+    /* Hide the default checkbox */
+    .custom-checkbox input[type="checkbox"] {
+        display: none;
+    }
+
+    /* Style the custom checkbox container */
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+        /* Align the text with the checkbox */
+        cursor: pointer;
+        /* Show the pointer cursor on hover */
+        margin-bottom: 10px;
+        /* Optional: Add some spacing between each checkbox */
+    }
+
+    /* Style the custom checkbox */
+    .custom-checkbox .checkmark {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border: 1px solid hsl(171, 80%, 41%);
+        ;
+        position: relative;
+        margin-right: 8px;
+        /* Optional: Add some spacing between checkbox and text */
+    }
+
+    /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+        content: "\2713";
+        /* Unicode for checkmark symbol */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        color: #fff;
+        /* Color of the checkmark when checked */
+    }
+
+    /* Customize the background color when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+        background-color: hsl(171, 100%, 41%);
+        ;
+        /* Red background when checked */
+        border-color: white;
+        /* Red border color when checked */
+    }
+
+    /* Style the text when hovered */
+    .custom-checkbox:hover {
+        text-decoration: underline;
+        /* Underline the text on hover */
+    }
+
+
+
+    .btn:hover {
+
+        background-color: hsl(171, 80%, 41%);
+        color: white;
+        border-color: hsl(171, 100%, 41%);
+
+    }
+
+    .btn {
+
+        background-color: white;
+        color: hsl(171, 100%, 41%);
+        border-color: hsl(171, 100%, 41%);
+    }
+
+    .vrstica:hover {
+        background-color: hsl(171, 100%, 41%);
+    }
+</style>
+
+<body>
+
+    <div class="container is-max">
+
+        <div class="block">
+            <nav class="navbar is-transparent">
+
+
+                <div id="navbarExampleTransparentExample" class="navbar-menu">
+                    <div class="navbar-start">
+                        <a class="navbar-item" href="/">
+                            Artikli
+                        </a>
+                        <a class="navbar-item" href="/zaloga/">
+                            Zaloga
+                        </a>
+                        Odjava
+                    </a>
+                    </div>
+
+
+                </div>
+            </nav>
+        </div>
+
+        <section class="hero is-primary">
+            <div class="hero-body">
+                <h1 class="title is-2">Artikel: {{EAN}}</h1>
+
+                <form action={{"/zaloga/tocno-izbrisi?EAN="+ EAN}} method=" POST">
+
+
+
+
+                    <div class="field has-addons">
+
+
+
+                        <div class="control" style="width:33%">
+                            <input class="input is-primary" type="text" name="stevilo_kartonov"
+                                placeholder="Koliko kartonov artiklov ste odstranili iz zaloge?">
+                        </div>
+
+                        <div class="control" style="width:33%">
+                            <input class="input is-primary" type="text" name="stevilo_paketov"
+                                placeholder="Koliko paketov artiklov ste odstranili iz zaloge?">
+                        </div>
+
+                        <div class="control" style="width:33%">
+                            <input class="input is-primary" type="text" name="stevilo"
+                                placeholder="Koliko artiklov ste odstranili iz zaloge?">
+                        </div>
+                        <p class="control">
+                            <button type="submit" class="button" href=""
+                                style="backgrond-color:white;color:red;border-color: hsl(171, 80%, 41%) ;">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </p>
+                    </div>
+
+
+                </form>
+
+                <div class="columns" style="padding-bottom: 0px;">
+                    <p class="column is-4" style="text-align: center;"> Število kartonov: 6</p>
+                    <p class="column is-3" style="text-align: center;"> Število paketov: 63</p>
+                    <p class="column is-3" style="text-align: center;"> Število artiklov: 600</p>
+                    <p class="column is-2" style="text-align: center;"> Skupaj: 1000</p>
+                </div>
+
+                <div class="columns" style="padding-top: 0px;">
+                    <p class="column is-4" style="text-align: center;"> artikli/karton: 60</p>
+                    <p class="column is-3" style="text-align: center;"> artikli/paket: 6</p>
+                    
+                </div>
+          
+
+
+            </div>
+
+
+
+        </section>
+
+
+</body>
+
+</html>

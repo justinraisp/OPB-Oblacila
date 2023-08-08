@@ -1,0 +1,150 @@
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+    integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <title>Prijava</title>
+</head>
+<style>
+  /* Hide the default checkbox */
+  .custom-checkbox input[type="checkbox"] {
+    display: none;
+  }
+
+  /* Style the custom checkbox container */
+  .custom-checkbox {
+    display: flex;
+    align-items: center;
+    /* Align the text with the checkbox */
+    cursor: pointer;
+    /* Show the pointer cursor on hover */
+    margin-bottom: 10px;
+    /* Optional: Add some spacing between each checkbox */
+  }
+
+  /* Style the custom checkbox */
+  .custom-checkbox .checkmark {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border: 1px solid hsl(171, 80%, 41%);
+    ;
+    position: relative;
+    margin-right: 8px;
+    /* Optional: Add some spacing between checkbox and text */
+  }
+
+  /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+  .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+    content: "\2713";
+    /* Unicode for checkmark symbol */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    color: #fff;
+    /* Color of the checkmark when checked */
+  }
+
+  /* Customize the background color when the checkbox is checked */
+  .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+    background-color: hsl(171, 100%, 41%);
+    ;
+    /* Red background when checked */
+    border-color: white;
+    /* Red border color when checked */
+  }
+
+  /* Style the text when hovered */
+  .custom-checkbox:hover {
+    text-decoration: underline;
+    /* Underline the text on hover */
+  }
+
+
+
+  .btn:hover {
+
+    background-color: hsl(171, 80%, 41%);
+    color: white;
+    border-color: hsl(171, 100%, 41%);
+
+  }
+
+  .btn {
+
+    background-color: white;
+    color: hsl(171, 100%, 41%);
+    border-color: hsl(171, 100%, 41%);
+  }
+
+  .vrstica:hover {
+    background-color: hsl(171, 100%, 41%);
+  }
+</style>
+
+<div class="container is-max" style="padding-top: 20px;">
+  <section class="hero is-primary">
+    <div class="hero-body">
+
+      <div class="title">Prijava</div>
+
+      <form action="{{url('prijava')}}" method="POST" style="width:100%">
+
+
+        
+<div style="padding-bottom: 10px;">
+
+
+
+              <label for="username" class="title is-5">Uporabniško ime:</label>
+            
+              <input type="input"  class="form-control input is-primary"  name="username"
+                placeholder="Vnesi uporabniško ime">
+              </div>
+
+
+        
+
+        
+          <label for="password" class="title is-5">Geslo:</label>
+          <input type="password" class="form-control input is-primary" name="password" placeholder="Geslo">
+        
+<div style="padding-top: 10px;">
+
+
+        <button type="submit" class="button is-medium" style="float:right ;background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;"> Prijava</button>
+      </div>
+      </form>
+
+      % if napaka!="Potrebna je prijava!":
+      <div class="notification is-warning" style="width: 30%;">
+        <p class="opozorilo">{{napaka}}</p>
+      </div>
+      % else:
+      <p class="opozorilo">{{napaka}}</p>
+      % end
+
+      <p class="title is-5">Niste še registrirani? <a href="{{url('registracija')}}" style="text-decoration: underline;">Registracija</a></p>
+
+
+    </div>
+  </section>
+</div>
+
+
+
+</body>
+
+</html>
