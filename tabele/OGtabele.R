@@ -33,8 +33,9 @@ glavna[[28]] = str_replace(glavna[[28]], "&#8364;", "€")
 
 glavna =  dplyr::select(glavna,c(1,2,3,4,5,12,16,20,21,22,28,30,32))
 glavna = glavna[c(1,2,4,3,13,11,8,5,6,9,10,12)]
+colnames(glavna) = c("SKU", "Style", "Name", "Manufacturer", "Category", "Price", "Name2", "Colour", "Status", "Material", "Description", "Origin")
 
-write.csv(glavna,"C:\\Users\\matic\\Desktop\\glavna.txt" , row.names=FALSE)
+write.csv(glavna,"C:\\Users\\justin\\Desktop\\glavna.txt" , row.names=FALSE, sep=";",encoding="UTF-8")
 
 artikel_ = SKU_list[c("SKU","ManufacturerSKU")]
 colnames(artikel_)[1] = "sku"

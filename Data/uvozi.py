@@ -5,13 +5,15 @@ from Database import Repo
 
 repo = Repo()
 
+
+
 def uvozi_csv(pot, ime):
     """
     Uvozimo csv v bazo brez večjih posegov v podatke.
     Ustvarimo pandasov DataFrame ter nato z generično metodo ustvarimo ter
     napolnimo tabelo v postgresql bazi.
     """
-    df = pd.read_csv(pot, sep=",", encoding="Windows-1250")
+    df = pd.read_csv(pot, sep=",", encoding="Windows-1250",  quotechar='"')
 
     # Zamenjamo pomišljaje z prazno vrednostjo
     df.replace(to_replace="-", value="", inplace=True)
@@ -44,3 +46,4 @@ def uvozi_csv(pot, ime):
 #uvozi_csv("tabele/velikostni_tip.txt", "Velikostni_tip")
 #uvozi_csv("tabele/vrsta_produkta.txt", "Vrsta_produkta")
 #uvozi_csv("Artikli.csv", "Artikli")
+#uvozi_csv(r"tabele/glavna.txt", "Glavna")

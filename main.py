@@ -37,11 +37,9 @@ def cookie_required(f):
 @bottle.route("/")
 @cookie_required
 def prikaz_strani_artikel():
-    artikli = repo.dobi_gen(Artikli)
+    artikli = repo.dobi_gen(Glavna)
     uporabnik = request.get_cookie("uporabnik")
-    print(uporabnik)
     rola= request.get_cookie("rola")
-    print(rola)
     return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola)
 
 
@@ -52,7 +50,7 @@ def prikaz_strani_artikel():
     print(uporabnik)
     
 
-    artikli = repo.dobi_gen(Artikli)
+    artikli = repo.dobi_gen(Glavna)
     
     rola= request.get_cookie("rola")
     print(rola)
@@ -696,16 +694,14 @@ def prijava():
     if prijava:
         response.set_cookie("uporabnik", username)
         response.set_cookie("rola", prijava.role)
-        rola= request.get_cookie("rola")
-        uporabnik = request.get_cookie("uporabnik")
-        print(uporabnik)
-        print(rola)
+        rola= prijava.role
+        uporabnik = username
         
         # redirect v večino primerov izgleda ne deluje
         # redirect(url('index'))
 
         # Uporabimo kar template, kot v sami "index" funkciji
-        artikli = repo.dobi_gen(Artikli)
+        artikli = repo.dobi_gen(Glavna)
         return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola)
         
     else:

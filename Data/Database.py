@@ -258,7 +258,7 @@ class Repo:
 
         # dobimo slovar stolpcev in njihovih tipov
         cols = dict(df.dtypes)
-
+        print(cols)
         cols_sql = ""
 
         # dodamo serial primary key
