@@ -63,6 +63,21 @@ def prikaz_strani_kosarica():
     print(rola)
     return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik)
 
+
+@bottle.route("/dodaj_v_kosarico/<sku>")
+@cookie_required
+def dodaj_v_kosarico(sku):
+    uporabnik = request.get_cookie("uporabnik")
+    #artikel = repo.dobi_Artikel(sku)
+    trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
+    print(trenutna_kosarica)
+    #treba k trenutni kosarici dodat nov izdelek in ga shranit gor, ne dela repo.dobi_artikel
+    #kosarica = {**trenutna_kosarica,}
+    repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
+
+    bottle.redirect("/")
+
+
 @bottle.route("/zaloga/")
 @cookie_required
 def prikaz_strani_zaloga():
@@ -713,7 +728,7 @@ def prijava():
 
         # Uporabimo kar template, kot v sami "index" funkciji
         artikli = repo.dobi_gen(Glavna)
-        return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola)
+        return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10)
         
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")

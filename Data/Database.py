@@ -314,20 +314,16 @@ class Repo:
 
 
 
-    def dobi_Artikel(self, ime_izdelka: str) -> Artikel:
+    def dobi_Artikel(self, sku):
         # Preverimo, če Artikel že obstaja
-        self.cur.execute("""
-            SELECT id, ime, kategorija from Artikel
-            WHERE ime = %s
-          """, (ime_izdelka,))
-        
+        self.cur.execute("SELECT izdelki FROM kosarica WHERE uporabnik = %s;", (sku,))
         row = self.cur.fetchone()
-
+        print(row)
         if row:
-            id, ime, kategorija = row
-            return Artikel(id, ime, kategorija)
+            id, sku, cena = row
+            return Artikel(id, sku, cena)
         
-        raise Exception("Artikel z imenom " + ime_izdelka + " ne obstaja")
+        raise Exception("Artikel z imenom " + sku + " ne obstaja")
 
     
     def dodaj_Artikel(self, Artikel: Artikel) -> Artikel:
@@ -335,7 +331,7 @@ class Repo:
         # Preverimo, če Artikel že obstaja
         self.cur.execute("""
             SELECT id, ime, kategorija from Artikel
-            WHERE ime = %s
+            WHERE ime = %s;
           """, (Artikel.ime,))
         
         row = self.cur.fetchone()
@@ -381,24 +377,23 @@ class Repo:
 
 
 
-    def kosarica_shrani(self,izdelki):
-        self.cur.execute("SELECT * FROM kosarica WHERE uporabnik_id = %s;", (self.uporabnik,))
+    def kosarica_shrani(self,uporabnik,izdelki):
+        self.cur.execute("SELECT * FROM kosarica WHERE uporabnik = %s;", (uporabnik,))
         trenutna = self.cur.fetchone()
 
         if trenutna:
-            self.cur.execute("UPDATE kosarica SET izdelki = %s WHERE uporabnik = %s;", (json.dumps(self.izdelki), self.uporabnik))
+            self.cur.execute("UPDATE kosarica SET izdelki = %s WHERE uporabnik = %s;", (json.dumps(izdelki), uporabnik))
         else:
-            self.cur.execute("INSERT INTO kosarice (uporabnik_id, izdelki) VALUES (%s, %s);", (self.uporabnik, json.dumps(self.izdelki)))
+            self.cur.execute("INSERT INTO kosarica (uporabnik, izdelki) VALUES (%s, %s);", (uporabnik, json.dumps(izdelki)))
 
         self.conn.commit()
         
-    def kosarica_nalozi(self, uporabnik_id):
-        self.cur.execute("SELECT izdelki FROM kosarice WHERE uporabnik_id = %s;", (uporabnik_id,))
+    def kosarica_nalozi(self, uporabnik):
+        self.cur.execute("SELECT izdelki FROM kosarica WHERE uporabnik = %s;", (uporabnik,))
         row = self.cur.fetchone()
-
         if row:
-            kosarica_data = json.loads(row[0])
-            return Kosarica.from_dict(kosarica_data)
+            kosarica_data = row[0]
+            return Kosarica(uporabnik,kosarica_data)
         else:
             return None
            

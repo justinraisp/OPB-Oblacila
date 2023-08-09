@@ -197,6 +197,7 @@
                     %for atribut in fields(artikli[0]):
                         <th>{{atribut.name}}</th>
                     %end
+                    <th>Dodaj v košarico</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -206,6 +207,11 @@
                         % k = atribut.name
                         <td> {{getattr(artikel, atribut.name)}}</td>
                         %end
+                        <td>
+                            <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="get">
+                                <button type="submit" class="button is-primary">Dodaj</button>
+                            </form>
+                        </td>                        
                     </tr>
                     %end
                 </tbody>
@@ -235,10 +241,10 @@
                 <ul class="pagination-list is-primary">
                     % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):                    
                     <li>
-                        <a href="/?stran={{i}}" class="pagination-link btn {% 'is-current' if i == trenutna_stran else '' %}"
-                        style="background-color: {% 'hsl(171, 100%, 41%)' if i == trenutna_stran else 'white' %};
-                        border-color: {% 'hsl(171,100%, 41%)' if i == trenutna_stran else 'hsl(171, 80%, 41%)' %};
-                        color: {% 'white' if i == trenutna_stran else 'hsl(171, 100%, 41%)' %}">
+                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'"
+                        style="background-color: hsl(171, 100%, 41%);
+                        border-color: hsl(171,100%, 41%);
+                        color: white">
                         {{i}}
                         </a>
                     </li>
