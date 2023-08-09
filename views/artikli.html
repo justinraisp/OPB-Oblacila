@@ -221,42 +221,37 @@
             <nav class="pagination is-centered">
 
                 
-                <a href="" class="pagination-previous btn" disabled>
+                <a href="/?stran={{trenutna_stran - 1}}" class="pagination-previous btn" disabled>
                     Prejšnja stran
                 </a>
 
-
-
-
-
-
+                <ul class="pagination-list is-primary">
+                    % if trenutna_stran > 3:
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                    </li>
+                    % end
 
                 <ul class="pagination-list is-primary">
+                    % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):                    
                     <li>
-                        <a href="" class="pagination-link is-current btn"
-                            style="background-color:hsl(171, 100%, 41%);border-color: hsl(171,100%, 41%);">
-                            1
+                        <a href="/?stran={{i}}" class="pagination-link btn {% 'is-current' if i == trenutna_stran else '' %}"
+                        style="background-color: {% 'hsl(171, 100%, 41%)' if i == trenutna_stran else 'white' %};
+                        border-color: {% 'hsl(171,100%, 41%)' if i == trenutna_stran else 'hsl(171, 80%, 41%)' %};
+                        color: {% 'white' if i == trenutna_stran else 'hsl(171, 100%, 41%)' %}">
+                        {{i}}
                         </a>
+                    </li>
+                    %end
 
+                    % if trenutna_stran < max_stran - 2:
                     <li>
                         <span class="pagination-ellipsis">&hellip;</span>
                     </li>
-
-                    <a href="" class="pagination-link  btn">
-                        2
-                    </a>
-
-                    <li>
-                        <span class="pagination-ellipsis">&hellip;</span>
-                    </li>
-
-                    <a href="" class="pagination-link btn">
-                        3
-                    </a>
-                    </li>
+                    % end    
                 </ul>
 
-                <a href="" class="pagination-next btn">
+                <a href="/?stran={{trenutna_stran + 1}}" class="pagination-next btn">
                     Naslednja stran
                 </a>
 

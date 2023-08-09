@@ -1,3 +1,4 @@
+from math import ceil
 import bottle
 from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
 
@@ -38,24 +39,29 @@ def cookie_required(f):
 @bottle.route("/")
 @cookie_required
 def prikaz_strani_artikel():
-    artikli = repo.dobi_gen(Glavna)
     uporabnik = request.get_cookie("uporabnik")
     rola= request.get_cookie("rola")
-    return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola)
+
+    artikli_na_stran = 10
+    max_stran = ceil(106871 / artikli_na_stran)
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
+    artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
+
+    return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran)
 
 
 @bottle.route("/kosarica/")
 @cookie_required
-def prikaz_strani_artikel():
+def prikaz_strani_kosarica():
     uporabnik = request.get_cookie("uporabnik")
-    print(uporabnik)
     
-
     artikli = repo.dobi_gen(Glavna)
     
     rola= request.get_cookie("rola")
     print(rola)
-    return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola)
+    return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik)
 
 @bottle.route("/zaloga/")
 @cookie_required
@@ -668,13 +674,17 @@ def registracija():
 def registracija_post():
 
     username = request.forms.get('username')
-    role = request.forms.get('role')
+    rola = request.forms.get('role')
     password = request.forms.get('password')
     confirm_password = request.forms.get('confirm_password')
     # if role == "admin":
     #    return template("potrditev.html", napaka=None)
 
-    auth.dodaj_uporabnika(username,role,password)
+    auth.dodaj_uporabnika(username,rola,password)
+
+    if rola == "guest":
+        nova_kosarica = Kosarica(uporabnik=username)
+        repo.dodaj_gen(nova_kosarica)
 
     return template("prijava.html", napaka=None)
 @post('/prijava')

@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
@@ -5,19 +6,19 @@ from dataclasses_json import dataclass_json
 @dataclass
 class Kosarica:
     uporabnik: str = field(default="")
-    izdelki: dict = field(default_factory=dict())
+    izdelki: str = field(default=json.dumps({}))
 
     @classmethod
     def from_dict(cls, data: dict) -> 'Kosarica':
         return cls(
             uporabnik=data.get('uporabnik', ''),
-            izdelki=data.get('izdelki', {})
+            izdelki=json.dumps(data.get('izdelki', {}))
         )
 
     def to_dict(self) -> dict:
         return {
             'uporabnik': self.uporabnik,
-            'izdelki': self.izdelki
+            'izdelki': json.loads(self.izdelki)
         }
 
 
