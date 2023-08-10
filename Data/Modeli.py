@@ -42,6 +42,23 @@ class Kosarica:
         
         self.izdelki = json.dumps(trenutni_izdelki)
 
+    def izbrisi(self, izdelek: dict):
+    # Preverimo, ali je izdelek v košarici
+        trenutni_izdelki = json.loads(self.izdelki) if self.izdelki else {}
+        sku = izdelek.get('sku')
+        kolicina = izdelek.get('kolicina',1)
+        if sku in trenutni_izdelki:
+            trenutna_kolicina = trenutni_izdelki[sku].get('kolicina', 0)
+            if kolicina == trenutna_kolicina:
+                del trenutni_izdelki[sku]
+            elif kolicina < trenutna_kolicina:
+                trenutna_kolicina -= kolicina
+                trenutni_izdelki[sku]['kolicina'] = trenutna_kolicina
+            else:
+                pass
+        
+        self.izdelki = json.dumps(trenutni_izdelki)        
+
 @dataclass
 class Glavna:
     id: int = field(default=0)

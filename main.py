@@ -81,6 +81,24 @@ def dodaj_v_kosarico(sku):
     bottle.redirect("/")
 
 
+@bottle.route("/izbrisi_iz_kosarice/<sku>", method="post")
+@cookie_required
+def dodaj_v_kosarico(sku):
+    uporabnik = request.get_cookie("uporabnik")
+    #artikel = repo.dobi_Artikel(sku)
+    trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
+    kolicina = int(request.forms.get("kolicina_izbrisi_kosarica"))
+    izdelek = {
+        "sku": sku,
+        "kolicina": kolicina
+    }
+    print(izdelek)
+    trenutna_kosarica.izbrisi(izdelek)
+    repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
+
+    bottle.redirect("/kosarica/")    
+
+
 @bottle.route("/zaloga/")
 @cookie_required
 def prikaz_strani_zaloga():

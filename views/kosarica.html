@@ -149,8 +149,8 @@
                             % for sku in artikli.keys():
                             <tr class="vrstica">
                                 <td style="width: 130px;">
-                                    <form action="/zbrisi_iz_kosarice/{{sku}}" method="post">
-                                        <input type="number" min=1 name="kolicina_zbrisi_kosarica" style="width: 100%;" class="input is-primary"
+                                    <form action="/izbrisi_iz_kosarice/{{sku}}" method="post">
+                                        <input type="number" min=1 max={{ artikli[sku]["kolicina"] }} name="kolicina_izbrisi_kosarica" style="width: 100%;" class="input is-primary"
                                             placeholder="Količina">
                                         <button class="button is-small fa fa-trash" type="submit" aria-hidden="true"
                                             style="border: hsl(171, 100%, 41%); color:red; width: 100%; background-color: hsl(171, 80%, 41%);">
