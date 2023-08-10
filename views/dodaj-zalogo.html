@@ -1,4 +1,5 @@
 %import math
+%from dataclasses import fields
 <html>
 
 <head>
@@ -143,17 +144,17 @@
                         </div>
 
                         <div class="control" style="width:25%">
-                            <input class="input is-primary" type="text" name="stevilo_kartonov"
+                            <input class="input is-primary" type="number" min=1 name="stevilo_kartonov"
                                 placeholder="Število kartonov">
                         </div>
 
                         <div class="control" style="width:25%">
-                            <input class="input is-primary" type="text" name="stevilo_paketov"
+                            <input class="input is-primary" type="number" min=1 name="stevilo_paketov"
                                 placeholder="Število paketov">
                         </div>
 
                         <div class="control" style="width:25%">
-                            <input class="input is-primary" type="text" name="stevilo" placeholder="Število artiklov">
+                            <input class="input is-primary" ttype="number" min=1 name="stevilo" placeholder="Število artiklov">
                         </div>
                         <p class="control">
                             <button type="submit" class="button" href=""
@@ -244,97 +245,154 @@
 
 
 
+        
+
+
+
         <div class="table-container" style="padding-top:25px">
 
             <table class="table" style="width:100%">
                 <thead>
+
                     <tr>
-                        <th>EAN</th>
-                        <th>Kartoni</th>
-                        <th>Paketi</th>
-                        <th>Posamezni artikli</th>
+                        
+                        <th>Št. kartonov</th>
+                        <th>Št. paketov</th>
+                        <th>Št. artiklov</th>
+                        %for atribut in fields(artikli[0]):
+
+                        <th>{{atribut.name}}</th>
+
+                        %end
 
                     </tr>
                 </thead>
                 <tbody>
+                    %for artikel in artikli:
                     <tr class="vrstica">
-                        <th>93719848</th>
-                        <th>4</th>
-                        <th>5</th>
-                        <th>5</th>
+                        <td>4</td>
+                        <td>2</td>
+                        <td>0</td>
+                        %for atribut in fields(artikli[0]):
+                        % k = atribut.name
+                        % if atribut.name == "material" or atribut.name == "description" :
+
+                        <td>
+                            <div class="dropdown is-hoverable">
+                                <div class="dropdown-trigger">
+                                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                                        <span>več</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu2" role="menu" style="position: absolute;">
+                                    <div class="dropdown-content">
+                                        {{getattr(artikel, atribut.name)}}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        % elif atribut.name == "price":
+                        <td> {{getattr(artikel, atribut.name)}}€</td>
+                        % else:
+                        <td> {{getattr(artikel, atribut.name)}}</td>
+                        % end
+                        %end
+
+
+                        % end
                     </tr>
-                    <tr class="vrstica">
-                        <th>2028746429</th>
-                        <th>4</th>
-                        <th>5</th>
-                        <th>5</th>
-                    </tr>
-                    <tr class="vrstica">
-                        <th>2329111</th>
-                        <th>4</th>
-                        <th>5</th>
-                        <th>5</th>
-                    </tr>
-                    <tr class="vrstica">
-                        <th>567890322</th>
-                        <th>4</th>
-                        <th>5</th>
-                        <th>5</th>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>
 
 
 
-
-
-
         <div class="block" style="padding-top: 50px; padding-bottom: 50px">
             <nav class="pagination is-centered">
 
-
-                <a href="" class="pagination-previous btn" disabled>
+                % if trenutna_stran == 1:
+                <a class="pagination-previous btn" style="float:left" disabled>
                     Prejšnja stran
                 </a>
-
-
-
-
-
+                % else:
+                <a href="/dodaj-zalogo/?stran={{trenutna_stran - 1}}" style="float:left" class="pagination-previous btn">
+                    Prejšnja stran
+                </a>
+                % end
 
 
                 <ul class="pagination-list is-primary">
+                    % if trenutna_stran > 3:
                     <li>
-                        <a href="" class="pagination-link is-current btn"
-                            style="background-color:hsl(171, 100%, 41%);border-color: hsl(171,100%, 41%);">
+                        <a href="/dodaj-zalogo/?stran=1" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            border-color: hsl(171,100%, 41%);
+                            color: white">
                             1
                         </a>
+                    </li>
 
                     <li>
                         <span class="pagination-ellipsis">&hellip;</span>
                     </li>
+                    % end
 
-                    <a href="" class="pagination-link  btn">
-                        2
-                    </a>
+
+                    % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):
+                    % if i == trenutna_stran :
 
                     <li>
-                        <span class="pagination-ellipsis">&hellip;</span>
+                        <a href="/dodaj-zalogo/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
+                            border-color: hsl(171,70%, 41%);
+                            color: lightgray">
+                            {{i}}
+                        </a>
                     </li>
 
-                    <a href="" class="pagination-link btn">
-                        3
-                    </a>
+                    %else:
+
+                    <li>
+                        <a href="/dodaj-zalogo/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            border-color: hsl(171,100%, 41%);
+                            color: white">
+                            {{i}}
+                        </a>
                     </li>
+                    % end
+                    %end
+
+                    % if trenutna_stran < max_stran - 2: 
+                    
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                        </li>
+
+                        <li>
+                            <a href="/dodaj-zalogo/?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            border-color: hsl(171,100%, 41%);
+                            color: white">
+                                {{max_stran}}
+                            </a>
+                        </li>
+
+                        % end
                 </ul>
 
-                <a href="" class="pagination-next btn">
+                % if trenutna_stran != max_stran:
+                <a href="/dodaj-zalogo/?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
                     Naslednja stran
                 </a>
-
+                % else:
+                <a class="pagination-next btn" style="float:right" disabled>
+                    Naslednja stran
+                </a>
+                % end
             </nav>
         </div>
+
 
 
 

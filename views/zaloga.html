@@ -1,4 +1,5 @@
 %import math
+%from dataclasses import fields
 <html>
 
 <head>
@@ -16,52 +17,62 @@
     <title>Artikli</title>
 </head>
 <style>
+    /* Hide the default checkbox */
+    .custom-checkbox input[type="checkbox"] {
+        display: none;
+    }
 
-/* Hide the default checkbox */
-.custom-checkbox input[type="checkbox"] {
-  display: none;
-}
+    /* Style the custom checkbox container */
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+        /* Align the text with the checkbox */
+        cursor: pointer;
+        /* Show the pointer cursor on hover */
+        margin-bottom: 10px;
+        /* Optional: Add some spacing between each checkbox */
+    }
 
-/* Style the custom checkbox container */
-.custom-checkbox {
-  display: flex;
-  align-items: center; /* Align the text with the checkbox */
-  cursor: pointer; /* Show the pointer cursor on hover */
-  margin-bottom: 10px; /* Optional: Add some spacing between each checkbox */
-}
+    /* Style the custom checkbox */
+    .custom-checkbox .checkmark {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border: 1px solid hsl(171, 80%, 41%);
+        ;
+        position: relative;
+        margin-right: 8px;
+        /* Optional: Add some spacing between checkbox and text */
+    }
 
-/* Style the custom checkbox */
-.custom-checkbox .checkmark {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background-color: white;
-  border: 1px solid hsl(171, 80%, 41%);;
-  position: relative;
-  margin-right: 8px; /* Optional: Add some spacing between checkbox and text */
-}
+    /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+        content: "\2713";
+        /* Unicode for checkmark symbol */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        color: #fff;
+        /* Color of the checkmark when checked */
+    }
 
-/* Add a tick symbol using a pseudo-element when the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked + .checkmark::before {
-  content: "\2713"; /* Unicode for checkmark symbol */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 16px;
-  color: #fff; /* Color of the checkmark when checked */
-}
+    /* Customize the background color when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+        background-color: hsl(171, 100%, 41%);
+        ;
+        /* Red background when checked */
+        border-color: white;
+        /* Red border color when checked */
+    }
 
-/* Customize the background color when the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked + .checkmark {
-  background-color: hsl(171, 100%, 41%);; /* Red background when checked */
-  border-color: white; /* Red border color when checked */
-}
-
-/* Style the text when hovered */
-.custom-checkbox:hover {
-  text-decoration: underline; /* Underline the text on hover */
-}
+    /* Style the text when hovered */
+    .custom-checkbox:hover {
+        text-decoration: underline;
+        /* Underline the text on hover */
+    }
 
 
 
@@ -92,36 +103,37 @@
         <div class="block">
             <nav class="navbar is-transparent">
 
-              
+
                 <div id="navbarExampleTransparentExample" class="navbar-menu">
-                  <div class="navbar-start">
-                    
-                    <a class="navbar-item" href="/">
-                      Artikli
-                    </a>
-                    % if rola == "admin" :
-                    <a class="navbar-item" href="/zaloga/" style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
-                        Zaloga
-                      </a>
-                    % else :
-                    <a class="navbar-item" href="/kosarica/">
-                        <i class="fa fa-shopping-basket" aria-hidden="true"></i>
-                        Košarica
-                      </a>
-                      % end
-                      <a class="navbar-item" href="/odjava">
-                        Odjava
-                      </a>
-                  </div>
-              
-                  
+                    <div class="navbar-start">
+
+                        <a class="navbar-item" href="/">
+                            Artikli
+                        </a>
+                        % if rola == "admin" :
+                        <a class="navbar-item" href="/zaloga/"
+                            style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
+                            Zaloga
+                        </a>
+                        % else :
+                        <a class="navbar-item" href="/kosarica/">
+                            <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                            Košarica
+                        </a>
+                        % end
+                        <a class="navbar-item" href="/odjava">
+                            Odjava
+                        </a>
+                    </div>
+
+
                 </div>
-              </nav>
+            </nav>
         </div>
 
         <section class="hero is-primary">
             <div class="hero-body">
-                
+
                 <form action="/poizvedba-zaloga/" method="POST">
 
 
@@ -129,7 +141,8 @@
                     <div class="field has-addons">
                         <label for="" class="label">
                             <p class="control">
-                                <a class="button" href="/dodaj-zalogo/" style="backgrond-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
+                                <a class="button" href="/dodaj-zalogo/"
+                                    style="backgrond-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
                                     Dodaj novo zalogo
                                 </a>
                             </p>
@@ -138,159 +151,215 @@
                             <input type="text" name="iskanje" class="input is-primary" placeholder="Išči...">
                         </p>
                         <p class="control">
-                            <button type="submit" class="button" href=""style="backgrond-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
+                            <button type="submit" class="button" href=""
+                                style="backgrond-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
                                 <i class="fas fa-search"></i>
                             </button>
                         </p>
-                        
+
                     </div>
 
 
-                
-
-
-                <div class="table-container">
-                    <table class="table" style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
-                        % k = 0
-                        % for i in range(4):
-                        <tr >
-                            % for j in range(6):
-                            <td >
-                                % if k <= 18: 
-
-                                <label class="custom-checkbox">
-                                    <input type="checkbox" name={{filtri2[k]}} >
-                                    
-                                    <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
-                                    {{filtri1[k]}}
-                                  </label>
 
 
 
+                    <div class="table-container">
+                        <table class="table"
+                            style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
+                            % k = 0
+                            % for i in range(4):
+                            <tr>
+                                % for j in range(6):
+                                <td>
+                                    % if k <= 18: 
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" name={{filtri2[k]}}>
 
-                              
+                                        <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
+                                        {{filtri1[k]}}
+                                        </label>
 
+
+
+
+
+
+                                        % end
+                                </td>
+                                % if j != 5:
+                                % k = k+1
                                 % end
-                            </td>
-                            % if j != 5:
-                            % k = k+1
+                                % end
+                            </tr>
+                            %k = k+1
                             % end
-                            % end
-                        </tr>
-                        %k = k+1 
-                        % end
-                    </table>
-                </div>
+                        </table>
+                    </div>
 
-            </form>
+                </form>
 
             </div>
 
-            
+
 
         </section>
 
-        
+
 
 
         <div class="table-container" style="padding-top:25px">
 
             <table class="table" style="width:100%">
                 <thead>
+
                     <tr>
                         <th></th>
-                        <th>EAN</th>
-                        <th>Proizvajalec</th>
-                        <th>Poreklo</th>
+                        <th>Št. kartonov</th>
+                        <th>Št. paketov</th>
+                        <th>Št. artiklov</th>
+                        %for atribut in fields(artikli[0]):
+
+                        <th>{{atribut.name}}</th>
+
+                        %end
 
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="vrstica" >
-                        <th style="width: 50px;"    >
-                            <a class="button is-small fa fa-trash" href="/zaloga/izbrisi?EAN=93719848" aria-hidden="true" style="color: red;"></a>
-                        </th>
-                        <th>93719848</th>
-                        <th>Falken Ross</th>
-                        <th>GER</th>
-                    </tr>
+                    %for artikel in artikli:
                     <tr class="vrstica">
-                        <th></th>
-                        <th>2028746429</th>
-                        <th>Fruit of the loom</th>
-                        <th>CHI</th>
+                        <td style="width: 50px;">
+                            <a class="button is-small fa fa-trash" href="/zaloga/izbrisi?EAN=????????????????"
+                                aria-hidden="true" style="color: red;"></a>
+                        </td>
+                        <td>4</td>
+                        <td>2</td>
+                        <td>0</td>
+                        %for atribut in fields(artikli[0]):
+                        % k = atribut.name
+                        % if atribut.name == "material" or atribut.name == "description" :
+
+                        <td>
+                            <div class="dropdown is-hoverable">
+                                <div class="dropdown-trigger">
+                                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                                        <span>več</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu2" role="menu" style="position: absolute;">
+                                    <div class="dropdown-content">
+                                        {{getattr(artikel, atribut.name)}}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        % elif atribut.name == "price":
+                        <td> {{getattr(artikel, atribut.name)}}€</td>
+                        % else:
+                        <td> {{getattr(artikel, atribut.name)}}</td>
+                        % end
+                        %end
+
+
+                        % end
                     </tr>
-                    <tr class="vrstica">
-                        <th></th>
-                        <th>2329111</th>
-                        <th>James Nicholson</th>
-                        <th>USA</th>
-                    </tr>
-                    <tr class="vrstica">
-                        <th></th>
-                        <th>567890322</th>
-                        <th>Eurowear</th>
-                        <th>SLO</th>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>
 
 
 
-
-
-
         <div class="block" style="padding-top: 50px; padding-bottom: 50px">
             <nav class="pagination is-centered">
 
-                
-                <a href="" class="pagination-previous btn" disabled>
+                % if trenutna_stran == 1:
+                <a class="pagination-previous btn" style="float:left" disabled>
                     Prejšnja stran
                 </a>
-
-
-
-
-
+                % else:
+                <a href="/zaloga/?stran={{trenutna_stran - 1}}" style="float:left" class="pagination-previous btn">
+                    Prejšnja stran
+                </a>
+                % end
 
 
                 <ul class="pagination-list is-primary">
+                    % if trenutna_stran > 3:
                     <li>
-                        <a href="" class="pagination-link is-current btn"
-                            style="background-color:hsl(171, 100%, 41%);border-color: hsl(171,100%, 41%);">
+                        <a href="/zaloga/?stran=1" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            border-color: hsl(171,100%, 41%);
+                            color: white">
                             1
                         </a>
+                    </li>
 
                     <li>
                         <span class="pagination-ellipsis">&hellip;</span>
                     </li>
+                    % end
 
-                    <a href="" class="pagination-link  btn">
-                        2
-                    </a>
+
+                    % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):
+                    % if i == trenutna_stran :
 
                     <li>
-                        <span class="pagination-ellipsis">&hellip;</span>
+                        <a href="/zaloga/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
+                            border-color: hsl(171,70%, 41%);
+                            color: lightgray">
+                            {{i}}
+                        </a>
                     </li>
 
-                    <a href="" class="pagination-link btn">
-                        3
-                    </a>
+                    %else:
+
+                    <li>
+                        <a href="/zaloga/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            border-color: hsl(171,100%, 41%);
+                            color: white">
+                            {{i}}
+                        </a>
                     </li>
+                    % end
+                    %end
+
+                    % if trenutna_stran < max_stran - 2: 
+                    
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                        </li>
+
+                        <li>
+                            <a href="/zaloga/?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            border-color: hsl(171,100%, 41%);
+                            color: white">
+                                {{max_stran}}
+                            </a>
+                        </li>
+
+                        % end
                 </ul>
 
-                <a href="" class="pagination-next btn">
+                % if trenutna_stran != max_stran:
+                <a href="/zaloga/?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
                     Naslednja stran
                 </a>
-
+                % else:
+                <a class="pagination-next btn" style="float:right" disabled>
+                    Naslednja stran
+                </a>
+                % end
             </nav>
         </div>
 
 
 
+
     </div>
- 
+
 
 
 </body>

@@ -81,21 +81,35 @@ def dodaj_v_kosarico(sku):
 @bottle.route("/zaloga/")
 @cookie_required
 def prikaz_strani_zaloga():
+    artikli_na_stran = 10
+    max_stran = ceil(106871 / artikli_na_stran)
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
+    artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
     uporabnik = request.get_cookie("uporabnik")
     print(uporabnik)
     rola= request.get_cookie("rola")
     print(rola)
-    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola)
+    print(max_stran)
+    print(trenutna_stran)
+    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola,artikli=artikli,max_stran=max_stran,trenutna_stran=trenutna_stran)
 
 @bottle.route("/dodaj-zalogo/")
 @cookie_required
 def prikaz_strani_zaloga():
+    artikli_na_stran = 10
+    max_stran = ceil(106871 / artikli_na_stran)
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
+    artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
     uporabnik = request.get_cookie("uporabnik")
     print(uporabnik)
     rola= request.get_cookie("rola")
     
     print(rola)
-    return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22)
+    return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22,artikli=artikli,max_stran=max_stran,trenutna_stran=trenutna_stran)
 
 @bottle.route("/zaloga/izbrisi")
 @cookie_required
@@ -692,8 +706,8 @@ def registracija_post():
     rola = request.forms.get('role')
     password = request.forms.get('password')
     confirm_password = request.forms.get('confirm_password')
-    # if role == "admin":
-    #    return template("potrditev.html", napaka=None)
+    if rola == "admin":
+       return template("autorizacija.html", napaka=None, username=username, rola=rola, password=password)
 
     auth.dodaj_uporabnika(username,rola,password)
 
@@ -702,6 +716,8 @@ def registracija_post():
         repo.dodaj_gen(nova_kosarica)
 
     return template("prijava.html", napaka=None)
+
+
 @post('/prijava')
 def prijava():
     """
@@ -744,7 +760,17 @@ def odjava():
     
     return template('prijava.html', uporabnik=None, rola=None, napaka=None)
 
+@post("/autorizacija/")
+def autorizacija():
+    username = request.forms.get('username')
+    auth_koda = request.forms.get('auth_koda')
+    password = request.forms.get('password')
 
+    if auth_koda == "FMF2023":
+        auth.dodaj_uporabnika(username,"admin",password)
+        return template("prijava.html", napaka=None)
+    else : 
+        return template("autorizacija.html", napaka="Napačna koda!", username=username, password=password)
 
 if __name__ == "__main__":
     run(host='localhost', port=SERVER_PORT, reloader=RELOADER)

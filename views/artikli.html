@@ -17,52 +17,62 @@
     <title>Artikli</title>
 </head>
 <style>
+    /* Hide the default checkbox */
+    .custom-checkbox input[type="checkbox"] {
+        display: none;
+    }
 
-/* Hide the default checkbox */
-.custom-checkbox input[type="checkbox"] {
-  display: none;
-}
+    /* Style the custom checkbox container */
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+        /* Align the text with the checkbox */
+        cursor: pointer;
+        /* Show the pointer cursor on hover */
+        margin-bottom: 10px;
+        /* Optional: Add some spacing between each checkbox */
+    }
 
-/* Style the custom checkbox container */
-.custom-checkbox {
-  display: flex;
-  align-items: center; /* Align the text with the checkbox */
-  cursor: pointer; /* Show the pointer cursor on hover */
-  margin-bottom: 10px; /* Optional: Add some spacing between each checkbox */
-}
+    /* Style the custom checkbox */
+    .custom-checkbox .checkmark {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border: 1px solid hsl(171, 80%, 41%);
+        ;
+        position: relative;
+        margin-right: 8px;
+        /* Optional: Add some spacing between checkbox and text */
+    }
 
-/* Style the custom checkbox */
-.custom-checkbox .checkmark {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background-color: white;
-  border: 1px solid hsl(171, 80%, 41%);;
-  position: relative;
-  margin-right: 8px; /* Optional: Add some spacing between checkbox and text */
-}
+    /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+        content: "\2713";
+        /* Unicode for checkmark symbol */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        color: #fff;
+        /* Color of the checkmark when checked */
+    }
 
-/* Add a tick symbol using a pseudo-element when the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked + .checkmark::before {
-  content: "\2713"; /* Unicode for checkmark symbol */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 16px;
-  color: #fff; /* Color of the checkmark when checked */
-}
+    /* Customize the background color when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+        background-color: hsl(171, 100%, 41%);
+        ;
+        /* Red background when checked */
+        border-color: white;
+        /* Red border color when checked */
+    }
 
-/* Customize the background color when the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked + .checkmark {
-  background-color: hsl(171, 100%, 41%);; /* Red background when checked */
-  border-color: white; /* Red border color when checked */
-}
-
-/* Style the text when hovered */
-.custom-checkbox:hover {
-  text-decoration: underline; /* Underline the text on hover */
-}
+    /* Style the text when hovered */
+    .custom-checkbox:hover {
+        text-decoration: underline;
+        /* Underline the text on hover */
+    }
 
 
 
@@ -93,31 +103,32 @@
         <div class="block">
             <nav class="navbar is-transparent">
 
-              
-                <div id="navbarExampleTransparentExample" class="navbar-menu">
-                  <div class="navbar-start">
-                    <a class="navbar-item" href="/" style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
-                      Artikli
-                    </a>
 
-                    % if rola == "admin" :
-                    <a class="navbar-item" href="/zaloga/">
-                        Zaloga
-                      </a>
-                    % else :
-                    <a class="navbar-item" href="/kosarica/">
-                        
-                        Košarica <i class="fa fa-shopping-basket" aria-hidden="true" style="padding-left: 5px;"></i>
-                      </a>
-                    % end
-                      <a class="navbar-item" href="/odjava">
-                        Odjava
-                      </a>
-                  </div>
-              
-                  
+                <div id="navbarExampleTransparentExample" class="navbar-menu">
+                    <div class="navbar-start">
+                        <a class="navbar-item" href="/"
+                            style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
+                            Artikli
+                        </a>
+
+                        % if rola == "admin" :
+                        <a class="navbar-item" href="/zaloga/">
+                            Zaloga
+                        </a>
+                        % else :
+                        <a class="navbar-item" href="/kosarica/">
+
+                            Košarica <i class="fa fa-shopping-basket" aria-hidden="true" style="padding-left: 5px;"></i>
+                        </a>
+                        % end
+                        <a class="navbar-item" href="/odjava">
+                            Odjava
+                        </a>
+                    </div>
+
+
                 </div>
-              </nav>
+            </nav>
         </div>
 
         <section class="hero is-primary">
@@ -134,7 +145,8 @@
                             <input type="text" name="iskanje" class="input is-primary" placeholder="Išči...">
                         </p>
                         <p class="control">
-                            <button type="submit" class="button" href=""style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
+                            <button type="submit" class="button" href=""
+                                style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
                                 <i class="fas fa-search"></i>
                             </button>
                         </p>
@@ -142,51 +154,51 @@
                     </div>
 
 
-                
-
-
-                <div class="table-container">
-                    <table class="table" style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
-                        % k = 0
-                        % for i in range(4):
-                        <tr >
-                            % for j in range(6):
-                            <td >
-                                % if k <= 18: 
-
-                                <label class="custom-checkbox">
-                                    <input type="checkbox" name={{filtri2[k]}} >
-                                    
-                                    <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
-                                    {{filtri1[k]}}
-                                  </label>
 
 
 
+                    <div class="table-container">
+                        <table class="table"
+                            style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
+                            % k = 0
+                            % for i in range(4):
+                            <tr>
+                                % for j in range(6):
+                                <td>
+                                    % if k <= 18: 
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" name={{filtri2[k]}}>
 
-                              
+                                        <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
+                                        {{filtri1[k]}}
+                                        </label>
 
+
+
+
+
+
+                                        % end
+                                </td>
+                                % if j != 5:
+                                % k = k+1
                                 % end
-                            </td>
-                            % if j != 5:
-                            % k = k+1
+                                % end
+                            </tr>
+                            %k = k+1
                             % end
-                            % end
-                        </tr>
-                        %k = k+1 
-                        % end
-                    </table>
-                </div>
+                        </table>
+                    </div>
 
-            </form>
+                </form>
 
             </div>
 
-            
+
 
         </section>
 
-        
+
 
 
         <div class="table-container" style="padding-top:25px">
@@ -194,10 +206,14 @@
             <table class="table" style="width:100%">
                 <thead>
                     <tr>
-                    %for atribut in fields(artikli[0]):
+                        %for atribut in fields(artikli[0]):
+
                         <th>{{atribut.name}}</th>
-                    %end
-                    <th>Dodaj v košarico</th>
+
+                        %end
+                        % if rola=="guest":
+                        <th style="width:30%">Dodaj v košarico</th>
+                        % end
                     </tr>
                 </thead>
                 <tbody>
@@ -205,13 +221,63 @@
                     <tr class="vrstica">
                         %for atribut in fields(artikli[0]):
                         % k = atribut.name
-                        <td> {{getattr(artikel, atribut.name)}}</td>
-                        %end
+                        % if atribut.name == "material" or atribut.name == "description" :
                         <td>
-                            <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="get">
-                                <button type="submit" class="button is-primary">Dodaj</button>
-                            </form>
-                        </td>                        
+                            <div class="dropdown is-hoverable">
+                                <div class="dropdown-trigger">
+                                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                                        <span>več</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu2" style="position: absolute;" role="menu">
+                                    <div class="dropdown-content">
+                                        {{getattr(artikel, atribut.name)}}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        % elif atribut.name == "price":
+                        <td> {{getattr(artikel, atribut.name)}}€</td>
+                        % else:
+                        <td> {{getattr(artikel, atribut.name)}}</td>
+                        % end
+                        %end
+
+                        % if rola=="guest":
+                        <td>
+
+                            
+
+
+                                <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="get">
+
+                                    
+                                      
+                                        <input type="number" min=1 name="kolicina_za_v_kosarico" style="width: 100%;" class="input is-primary"
+                                            placeholder="Količina">
+                                    
+                                    
+                                        <button type="submit" style="width: 100%;" class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>
+                                    
+                                    
+                                    
+                                </form>
+
+
+
+
+
+
+                            
+
+
+
+
+                        </td>
+                        % end
                     </tr>
                     %end
                 </tbody>
@@ -226,48 +292,88 @@
         <div class="block" style="padding-top: 50px; padding-bottom: 50px">
             <nav class="pagination is-centered">
 
-                
-                <a href="/?stran={{trenutna_stran - 1}}" class="pagination-previous btn" disabled>
+                % if trenutna_stran == 1:
+                <a class="pagination-previous btn" style="float:left" disabled>
                     Prejšnja stran
                 </a>
+                % else:
+                <a href="/?stran={{trenutna_stran - 1}}" style="float:left" class="pagination-previous btn">
+                    Prejšnja stran
+                </a>
+                % end
+
 
                 <ul class="pagination-list is-primary">
                     % if trenutna_stran > 3:
+                    <li>
+                        <a href="/?stran=1" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        border-color: hsl(171,100%, 41%);
+                        color: white">
+                            1
+                        </a>
+                    </li>
+
                     <li>
                         <span class="pagination-ellipsis">&hellip;</span>
                     </li>
                     % end
 
-                <ul class="pagination-list is-primary">
-                    % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):                    
+
+                    % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):
+                    % if i == trenutna_stran :
+
                     <li>
-                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'"
-                        style="background-color: hsl(171, 100%, 41%);
-                        border-color: hsl(171,100%, 41%);
-                        color: white">
-                        {{i}}
+                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
+                        border-color: hsl(171,70%, 41%);
+                        color: lightgray">
+                            {{i}}
                         </a>
                     </li>
+
+                    %else:
+
+                    <li>
+                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        border-color: hsl(171,100%, 41%);
+                        color: white">
+                            {{i}}
+                        </a>
+                    </li>
+                    % end
                     %end
 
-                    % if trenutna_stran < max_stran - 2:
+                    % if trenutna_stran < max_stran - 2: 
                     <li>
                         <span class="pagination-ellipsis">&hellip;</span>
-                    </li>
-                    % end    
+                        </li>
+
+                        <li>
+                            <a href="/?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        border-color: hsl(171,100%, 41%);
+                        color: white">
+                                {{max_stran}}
+                            </a>
+                        </li>
+
+                        % end
                 </ul>
 
-                <a href="/?stran={{trenutna_stran + 1}}" class="pagination-next btn">
+                % if trenutna_stran != max_stran:
+                <a href="/?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
                     Naslednja stran
                 </a>
-
+                % else:
+                <a class="pagination-next btn" style="float:right" disabled>
+                    Naslednja stran
+                </a>
+                % end
             </nav>
         </div>
 
 
 
     </div>
- 
+
 
 
 </body>
