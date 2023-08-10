@@ -16,10 +16,16 @@ class Kosarica:
         )
 
     def to_dict(self) -> dict:
-        return {
-            'uporabnik': self.uporabnik,
-            'izdelki': json.loads(self.izdelki)
-        }
+        if self.izdelki:
+            return {
+                'uporabnik': self.uporabnik,
+                'izdelki': json.loads(self.izdelki)
+            }
+        else:
+            return {
+                'uporabnik': self.uporabnik,
+                'izdelki': {}
+            }
 
     def dodaj_izdelek(self, izdelek: dict):
         # Preverimo, ali je izdelek že v košarici

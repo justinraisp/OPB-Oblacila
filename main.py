@@ -56,17 +56,16 @@ def prikaz_strani_artikel():
 def prikaz_strani_kosarica():
     uporabnik = request.get_cookie("uporabnik")
     
-    artikli = repo.dobi_gen(Glavna)
-    
+    kosarica = repo.kosarica_nalozi(uporabnik)
+    artikli = kosarica.to_dict()['izdelki']
     rola= request.get_cookie("rola")
-    print(rola)
+    print(artikli)
     return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik)
 
 
 @bottle.route("/dodaj_v_kosarico/<sku>", method="post")
 @cookie_required
 def dodaj_v_kosarico(sku):
-    print("HALO")
     uporabnik = request.get_cookie("uporabnik")
     #artikel = repo.dobi_Artikel(sku)
     trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
