@@ -21,6 +21,20 @@ class Kosarica:
             'izdelki': json.loads(self.izdelki)
         }
 
+    def dodaj_izdelek(self, izdelek: dict):
+        # Preverimo, ali je izdelek že v košarici
+        trenutni_izdelki = json.loads(self.izdelki) if self.izdelki else {}
+        sku = izdelek.get('sku')
+        kolicina = izdelek.get('kolicina', 1)
+        
+        if sku in trenutni_izdelki:
+            trenutni_kolicina = trenutni_izdelki[sku].get('kolicina', 0)
+            trenutni_kolicina += kolicina
+            trenutni_izdelki[sku]['kolicina'] = trenutni_kolicina
+        else:
+            trenutni_izdelki[sku] = {'kolicina': kolicina}
+        
+        self.izdelki = json.dumps(trenutni_izdelki)
 
 @dataclass
 class Glavna:
@@ -28,6 +42,7 @@ class Glavna:
     sku: str = field(default="")
     style: str = field(default="")
     name: str = field(default="")
+    size: str = field(default="")
     manufacturer: str = field(default="")
     category: str = field(default="")
     price: str = field(default="")
@@ -45,6 +60,7 @@ class Glavna:
             sku=data.get('sku', ''),
             style=data.get('style', ''),
             name=data.get('name', ''),
+            size=data.get('size',''),
             manufacturer=data.get('manufacturer', ''),
             category=data.get("category", ""),
             price=data.get("price", ""),
@@ -61,6 +77,7 @@ class Glavna:
             'sku': self.sku,
             'style': self.style,
             'name': self.name,
+            'size': self.size,
             'manufacturer': self.manufacturer,
             'category': self.category,
             'price': self.price,

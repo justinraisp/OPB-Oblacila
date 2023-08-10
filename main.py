@@ -48,7 +48,6 @@ def prikaz_strani_artikel():
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
-
     return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran)
 
 
@@ -64,15 +63,20 @@ def prikaz_strani_kosarica():
     return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik)
 
 
-@bottle.route("/dodaj_v_kosarico/<sku>")
+@bottle.route("/dodaj_v_kosarico/<sku>", method="post")
 @cookie_required
 def dodaj_v_kosarico(sku):
+    print("HALO")
     uporabnik = request.get_cookie("uporabnik")
     #artikel = repo.dobi_Artikel(sku)
     trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
-    print(trenutna_kosarica)
-    #treba k trenutni kosarici dodat nov izdelek in ga shranit gor, ne dela repo.dobi_artikel
-    #kosarica = {**trenutna_kosarica,}
+    kolicina = int(request.forms.get("kolicina_za_v_kosarico"))
+    izdelek = {
+        "sku": sku,
+        "kolicina": kolicina
+    }
+    print(izdelek)
+    trenutna_kosarica.dodaj_izdelek(izdelek)
     repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
 
     bottle.redirect("/")
@@ -743,7 +747,9 @@ def prijava():
         # redirect(url('index'))
 
         # Uporabimo kar template, kot v sami "index" funkciji
+        print("Ni uspelo")
         artikli = repo.dobi_gen(Glavna)
+        print(artikli)
         return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10)
         
     else:

@@ -380,7 +380,7 @@ class Repo:
     def kosarica_shrani(self,uporabnik,izdelki):
         self.cur.execute("SELECT * FROM kosarica WHERE uporabnik = %s;", (uporabnik,))
         trenutna = self.cur.fetchone()
-
+        #print(trenutna)
         if trenutna:
             self.cur.execute("UPDATE kosarica SET izdelki = %s WHERE uporabnik = %s;", (json.dumps(izdelki), uporabnik))
         else:

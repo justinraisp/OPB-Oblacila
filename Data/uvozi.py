@@ -50,3 +50,4 @@ def uvozi_csv(pot, ime):
 #uvozi_csv("tabele/vrsta_produkta.txt", "Vrsta_produkta")
 #uvozi_csv("Artikli.csv", "Artikli")
 #uvozi_csv(r"tabele/glavna.txt", "Glavna")
+
