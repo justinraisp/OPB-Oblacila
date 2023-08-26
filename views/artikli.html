@@ -253,7 +253,7 @@
 
 
                                 <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="post">
-
+                                    <input type="hidden" name="artikel_cena" value="{{artikel.price}}">
                                     
                                       
                                         <input type="number" min=1 name="kolicina_za_v_kosarico" style="width: 100%;" class="input is-primary"

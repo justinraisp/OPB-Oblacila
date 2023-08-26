@@ -70,9 +70,13 @@ def dodaj_v_kosarico(sku):
     #artikel = repo.dobi_Artikel(sku)
     trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
     kolicina = int(request.forms.get("kolicina_za_v_kosarico"))
+    cena = float(request.forms.get("artikel_cena"))
+    celotna_cena = cena * kolicina
+    print(celotna_cena)
     izdelek = {
         "sku": sku,
-        "kolicina": kolicina
+        "kolicina": kolicina,
+        "cena": celotna_cena
     }
     print(izdelek)
     trenutna_kosarica.dodaj_izdelek(izdelek)

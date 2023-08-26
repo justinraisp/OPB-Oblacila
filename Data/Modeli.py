@@ -32,13 +32,17 @@ class Kosarica:
         trenutni_izdelki = json.loads(self.izdelki) if self.izdelki else {}
         sku = izdelek.get('sku')
         kolicina = izdelek.get('kolicina', 1)
-        
+        cena = izdelek.get('cena',0)
+        cena_izdelka = cena / kolicina
         if sku in trenutni_izdelki:
             trenutni_kolicina = trenutni_izdelki[sku].get('kolicina', 0)
             trenutni_kolicina += kolicina
             trenutni_izdelki[sku]['kolicina'] = trenutni_kolicina
+            trenutni_cena = trenutni_kolicina * cena_izdelka
+            trenutni_izdelki[sku]['cena'] = trenutni_cena
+
         else:
-            trenutni_izdelki[sku] = {'kolicina': kolicina}
+            trenutni_izdelki[sku] = {'kolicina': kolicina, 'cena': cena}
         
         self.izdelki = json.dumps(trenutni_izdelki)
 
