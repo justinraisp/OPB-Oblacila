@@ -74,6 +74,8 @@ class Repo:
         # Use the from_dict method to create Artikel objects from the fetched data
         return [typ.from_dict(data) for data in fetched_data]
 
+
+
     def dobi_gen_id(self, typ: Type[T], id: int | str, id_col = "id") -> T:
         """
         Generična metoda, ki vrne dataclass objekt pridobljen iz baze na podlagi njegovega idja.
@@ -119,7 +121,7 @@ class Repo:
 
         if serial_col != None:
             sql_cmd += f'RETURNING {serial_col}'
-
+        print(sql_cmd)
         self.cur.execute(sql_cmd)
 
         if serial_col != None:
@@ -374,7 +376,27 @@ class Repo:
         self.conn.commit()
         print("Tabela 'kosarica' ustvarjena ali že obstaja.")
 
+    def ustvari_tabelo_ocene(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS ocene (
+            sku TEXT PRIMARY KEY,
+            ocena FLOAT
+        );
+        """
+        self.cur.execute(sql)
+        self.conn.commit()
+        print("Tabela 'ocena' ustvarjena ali že obstaja.")
 
+    def ustvari_tabelo_stanje(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS stanje (
+            username TEXT PRIMARY KEY,
+            bilanca FLOAT
+        );
+        """
+        self.cur.execute(sql)
+        self.conn.commit()
+        print("Tabela 'ocena' ustvarjena ali že obstaja.")
 
     def kosarica_shrani(self,uporabnik,izdelki):
         self.cur.execute("SELECT * FROM kosarica WHERE uporabnik = %s;", (uporabnik,))
@@ -396,6 +418,13 @@ class Repo:
         else:
             return None
            
+    def dobi_stanje(self, username):
+        self.cur.execute("SELECT bilanca FROM stanje WHERE username = %s", (username,))
+        row = self.cur.fetchone()
+        if row:
+            return Stanje(username,row[0])
+        else: 
+            return None
 
 
     

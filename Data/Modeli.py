@@ -290,6 +290,25 @@ class Uporabnik:
             'last_login': self.last_login
         }
 
+
+@dataclass
+class Stanje:
+    username: str = field(default="")
+    bilanca: float = field(default=0)
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> 'Uporabnik':
+        return cls(
+            username=data.get('username'),
+            bilanca=float(data.get('bilanca', 0))
+        )
+    @classmethod
+    def to_dict(self) -> dict[str, str]:
+        return {
+            'username': self.username,
+            'bilanca': str(self.bilanca)
+        }
+
+
 @dataclass
 class UporabnikDto:
     username: str = field(default="")

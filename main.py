@@ -40,15 +40,15 @@ def cookie_required(f):
 @cookie_required
 def prikaz_strani_artikel():
     uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
-
     artikli_na_stran = 10
     max_stran = ceil(106871 / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
-    return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran)
+    return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje)
 
 
 @bottle.route("/artikel/<sku>")
@@ -56,7 +56,6 @@ def prikaz_strani_artikel():
 def prikaz_artikla(sku):
     uporabnik = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
-
     artikel = repo.dobi_Artikel(sku)
     print(artikel)
     return template("artikel.html", artikel=artikel, rola=rola, uporabnik=uporabnik)
@@ -66,7 +65,6 @@ def prikaz_artikla(sku):
 @cookie_required
 def prikaz_strani_kosarica():
     uporabnik = request.get_cookie("uporabnik")
-    
     kosarica = repo.kosarica_nalozi(uporabnik)
     artikli = kosarica.to_dict()['izdelki']
     rola= request.get_cookie("rola")
@@ -78,7 +76,6 @@ def prikaz_strani_kosarica():
 @cookie_required
 def dodaj_v_kosarico(sku):
     uporabnik = request.get_cookie("uporabnik")
-    #artikel = repo.dobi_Artikel(sku)
     trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
     kolicina = int(request.forms.get("kolicina_za_v_kosarico"))
     cena = float(request.forms.get("artikel_cena"))
@@ -750,6 +747,9 @@ def registracija_post():
     if rola == "guest":
         nova_kosarica = Kosarica(uporabnik=username)
         repo.dodaj_gen(nova_kosarica)
+        novo_stanje = Stanje(username=username)
+        print(novo_stanje)
+        repo.dodaj_gen(novo_stanje,serial_col=None)
 
     return template("prijava.html", napaka=None)
 
@@ -780,7 +780,8 @@ def prijava():
 
         # Uporabimo kar template, kot v sami "index" funkciji
         artikli = repo.dobi_gen(Glavna)
-        return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10)
+        stanje = repo.dobi_stanje(uporabnik)
+        return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje)
         
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
