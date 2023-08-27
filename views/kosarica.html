@@ -135,6 +135,8 @@
                 
                 <div class="title">Košarica</div>
 
+                % if artikli:
+
                 <div class="table-container" style="padding-top:25px">
 
                     <table class="table" style="width: 100%; background-color: hsl(171, 80%, 41%) ;">
@@ -165,19 +167,24 @@
                                     <p style="padding-top: 25px;">{{ artikli[sku]["kolicina"] }}</p>
                                 </td>
                                 <td>
-                                    <p style="padding-top: 25px;">{{ artikli[sku]["cena"] }}</p>
+                                    <p style="padding-top: 25px;">{{ format(artikli[sku]["cena"], ".2f") }}€</p>
                                 </td>
                             </tr>
                             % end
                         </tbody>
                     </table>
+
+                    % else:
+                    <p>Košarica je prazna.</p>
+                    % end   
+
                 </div>
 
 
             </div>
-
+            %if artikli:
             <a class="button is-large btn" type="submit" aria-hidden="true"> Pošlji poizvedbo</a>
-
+            %end
         </section>
 
 <div class="block" style="height: 50px;">

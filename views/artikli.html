@@ -207,12 +207,15 @@
                 <thead>
                     <tr>
                         %for atribut in fields(artikli[0]):
-
-                        <th>{{atribut.name}}</th>
-
+                            %if atribut.name not in ["material", "origin", "description"]:
+                            <th>{{atribut.name}}</th>
+                            %end
+                            %if atribut.name == "material":
+                            <th></th>
+                            %end
                         %end
                         % if rola=="guest":
-                        <th style="width:30%">Dodaj v košarico</th>
+                        <th >Dodaj v košarico</th>
                         % end
                     </tr>
                 </thead>
@@ -221,24 +224,17 @@
                     <tr class="vrstica">
                         %for atribut in fields(artikli[0]):
                         % k = atribut.name
-                        % if atribut.name == "material" or atribut.name == "description" :
+                        % if atribut.name == "material":
                         <td>
-                            <div class="dropdown is-hoverable">
-                                <div class="dropdown-trigger">
-                                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
-                                        <span>več</span>
-                                        <span class="icon is-small">
-                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                                <div class="dropdown-menu" id="dropdown-menu2" style="position: absolute;" role="menu">
-                                    <div class="dropdown-content">
-                                        {{getattr(artikel, atribut.name)}}
-                                    </div>
-                                </div>
-                            </div>
+                            <a href="/artikel/{{ artikel.sku }}" class="button is-small">
+                                <span>Prikaži več</span>
+                                <span class="icon is-small">
+                                    <i class="fas fa-angle-right"></i>
+                                </span>
+                            </a>
                         </td>
+                        % elif atribut.name in ["description", "origin"]:
+
                         % elif atribut.name == "price":
                         <td> {{getattr(artikel, atribut.name)}}€</td>
                         % else:

@@ -316,12 +316,11 @@ class Repo:
 
     def dobi_Artikel(self, sku):
         # Preverimo, če Artikel že obstaja
-        self.cur.execute("SELECT izdelki FROM kosarica WHERE uporabnik = %s;", (sku,))
+        print(sku)
+        self.cur.execute(f"""SELECT * FROM glavna WHERE "Sku" = '{sku}';""")
         row = self.cur.fetchone()
-        print(row)
         if row:
-            id, sku, cena = row
-            return Artikel(id, sku, cena)
+            return(Glavna.create_glavna_from_row(row))
         
         raise Exception("Artikel z imenom " + sku + " ne obstaja")
 

@@ -115,6 +115,23 @@ class Glavna:
             'description': self.description,
             'origin': self.origin
         }
+    def create_glavna_from_row(row):
+        return Glavna(
+            id=row[0],
+            sku=row[1],
+            style=row[2],
+            name=row[3],
+            size=row[4],
+            manufacturer=row[5],
+            category=row[6],
+            price=float(row[7]),
+            name2=row[8],
+            colour=row[9],
+            status=row[10],
+            material=row[11],
+            description=row[12],
+            origin=row[13]
+        )
 
 
 @dataclass

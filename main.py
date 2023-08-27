@@ -51,6 +51,17 @@ def prikaz_strani_artikel():
     return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran)
 
 
+@bottle.route("/artikel/<sku>")
+@cookie_required
+def prikaz_artikla(sku):
+    uporabnik = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+
+    artikel = repo.dobi_Artikel(sku)
+    print(artikel)
+    return template("artikel.html", artikel=artikel, rola=rola, uporabnik=uporabnik)
+
+
 @bottle.route("/kosarica/")
 @cookie_required
 def prikaz_strani_kosarica():
@@ -768,9 +779,7 @@ def prijava():
         # redirect(url('index'))
 
         # Uporabimo kar template, kot v sami "index" funkciji
-        print("Ni uspelo")
         artikli = repo.dobi_gen(Glavna)
-        print(artikli)
         return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10)
         
     else:
