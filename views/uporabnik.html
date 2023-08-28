@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artikel</title>
+    <style>
+        /* Your existing styles here */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background-color: white;
+            width: 50%;
+            padding: 20px;
+            position: absolute;
+            left: 25%;
+            top: 20%;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <h1>Podatki o uporabniku</h1>
+    <p>Uporabniško ime: {{ uporabnik }}</p>
+    <p>Stanje: {{ stanje.bilanca }}</p>
+
+    <!-- Button to open the popup -->
+    <button id="open-popup-btn" class="button">Add Money</button>
+
+    <!-- Popup for adding money via credit card -->
+    <div class="popup" id="add-money-popup">
+        <div class="popup-content">
+            <h2>Add Money to Balance</h2>
+            <form action="/dodaj_denar" method="post">
+                <label for="vsota">Vsota:</label>
+                <input type="number" id="vsota" name="vsota" min="1" required>
+                <label for="credit-card">Credit Card:</label>
+                <input type="text" id="credit-card" name="credit-card" required>
+                <button type="submit" class="button">Submit</button>
+            </form>
+            <button id="close-popup-btn" class="button">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const openPopupBtn = document.getElementById('open-popup-btn');
+        const closePopupBtn = document.getElementById('close-popup-btn');
+        const addMoneyPopup = document.getElementById('add-money-popup');
+
+        openPopupBtn.addEventListener('click', () => {
+            addMoneyPopup.style.display = 'block';
+        });
+
+        closePopupBtn.addEventListener('click', () => {
+            addMoneyPopup.style.display = 'none';
+        });
+    </script>
+    
+</body>
+</html>

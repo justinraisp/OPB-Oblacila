@@ -68,8 +68,30 @@ def prikaz_strani_kosarica():
     kosarica = repo.kosarica_nalozi(uporabnik)
     artikli = kosarica.to_dict()['izdelki']
     rola= request.get_cookie("rola")
+    stanje= repo.dobi_stanje(uporabnik)
     print(artikli)
-    return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik)
+    return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik, stanje=stanje, napaka=None)
+
+@bottle.route("/uporabnik/")
+@cookie_required
+def prikaz_uporabnik():
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
+    return template("uporabnik.html", stanje=stanje, uporabnik=uporabnik)
+
+@bottle.route("/dodaj_denar", method="post")
+@cookie_required
+def dodaj_denar():
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
+
+    # Get the amount and credit card info from the form
+    vsota = float(request.forms.get("vsota"))
+    credit_card = request.forms.get("credit-card")
+
+    repo.posodobi_stanje(uporabnik, vsota)
+
+    bottle.redirect("/uporabnik/")
 
 
 @bottle.route("/dodaj_v_kosarico/<sku>", method="post")
@@ -95,20 +117,48 @@ def dodaj_v_kosarico(sku):
 
 @bottle.route("/izbrisi_iz_kosarice/<sku>", method="post")
 @cookie_required
-def dodaj_v_kosarico(sku):
+def izbrisi_iz_kosarice(sku):
     uporabnik = request.get_cookie("uporabnik")
     #artikel = repo.dobi_Artikel(sku)
     trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
     kolicina = int(request.forms.get("kolicina_izbrisi_kosarica"))
+    cena = trenutna_kosarica.to_dict()['izdelki'][sku]['cena']  / trenutna_kosarica.to_dict()['izdelki'][sku]['kolicina']
+    celotna_cena = cena * kolicina
     izdelek = {
         "sku": sku,
-        "kolicina": kolicina
+        "kolicina": kolicina,
+        "cena": celotna_cena
     }
     print(izdelek)
     trenutna_kosarica.izbrisi(izdelek)
     repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
 
     bottle.redirect("/kosarica/")    
+
+@bottle.route("/izvedi_nakup", method="post")
+@cookie_required
+def izvedi_nakup():
+    uporabnik = request.get_cookie("uporabnik")
+    trenutno_stanje = repo.dobi_stanje(uporabnik)
+    skupna_cena = 0
+    kosarica = repo.kosarica_nalozi(uporabnik).to_dict()
+    print(kosarica)
+    
+    izdelki_v_kosarici = kosarica.get("izdelki", {}) 
+    
+    for izdelek in izdelki_v_kosarici.values():
+        skupna_cena += izdelek["cena"]
+
+    if trenutno_stanje.bilanca < skupna_cena:
+        return template("kosarica.html", artikli=izdelki_v_kosarici, uporabnik=uporabnik, stanje=trenutno_stanje,
+                        napaka="Nimate dovolj sredstev za nakup.")
+    
+    repo.posodobi_stanje(uporabnik, -skupna_cena)
+    
+    repo.kosarica_shrani(uporabnik, {})
+    
+    bottle.redirect("/kosarica/")
+
 
 
 @bottle.route("/zaloga/")
@@ -742,6 +792,12 @@ def registracija_post():
     if rola == "admin":
        return template("autorizacija.html", napaka=None, username=username, rola=rola, password=password)
 
+    try:
+        if auth.obstaja_uporabnik(username):
+            return template("registracija.html", napaka="Uporabnik s tem imenom že obstaja")
+    except Exception as e:
+            return template("prijava.html", napaka="Uporabnik s tem imenom že obstaja")
+
     auth.dodaj_uporabnika(username,rola,password)
 
     if rola == "guest":
@@ -774,13 +830,13 @@ def prijava():
         response.set_cookie("rola", prijava.role)
         rola= prijava.role
         uporabnik = username
-        
-        # redirect v večino primerov izgleda ne deluje
-        # redirect(url('index'))
 
         # Uporabimo kar template, kot v sami "index" funkciji
         artikli = repo.dobi_gen(Glavna)
         stanje = repo.dobi_stanje(uporabnik)
+        if not stanje: 
+            stanje= Stanje(username=username)
+            repo.dodaj_gen(stanje,serial_col=None)
         return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje)
         
     else:

@@ -127,10 +127,8 @@
                         
                     </div>
                     <div class="navbar-end">
-                        <a class="navbar-item">
-                            <p class="has-text-black">
-                                Uporabniško ime: {{ stanje.username }} | Stanje na računu: {{ stanje.bilanca }} €
-                            </p>
+                        <a class="navbar-item" href="/uporabnik/">
+                            Uporabniško ime: {{ stanje.username }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
 
@@ -261,7 +259,7 @@
                                     
                                       
                                         <input type="number" min=1 name="kolicina_za_v_kosarico" style="width: 100%;" class="input is-primary"
-                                            placeholder="Količina">
+                                            placeholder="Količina" required>
                                     
                                     
                                         <button type="submit" style="width: 100%;" class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>
@@ -381,5 +379,7 @@
 
 
 </body>
+
+
 
 </html>

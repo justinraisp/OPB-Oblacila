@@ -425,6 +425,15 @@ class Repo:
             return Stanje(username,row[0])
         else: 
             return None
+        
+    
+    def posodobi_stanje(self,username, vsota):
+        stanje = self.dobi_stanje(username=username)
+        bilanca = stanje.bilanca
+        bilanca += vsota
+        self.cur.execute("UPDATE stanje SET bilanca = %s WHERE username = %s;", (bilanca,username))
+        self.conn.commit()
+
 
 
     

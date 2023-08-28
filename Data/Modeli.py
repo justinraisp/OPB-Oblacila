@@ -51,13 +51,17 @@ class Kosarica:
         trenutni_izdelki = json.loads(self.izdelki) if self.izdelki else {}
         sku = izdelek.get('sku')
         kolicina = izdelek.get('kolicina',1)
+        cena = izdelek.get('cena',1)
         if sku in trenutni_izdelki:
             trenutna_kolicina = trenutni_izdelki[sku].get('kolicina', 0)
+            trenutna_cena = trenutni_izdelki[sku].get('cena',0)
             if kolicina == trenutna_kolicina:
                 del trenutni_izdelki[sku]
             elif kolicina < trenutna_kolicina:
                 trenutna_kolicina -= kolicina
                 trenutni_izdelki[sku]['kolicina'] = trenutna_kolicina
+                trenutna_cena -= cena
+                trenutni_izdelki[sku]['cena'] = trenutna_cena
             else:
                 pass
         
