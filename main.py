@@ -141,10 +141,11 @@ def izvedi_nakup():
     uporabnik = request.get_cookie("uporabnik")
     trenutno_stanje = repo.dobi_stanje(uporabnik)
     skupna_cena = 0
-    kosarica = repo.kosarica_nalozi(uporabnik).to_dict()
-    print(kosarica)
+    kosarica = repo.kosarica_nalozi(uporabnik)
+    #trenutna_transakcija = repo.transakcija_nalozi(uporabnik)
+    #print(trenutna_transakcija)
     
-    izdelki_v_kosarici = kosarica.get("izdelki", {}) 
+    izdelki_v_kosarici = kosarica.to_dict().get("izdelki", {}) 
     
     for izdelek in izdelki_v_kosarici.values():
         skupna_cena += izdelek["cena"]
@@ -154,7 +155,8 @@ def izvedi_nakup():
                         napaka="Nimate dovolj sredstev za nakup.")
     
     repo.posodobi_stanje(uporabnik, -skupna_cena)
-    
+    datum = date.today().isoformat()
+    repo.transakcija_shrani(Transakcija(uporabnik=uporabnik, datum=datum,kosarica=kosarica.to_dict()))
     repo.kosarica_shrani(uporabnik, {})
     
     bottle.redirect("/kosarica/")

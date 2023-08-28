@@ -1,3 +1,4 @@
+from datetime import date
 import json
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
@@ -65,7 +66,43 @@ class Kosarica:
             else:
                 pass
         
-        self.izdelki = json.dumps(trenutni_izdelki)        
+        self.izdelki = json.dumps(trenutni_izdelki)  
+
+    def get_skupna_cena(self):
+        skupna_cena = 0
+        for nakup in self.izdelki.values():
+            skupna_cena += nakup['cena']
+        return skupna_cena         
+
+
+@dataclass
+class Transakcija:
+    uporabnik: str = field(default="")
+    datum: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    kosarica: Kosarica = field(default=Kosarica("",{}))
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'Transakcija':
+        return cls(
+            uporabnik=data.get('uporabnik', ''),
+            datum=data.get('datum', ''),
+            kosarica=Kosarica.from_dict(data.get('kosarica', {}))
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            'uporabnik': self.uporabnik,
+            'datum': self.datum,
+            'kosarica': self.kosarica.to_dict()
+        }
+
+    def dodaj_nakup(self, kosarica: Kosarica):
+        trenutna_kosarica = self.kosarica
+        trenutna_kosarica.dodaj_izdelke(kosarica.izdelki)
+        self.kosarica = trenutna_kosarica
+
+
+
 
 @dataclass
 class Glavna:
@@ -157,6 +194,28 @@ class Artikel:
         return {
             'sku': self.sku,
             'proizvajalcev_sku': self.proizvajalcev_sku
+        }
+    
+@dataclass
+class Ocene: 
+    sku: str = field(default="")
+    ocena: float = field(default=0)
+    st_ocen: int = field(default=0)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> 'Ocene':
+        return cls(
+            sku=data.get('sku'),
+            ocena=float(data.get('ocena', 0)), 
+            st_ocen=int(data.get('ocena', 0)), 
+        )
+
+    @classmethod
+    def to_dict(self) -> dict[str, str]:
+        return {
+            'sku': self.sku,
+            'ocena': self.ocena,
+            'st_ocen': self.st_ocen
         }
 
 @dataclass
@@ -311,6 +370,72 @@ class Stanje:
             'username': self.username,
             'bilanca': str(self.bilanca)
         }
+
+
+
+@dataclass
+class Zgodovina:
+    uporabnik: str = field(default="")
+    izdelki: str = field(default=json.dumps({}))
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'Kosarica':
+        return cls(
+            uporabnik=data.get('uporabnik', ''),
+            izdelki=json.dumps(data.get('izdelki', {}))
+        )
+
+    def to_dict(self) -> dict:
+        if self.izdelki:
+            return {
+                'uporabnik': self.uporabnik,
+                'izdelki': json.loads(self.izdelki)
+            }
+        else:
+            return {
+                'uporabnik': self.uporabnik,
+                'izdelki': {}
+            }
+
+    def dodaj_izdelek(self, izdelek: dict):
+        # Preverimo, ali je izdelek že v košarici
+        trenutni_izdelki = json.loads(self.izdelki) if self.izdelki else {}
+        sku = izdelek.get('sku')
+        kolicina = izdelek.get('kolicina', 1)
+        cena = izdelek.get('cena',0)
+        cena_izdelka = cena / kolicina
+        if sku in trenutni_izdelki:
+            trenutni_kolicina = trenutni_izdelki[sku].get('kolicina', 0)
+            trenutni_kolicina += kolicina
+            trenutni_izdelki[sku]['kolicina'] = trenutni_kolicina
+            trenutni_cena = trenutni_kolicina * cena_izdelka
+            trenutni_izdelki[sku]['cena'] = trenutni_cena
+
+        else:
+            trenutni_izdelki[sku] = {'kolicina': kolicina, 'cena': cena}
+        
+        self.izdelki = json.dumps(trenutni_izdelki)
+
+    def izbrisi(self, izdelek: dict):
+    # Preverimo, ali je izdelek v košarici
+        trenutni_izdelki = json.loads(self.izdelki) if self.izdelki else {}
+        sku = izdelek.get('sku')
+        kolicina = izdelek.get('kolicina',1)
+        cena = izdelek.get('cena',1)
+        if sku in trenutni_izdelki:
+            trenutna_kolicina = trenutni_izdelki[sku].get('kolicina', 0)
+            trenutna_cena = trenutni_izdelki[sku].get('cena',0)
+            if kolicina == trenutna_kolicina:
+                del trenutni_izdelki[sku]
+            elif kolicina < trenutna_kolicina:
+                trenutna_kolicina -= kolicina
+                trenutni_izdelki[sku]['kolicina'] = trenutna_kolicina
+                trenutna_cena -= cena
+                trenutni_izdelki[sku]['cena'] = trenutna_cena
+            else:
+                pass
+        
+        self.izdelki = json.dumps(trenutni_izdelki)   
 
 
 @dataclass

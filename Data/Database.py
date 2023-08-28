@@ -43,7 +43,9 @@ T = TypeVar(
     Vrsta_produkta,
     Uporabnik,
     UporabnikDto,
-    Kosarica
+    Kosarica, 
+    Ocene,
+    Transakcija
     )
 
 class Repo:
@@ -378,14 +380,28 @@ class Repo:
 
     def ustvari_tabelo_ocene(self):
         sql = """
-        CREATE TABLE IF NOT EXISTS ocene (
+        CREATE TABLE IF NOT EXISTS ocene_predmetov (
             sku TEXT PRIMARY KEY,
-            ocena FLOAT
+            ocena FLOAT,
+            st_ocen INT
         );
         """
         self.cur.execute(sql)
         self.conn.commit()
         print("Tabela 'ocena' ustvarjena ali že obstaja.")
+
+    def ustvari_tabelo_transakcije(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS transakcije (
+            uporabnik TEXT,
+            datum TEXT,
+            kosarica JSONB
+        );
+        """
+        self.cur.execute(sql)
+        self.conn.commit()
+        print("Tabela 'transakcija' ustvarjena ali že obstaja.")
+
 
     def ustvari_tabelo_stanje(self):
         sql = """
@@ -397,6 +413,29 @@ class Repo:
         self.cur.execute(sql)
         self.conn.commit()
         print("Tabela 'ocena' ustvarjena ali že obstaja.")
+
+    def transakcija_shrani(self, transakcija):
+        uporabnik = transakcija.uporabnik
+        datum = transakcija.datum
+        print(datum)
+        kosarica = transakcija.kosarica["izdelki"]
+        self.cur.execute("INSERT INTO transakcije (uporabnik, datum, kosarica) VALUES (%s, %s, %s);",
+                            (uporabnik, datum, json.dumps(kosarica)))
+
+        self.conn.commit()
+
+    def transakcija_nalozi(self, uporabnik):
+        self.cur.execute("SELECT datum, kosarica FROM transakcija WHERE uporabnik = %s;", (uporabnik,))
+        row = self.cur.fetchone()
+        print(row)
+        if row:
+            datum = row[0]
+            kosarica_data = row[1]
+            kosarica = Kosarica.from_dict(json.loads(kosarica_data))
+            return Transakcija(uporabnik, datum, kosarica)
+        else:
+            return None
+
 
     def kosarica_shrani(self,uporabnik,izdelki):
         self.cur.execute("SELECT * FROM kosarica WHERE uporabnik = %s;", (uporabnik,))
@@ -431,6 +470,7 @@ class Repo:
         stanje = self.dobi_stanje(username=username)
         bilanca = stanje.bilanca
         bilanca += vsota
+        bilanca = round(bilanca,2)
         self.cur.execute("UPDATE stanje SET bilanca = %s WHERE username = %s;", (bilanca,username))
         self.conn.commit()
 
