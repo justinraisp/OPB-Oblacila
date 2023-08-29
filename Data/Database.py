@@ -1,5 +1,6 @@
 # uvozimo psycopg2
 import json
+import random
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE) # se znebimo problemov s šumniki
 
@@ -466,32 +467,28 @@ class Repo:
     def oceni_artikel(self, sku, nova_ocena):
         self.cur.execute("SELECT * FROM ocene_predmetov WHERE  sku = %s;", (sku,))
         trenutna_ocena = self.cur.fetchone()
-
         if trenutna_ocena:
-            st_ocen = trenutna_ocena['st_ocen'] + 1
-            nova_povprecna_ocena = (trenutna_ocena['ocena'] * trenutna_ocena['st_ocen'] + nova_ocena) / st_ocen
-
+            st_ocen = int(trenutna_ocena['st_ocen']) + 1
+            nova_povprecna_ocena = float((trenutna_ocena['ocena'] * trenutna_ocena['st_ocen'] + nova_ocena) / st_ocen)
             self.cur.execute("UPDATE ocene_predmetov SET ocena = %s, st_ocen = %s WHERE  sku = %s;",
-                            (nova_povprecna_ocena, st_ocen, sku))
+                            (nova_povprecna_ocena, st_ocen, sku,))
         else:
             self.cur.execute("INSERT INTO ocene_predmetov (sku, ocena, st_ocen) VALUES (%s, %s, 1);",
-                            (sku, nova_ocena))
-
+                            (sku, nova_ocena,))
         self.conn.commit()
 
-    def oceni_artikel_uporabnik(self, uporabnik, sku, nova_ocena):
+    def pridobi_zgodovino_ocen(self, uporabnik):
         self.cur.execute("SELECT ocene FROM uporabnik_ocene WHERE uporabnik = %s;", (uporabnik,))
         ocene_uporabnika = self.cur.fetchone()
+        return ocene_uporabnika[0]
 
-        if ocene_uporabnika:
-            ocene = ocene_uporabnika['ocene']
-            if sku in ocene:
-                print("Že ocenil")
-            else:
-                self.oceni_artikel(sku, nova_ocena)
-                ocene[sku] = nova_ocena
-                ocene_json = json.dumps(ocene)
-                self.cur.execute("UPDATE uporabnik_ocene SET ocene = %s WHERE uporabnik = %s;", (ocene_json, uporabnik))
+    def oceni_artikel_uporabnik(self, uporabnik, sku, nova_ocena):
+        ocene = self.pridobi_zgodovino_ocen(uporabnik)
+        if ocene:
+            self.oceni_artikel(sku, nova_ocena)
+            ocene[sku] = nova_ocena
+            ocene_json = json.dumps(ocene)
+            self.cur.execute("UPDATE uporabnik_ocene SET ocene = %s WHERE uporabnik = %s;", (ocene_json, uporabnik))
         
         else:
             self.oceni_artikel(sku, nova_ocena)
@@ -499,6 +496,7 @@ class Repo:
             self.cur.execute("INSERT INTO uporabnik_ocene (uporabnik, ocene) VALUES (%s, %s);", (uporabnik, ocene_json))
         
         self.conn.commit()
+
 
     def kosarica_shrani(self,uporabnik,izdelki):
         self.cur.execute("SELECT * FROM kosarica WHERE uporabnik = %s;", (uporabnik,))
@@ -521,7 +519,7 @@ class Repo:
             return None
            
     def dobi_stanje(self, uporabnik):
-        self.cur.execute("SELECT bilanca FROM stanje WHERE uporabnik = %s", (uporabnik,))
+        self.cur.execute("SELECT bilanca FROM stanje WHERE uporabnik = %s;", (uporabnik,))
         row = self.cur.fetchone()
         if row:
             return Stanje(uporabnik,row[0])
@@ -537,16 +535,18 @@ class Repo:
         self.cur.execute("UPDATE stanje SET bilanca = %s WHERE uporabnik = %s;", (bilanca,uporabnik))
         self.conn.commit()
 
-
-
     
+    def generiraj_nakljucne_ocene(self, st_ocen):
+        self.cur.execute("""SELECT "Sku" FROM glavna;""")
+        artikli = self.cur.fetchall()
+        self.cur.execute("DELETE FROM ocene_predmetov;")
+        for artikel in artikli:
+            ocena = 0
+            st = random.randint(st_ocen //2, st_ocen)
+            for i in range(st):
+                nakljucna_ocena = random.randint(2,5)
+                ocena += nakljucna_ocena
+            ocena = ocena / st
+            self.cur.execute("INSERT INTO ocene_predmetov (sku, ocena, st_ocen) VALUES (%s,%s,%s);", (artikel[0], ocena, st))
 
-    
-
-
-
-
-
-
-
-    
+        self.conn.commit()

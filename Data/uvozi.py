@@ -29,6 +29,8 @@ def uvozi_csv(pot, ime):
 #repo.ustvari_tabelo_stanje()
 #repo.ustvari_tabelo_uporabnik_ocene()
 #repo.ustvari_tabelo_transakcije()
+#repo.generiraj_nakljucne_ocene(20)
+
 #uvozi_csv("tabele/artikel.txt", "Artikel")
 #uvozi_csv("tabele/barva.txt", "Barva")
 #uvozi_csv("tabele/barvne_lastnosti.txt", "Barvne_lastnosti")

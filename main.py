@@ -84,8 +84,8 @@ def prikaz_uporabnik():
 def prikazi_zgodovino():
     uporabnik = request.get_cookie("uporabnik")
     zgodovina = repo.pridobi_zgodovino_nakupov(uporabnik)
-    print(zgodovina)
-    return template("zgodovina.html", uporabnik=uporabnik, zgodovina=zgodovina)
+    ocene_predmetov = repo.pridobi_zgodovino_ocen(uporabnik)
+    return template("zgodovina.html", uporabnik=uporabnik, zgodovina=zgodovina, ocene_predmetov=ocene_predmetov)
 
 
 @bottle.route("/dodaj_denar", method="post")

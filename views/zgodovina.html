@@ -18,11 +18,14 @@
                     <ul>
                         % for izdelek, podatki in transakcija['kosarica'].items():
                             <li>{{ izdelek }} ({{ podatki['kolicina'] }} kosov) (Cena: {{podatki['cena']}}€)
-                                <form action="/oceni_artikel/{{ izdelek }}" method="post">
-                                    <input type="number" name="ocena" id="ocena_{{ izdelek }}" min="1" max="5" required>
-                                    <button type="submit">Oceni</button>
-                                </form>
-
+                                % if izdelek in ocene_predmetov:
+                                    (Predmet že ocenjen.)
+                                % else:
+                                    <form action="/oceni_artikel/{{ izdelek }}" method="post">
+                                        <input type="number" name="ocena" id="ocena_{{ izdelek }}" min="1" max="5" required>
+                                        <button type="submit">Oceni</button>
+                                    </form>
+                                % end
                             </li>
                         % end
                     </ul>
