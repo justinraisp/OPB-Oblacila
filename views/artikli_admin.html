@@ -107,20 +107,14 @@
                 <div id="navbarExampleTransparentExample" class="navbar-menu">
                     <div class="navbar-start">
 
-                        <a class="navbar-item" href="/">
-                            Artikli
-                        </a>
-                        % if rola == "admin" :
-                        <a class="navbar-item" href="/zaloga/"
+                        <a class="navbar-item" href="/"
                             style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
                             Zaloga
                         </a>
-                        % else :
-                        <a class="navbar-item" href="/kosarica/">
-                            <i class="fa fa-shopping-basket" aria-hidden="true"></i>
-                            Košarica
+                        <a class="navbar-item" href="/statistika"
+                        style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
+                            Statistika
                         </a>
-                        % end
                         <a class="navbar-item" href="/odjava">
                             Odjava
                         </a>
@@ -209,64 +203,55 @@
 
         </section>
 
-
-
-
         <div class="table-container" style="padding-top:25px">
 
             <table class="table" style="width:100%">
                 <thead>
 
                     <tr>
-                        <th></th>
-                        <th>Št. kartonov</th>
-                        <th>Št. paketov</th>
-                        <th>Št. artiklov</th>
                         %for atribut in fields(artikli[0]):
 
                         <th>{{atribut.name}}</th>
 
                         %end
+                        <th></th>
+                        <th></th>
 
                     </tr>
                 </thead>
                 <tbody>
                     %for artikel in artikli:
                     <tr class="vrstica">
-                        <td style="width: 50px;">
-                            <a class="button is-small fa fa-trash" href="/zaloga/izbrisi?EAN=????????????????"
-                                aria-hidden="true" style="color: red;"></a>
-                        </td>
-                        <td>4</td>
-                        <td>2</td>
-                        <td>0</td>
                         %for atribut in fields(artikli[0]):
                         % k = atribut.name
-                        % if atribut.name == "material" or atribut.name == "description" :
+                            <td> {{getattr(artikel, atribut.name)}}</td>
+                        % end
 
                         <td>
-                            <div class="dropdown is-hoverable">
-                                <div class="dropdown-trigger">
-                                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
-                                        <span>več</span>
-                                        <span class="icon is-small">
-                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                                <div class="dropdown-menu" id="dropdown-menu2" role="menu" style="position: absolute;">
-                                    <div class="dropdown-content">
-                                        {{getattr(artikel, atribut.name)}}
-                                    </div>
-                                </div>
-                            </div>
+                            <a href="/artikel/{{ artikel.sku }}" class="button is-small">
+                                <span>Prikaži več</span>
+                                <span class="icon is-small">
+                                    <i class="fas fa-angle-right"></i>
+                                </span>
+                            </a>
                         </td>
-                        % elif atribut.name == "price":
-                        <td> {{getattr(artikel, atribut.name)}}€</td>
-                        % else:
-                        <td> {{getattr(artikel, atribut.name)}}</td>
-                        % end
-                        %end
+                        <td>
+
+                            
+                            <form action="/dodaj_zalogo/{{artikel.sku}}" method="post">
+                                
+                                  
+                                    <input type="number" min=1 name="kolicina" style="width: 70%;" class="input is-primary"
+                                        placeholder="Količina" required>
+                                
+                                
+                                    <button type="submit" style="width: 70%;" class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>
+                                
+                                
+                                
+                            </form>
+
+                    </td>
 
 
                         % end
@@ -312,7 +297,7 @@
                     % if i == trenutna_stran :
 
                     <li>
-                        <a href="/zaloga/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
+                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
                             border-color: hsl(171,70%, 41%);
                             color: lightgray">
                             {{i}}
@@ -322,7 +307,7 @@
                     %else:
 
                     <li>
-                        <a href="/zaloga/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                             border-color: hsl(171,100%, 41%);
                             color: white">
                             {{i}}
@@ -338,7 +323,7 @@
                         </li>
 
                         <li>
-                            <a href="/zaloga/?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            <a href="/?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                             border-color: hsl(171,100%, 41%);
                             color: white">
                                 {{max_stran}}
@@ -349,7 +334,7 @@
                 </ul>
 
                 % if trenutna_stran != max_stran:
-                <a href="/zaloga/?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
+                <a href="/?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
                     Naslednja stran
                 </a>
                 % else:

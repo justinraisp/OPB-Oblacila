@@ -48,7 +48,13 @@ def prikaz_strani_artikel():
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
-    return template("artikli.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje)
+    if rola == "guest":
+        artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
+        return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik)
+    if rola == "admin":
+        artikli = repo.dobi_gen(Zaloga,take=artikli_na_stran,skip=zacetni_indeks)
+        return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik)
+
 
 
 @bottle.route("/artikel/<sku>")
@@ -57,7 +63,6 @@ def prikaz_artikla(sku):
     uporabnik = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
     artikel = repo.dobi_Artikel(sku)
-    print(artikel)
     return template("artikel.html", artikel=artikel, rola=rola, uporabnik=uporabnik)
 
 
@@ -69,15 +74,21 @@ def prikaz_strani_kosarica():
     artikli = kosarica.to_dict()['izdelki']
     rola= request.get_cookie("rola")
     stanje= repo.dobi_stanje(uporabnik)
-    print(artikli)
     return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik, stanje=stanje, napaka=None)
 
-@bottle.route("/uporabnik/")
+@bottle.route("/uporabnik_guest/")
 @cookie_required
 def prikaz_uporabnik():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
-    return template("uporabnik.html", stanje=stanje, uporabnik=uporabnik)
+    return template("uporabnik_guest.html", stanje=stanje, uporabnik=uporabnik)
+
+@bottle.route("/uporabnik_admin/")
+@cookie_required
+def prikaz_uporabnik():
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje("admin")
+    return template("uporabnik_admin.html", stanje=stanje, uporabnik=uporabnik)
 
 @bottle.route("/zgodovina")
 @cookie_required
@@ -111,13 +122,11 @@ def dodaj_v_kosarico(sku):
     kolicina = int(request.forms.get("kolicina_za_v_kosarico"))
     cena = float(request.forms.get("artikel_cena"))
     celotna_cena = cena * kolicina
-    print(celotna_cena)
     izdelek = {
         "sku": sku,
         "kolicina": kolicina,
         "cena": celotna_cena
     }
-    print(izdelek)
     trenutna_kosarica.dodaj_izdelek(izdelek)
     repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
 
@@ -188,12 +197,17 @@ def prikaz_strani_zaloga():
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
     uporabnik = request.get_cookie("uporabnik")
-    print(uporabnik)
     rola= request.get_cookie("rola")
-    print(rola)
-    print(max_stran)
-    print(trenutna_stran)
-    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola,artikli=artikli,max_stran=max_stran,trenutna_stran=trenutna_stran)
+    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola,artikli=artikli,max_stran=max_stran,trenutna_stran=trenutna_stran, uporabnik=uporabnik)
+
+
+@bottle.route("/dodaj_zalogo/<sku>", method="post")
+@cookie_required
+def dodaj_zalogo(sku):
+    kolicina_dodaj = int(request.forms.get("kolicina"))
+    repo.posodobi_zaloga(sku, kolicina_dodaj,dodaj=True)
+    bottle.redirect("/")
+
 
 @bottle.route("/dodaj-zalogo/")
 @cookie_required
@@ -205,10 +219,7 @@ def prikaz_strani_zaloga():
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
     uporabnik = request.get_cookie("uporabnik")
-    print(uporabnik)
     rola= request.get_cookie("rola")
-    
-    print(rola)
     return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22,artikli=artikli,max_stran=max_stran,trenutna_stran=trenutna_stran)
 
 @bottle.route("/zaloga/izbrisi")
@@ -216,18 +227,14 @@ def prikaz_strani_zaloga():
 def izbrisi_zalogo():
     EAN = bottle.request.query.EAN
     uporabnik = request.get_cookie("uporabnik")
-    print(uporabnik)
     rola= request.get_cookie("rola")
-    print(rola)
     return template("izbrisi.html",EAN=EAN,rola=rola)
 
 @bottle.post("/zaloga/tocno-izbrisi")
 @cookie_required
 def tocno_kaj_izbrisi_zalogo():
     uporabnik = request.get_cookie("uporabnik")
-    print(uporabnik)
     rola= request.get_cookie("rola")
-    print(rola)
     EAN = bottle.request.query.EAN
     try:
         stevilo = int(bottle.request.forms["stevilo"]);
@@ -249,9 +256,7 @@ def tocno_kaj_izbrisi_zalogo():
 @cookie_required
 def tocno_kaj_izbrisi_zalogo():
     uporabnik = request.get_cookie("uporabnik")
-    print(uporabnik)
     rola= request.get_cookie("rola")
-    print(rola)
     try:
         EAN = int(bottle.request.forms["EAN"]);
     except UnicodeError:
@@ -806,25 +811,25 @@ def registracija_post():
     rola = request.forms.get('role')
     password = request.forms.get('password')
     confirm_password = request.forms.get('confirm_password')
-    if rola == "admin":
-       return template("autorizacija.html", napaka=None, username=username, rola=rola, password=password)
+
 
     try:
         if auth.obstaja_uporabnik(username):
             return template("registracija.html", napaka="Uporabnik s tem imenom že obstaja")
     except Exception as e:
-            return template("prijava.html", napaka="Uporabnik s tem imenom že obstaja")
+            if rola == "guest":
+                auth.dodaj_uporabnika(username,rola,password)
+                nova_kosarica = Kosarica(uporabnik=username)
+                repo.dodaj_gen(nova_kosarica)
+                novo_stanje = Stanje(uporabnik=username)
+                repo.dodaj_gen(novo_stanje,serial_col=None)
+                nove_ocene = Uporabnik_ocene(uporabnik=username)
+                repo.dodaj_gen(nove_ocene,serial_col=None)
 
-    auth.dodaj_uporabnika(username,rola,password)
+            if rola == "admin":
+                return template("autorizacija.html", napaka=None, username=username, rola=rola, password=password)
 
-    if rola == "guest":
-        nova_kosarica = Kosarica(uporabnik=username)
-        repo.dodaj_gen(nova_kosarica)
-        novo_stanje = Stanje(uporabnik=username)
-        print(novo_stanje)
-        repo.dodaj_gen(novo_stanje,serial_col=None)
-
-    return template("prijava.html", napaka=None)
+            return template("prijava.html", napaka=None)
 
 
 @post('/prijava')
@@ -847,14 +852,13 @@ def prijava():
         response.set_cookie("rola", prijava.role)
         rola= prijava.role
         uporabnik = username
-
         # Uporabimo kar template, kot v sami "index" funkciji
         artikli = repo.dobi_gen(Glavna)
         stanje = repo.dobi_stanje(uporabnik)
         if not stanje: 
             stanje= Stanje(uporabnik=username)
             repo.dodaj_gen(stanje,serial_col=None)
-        return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje)
+        return template(f'artikli_{rola}.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje, uporabnik=uporabnik)
         
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")

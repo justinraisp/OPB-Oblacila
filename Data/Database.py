@@ -46,7 +46,7 @@ T = TypeVar(
     UporabnikDto,
     Kosarica, 
     OcenePredmetov,
-    UporabnikOcene,
+    Uporabnik_ocene,
     Transakcija
     )
 
@@ -427,6 +427,17 @@ class Repo:
         self.cur.execute(sql)
         self.conn.commit()
         print("Tabela 'ocena' ustvarjena ali že obstaja.")    
+
+    def ustvari_tabelo_zaloga(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS zaloga (
+            sku TEXT PRIMARY KEY,
+            kolicina INT
+        );
+        """
+        self.cur.execute(sql)
+        self.conn.commit()
+        print("Tabela 'zaloga' ustvarjena ali že obstaja.")     
         
 
     def transakcija_shrani(self, transakcija):
@@ -480,21 +491,17 @@ class Repo:
     def pridobi_zgodovino_ocen(self, uporabnik):
         self.cur.execute("SELECT ocene FROM uporabnik_ocene WHERE uporabnik = %s;", (uporabnik,))
         ocene_uporabnika = self.cur.fetchone()
-        return ocene_uporabnika[0]
+        if ocene_uporabnika:
+            return ocene_uporabnika[0]
+        else: return None
 
     def oceni_artikel_uporabnik(self, uporabnik, sku, nova_ocena):
         ocene = self.pridobi_zgodovino_ocen(uporabnik)
-        if ocene:
-            self.oceni_artikel(sku, nova_ocena)
-            ocene[sku] = nova_ocena
-            ocene_json = json.dumps(ocene)
-            self.cur.execute("UPDATE uporabnik_ocene SET ocene = %s WHERE uporabnik = %s;", (ocene_json, uporabnik))
-        
-        else:
-            self.oceni_artikel(sku, nova_ocena)
-            ocene_json = json.dumps({sku: nova_ocena})
-            self.cur.execute("INSERT INTO uporabnik_ocene (uporabnik, ocene) VALUES (%s, %s);", (uporabnik, ocene_json))
-        
+        self.oceni_artikel(sku, nova_ocena)
+        ocene[sku] = nova_ocena
+        ocene_json = json.dumps(ocene)
+        self.cur.execute("UPDATE uporabnik_ocene SET ocene = %s WHERE uporabnik = %s;", (ocene_json, uporabnik))
+              
         self.conn.commit()
 
 
@@ -526,6 +533,16 @@ class Repo:
         else: 
             return None
         
+    def posodobi_zaloga(self, sku, kolicina_sprememba, dodaj):
+        self.cur.execute("SELECT kolicina FROM zaloga WHERE sku = %s;", (sku,))
+        row = self.cur.fetchone()
+        kolicina = row[0]
+        if dodaj:
+            kolicina += kolicina_sprememba
+        else: 
+            kolicina -= kolicina_sprememba
+        self.cur.execute("UPDATE zaloga SET kolicina = %s WHERE sku = %s;", (kolicina,sku,))
+        self.conn.commit()        
     
     def posodobi_stanje(self,uporabnik, vsota):
         stanje = self.dobi_stanje(uporabnik=uporabnik)
@@ -549,4 +566,13 @@ class Repo:
             ocena = ocena / st
             self.cur.execute("INSERT INTO ocene_predmetov (sku, ocena, st_ocen) VALUES (%s,%s,%s);", (artikel[0], ocena, st))
 
+        self.conn.commit()
+
+    def generiraj_nakljucno_zalogo(self, max_kolicina):
+        self.cur.execute("""SELECT "Sku" FROM glavna;""")
+        artikli = self.cur.fetchall()
+        for artikel in artikli:
+            kolicina = random.randint(max_kolicina //2, max_kolicina)
+            self.cur.execute("INSERT INTO zaloga (sku, kolicina) VALUES (%s,%s);", (artikel[0], kolicina))
+            print(1)
         self.conn.commit()

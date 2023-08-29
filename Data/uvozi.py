@@ -30,6 +30,8 @@ def uvozi_csv(pot, ime):
 #repo.ustvari_tabelo_uporabnik_ocene()
 #repo.ustvari_tabelo_transakcije()
 #repo.generiraj_nakljucne_ocene(20)
+#repo.ustvari_tabelo_zaloga()
+#repo.generiraj_nakljucno_zalogo(730)
 
 #uvozi_csv("tabele/artikel.txt", "Artikel")
 #uvozi_csv("tabele/barva.txt", "Barva")

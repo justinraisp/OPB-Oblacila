@@ -17,13 +17,9 @@ class AuthService:
         self.repo = repo
 
     def obstaja_uporabnik(self, uporabnik: str) -> bool:
-        print(uporabnik)
         user = self.repo.dobi_gen_id(Uporabnik, uporabnik, id_col="username")
-        try:
-            user = self.repo.dobi_gen_id(Uporabnik, uporabnik, id_col="username")
-            return True
-        except:
-            return False
+        return user is not None
+
 
     def prijavi_uporabnika(self, uporabnik : str, geslo: str) -> UporabnikDto | bool :
 

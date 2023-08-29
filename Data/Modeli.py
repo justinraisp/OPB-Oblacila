@@ -201,6 +201,24 @@ class Artikel:
         }
     
 @dataclass
+class Zaloga: 
+    sku: str = field(default="")
+    kolicina: int = field(default=0)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> 'Zaloga':
+        return cls(
+            sku=data.get('sku'),
+            kolicina=int(data.get('kolicina', 0)) 
+        )
+
+    def to_dict(self) -> dict[str, str]:
+        return {
+            'sku': self.sku,
+            'kolicina': self.kolicina
+        }   
+    
+@dataclass
 class OcenePredmetov: 
     sku: str = field(default="")
     ocena: float = field(default=0)
@@ -214,7 +232,6 @@ class OcenePredmetov:
             st_ocen=int(data.get('st_ocen', 0)), 
         )
 
-    @classmethod
     def to_dict(self) -> dict[str, str]:
         return {
             'sku': self.sku,
@@ -223,12 +240,12 @@ class OcenePredmetov:
         }
 
 @dataclass
-class UporabnikOcene:
+class Uporabnik_ocene:
     uporabnik: str = field(default="")
     ocene: str = field(default=json.dumps({}))
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'UporabnikOcene':
+    def from_dict(cls, data: dict) -> 'Uporabnik_ocene':
         return cls(
             uporabnik_id=data.get('uporabnik', ''),
             ocene=json.dumps(data.fet('ocene', {}))

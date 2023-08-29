@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upravljanje Administratorja</title>
+</head>
+<body>
+    <h1>Upravljanje Administratorja</h1>
+
+    <h2>Upravljanje Zaloge</h2>
+    <form action="/dodaj_izdelek" method="POST">
+        <label for="ime">Ime izdelka:</label>
+        <input type="text" name="ime" required><br>
+        <label for="cena">Cena:</label>
+        <input type="number" name="cena" required><br>
+        <label for="kolicina">Količina:</label>
+        <input type="number" name="kolicina" required><br>
+        <button type="submit">Dodaj izdelek</button>
+    </form>
+
+    <h2>Upravljanje Uporabnikov</h2>
+    <table border="1">
+        <tr>
+            <th>Uporabniško Ime</th>
+            <th>Email</th>
+            <th>Akcije</th>
+        </tr>
+        <tr>
+            <td>uporabnik1</td>
+            <td>uporabnik1@example.com</td>
+            <td>
+                <button>Blokiraj</button>
+                <button>Uredi</button>
+                <button>Obriši</button>
+            </td>
+        </tr>
+        <!-- More rows... -->
+    </table>
+
+    <h2>Statistika in Analitika</h2>
+    <p>Trenutni dohodek: $1000</p>
+    <p>Najbolj prodajani izdelek: Izdelek A</p>
+    <!-- More statistics... -->
+
+    <h2>Upravljanje Naročil</h2>
+    <table border="1">
+        <tr>
+            <th>Naročilo ID</th>
+            <th>Uporabnik</th>
+            <th>Status</th>
+            <th>Akcije</th>
+        </tr>
+        <tr>
+            <td>123</td>
+            <td>uporabnik1</td>
+            <td>Naročeno</td>
+            <td>
+                <button>Spremeni Status</button>
+                <button>Prikaži Podrobnosti</button>
+            </td>
+        </tr>
+        <!-- More rows... -->
+    </table>
+</body>
+</html>
