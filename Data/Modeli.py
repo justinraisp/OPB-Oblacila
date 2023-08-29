@@ -1,4 +1,5 @@
 from datetime import date
+import datetime
 import json
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
@@ -79,21 +80,24 @@ class Kosarica:
 class Transakcija:
     uporabnik: str = field(default="")
     datum: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    kosarica: Kosarica = field(default=Kosarica("",{}))
+    kosarica: str = field(default=json.dumps({}))
+    skupna_cena: float = field(default=0)
 
     @classmethod
     def from_dict(cls, data: dict) -> 'Transakcija':
         return cls(
             uporabnik=data.get('uporabnik', ''),
             datum=data.get('datum', ''),
-            kosarica=Kosarica.from_dict(data.get('kosarica', {}))
+            kosarica=json.dumps(data.get('izdelki', {})),
+            skupna_cena=float(data.get('skupna_cena', ''))
         )
 
     def to_dict(self) -> dict:
         return {
             'uporabnik': self.uporabnik,
             'datum': self.datum,
-            'kosarica': self.kosarica.to_dict()
+            'izdelki': json.loads(self.izdelki),
+            'skupna_cena': self.skupna_cena,
         }
 
     def dodaj_nakup(self, kosarica: Kosarica):

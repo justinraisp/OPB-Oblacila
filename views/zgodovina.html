@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1>Zgodovina Nakupov</h1>
+    
+    <table>
+        <tr>
+            <th>Datum</th>
+            <th>Artikli</th>
+            <th>Skupna Cena</th>
+        </tr>
+        % for transakcija in zgodovina:
+            <tr>
+                <td>{{ transakcija['datum'] }}</td>
+                <td>
+                    <ul>
+                        % for izdelek, podatki in transakcija['kosarica'].items():
+                            <li>{{ izdelek }} ({{ podatki['kolicina'] }} kosov) (Cena: {{podatki['cena']}}€)</li>
+                        % end
+                    </ul>
+                </td>
+                <td>{{ transakcija['skupna_cena'] }} €</td>
+            </tr>
+        % end
+    </table>
+    <a href="/">Nazaj na glavno stran</a>
+</body>
+</html>

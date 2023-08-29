@@ -395,7 +395,8 @@ class Repo:
         CREATE TABLE IF NOT EXISTS transakcije (
             uporabnik TEXT,
             datum TEXT,
-            kosarica JSONB
+            kosarica JSONB,
+            skupna_cena FLOAT
         );
         """
         self.cur.execute(sql)
@@ -418,23 +419,37 @@ class Repo:
         uporabnik = transakcija.uporabnik
         datum = transakcija.datum
         print(datum)
-        kosarica = transakcija.kosarica["izdelki"]
-        self.cur.execute("INSERT INTO transakcije (uporabnik, datum, kosarica) VALUES (%s, %s, %s);",
-                            (uporabnik, datum, json.dumps(kosarica)))
+        kosarica = transakcija.kosarica
+        
+        skupna_cena = transakcija.skupna_cena
+        self.cur.execute("INSERT INTO transakcije (uporabnik, datum, kosarica, skupna_cena) VALUES (%s, %s, %s, %s);",
+                            (uporabnik, datum, json.dumps(kosarica), skupna_cena))
 
         self.conn.commit()
 
     def transakcija_nalozi(self, uporabnik):
-        self.cur.execute("SELECT datum, kosarica FROM transakcija WHERE uporabnik = %s;", (uporabnik,))
+        self.cur.execute("SELECT datum, kosarica, skupna_cena FROM transakcija WHERE uporabnik = %s;", (uporabnik,))
         row = self.cur.fetchone()
         print(row)
         if row:
             datum = row[0]
-            kosarica_data = row[1]
-            kosarica = Kosarica.from_dict(json.loads(kosarica_data))
-            return Transakcija(uporabnik, datum, kosarica)
+            kosarica = row[1]
+            skupna_cena = row[2]
+            return Transakcija(uporabnik, datum, kosarica, skupna_cena)
         else:
             return None
+        
+    def pridobi_zgodovino_nakupov(self, uporabnik):
+        self.cur.execute("SELECT datum, kosarica, skupna_cena FROM transakcije WHERE uporabnik = %s;", (uporabnik,))
+        rows = self.cur.fetchall()
+        zgodovina = []
+        for row in rows:
+            datum = row[0]
+            kosarica = row[1]
+            skupna_cena = row[2]
+            zgodovina.append({"datum": datum, "kosarica": kosarica, "skupna_cena": skupna_cena})
+        return zgodovina
+
 
 
     def kosarica_shrani(self,uporabnik,izdelki):

@@ -79,6 +79,15 @@ def prikaz_uporabnik():
     stanje = repo.dobi_stanje(uporabnik)
     return template("uporabnik.html", stanje=stanje, uporabnik=uporabnik)
 
+@bottle.route("/zgodovina")
+@cookie_required
+def prikazi_zgodovino():
+    uporabnik = request.get_cookie("uporabnik")
+    zgodovina = repo.pridobi_zgodovino_nakupov(uporabnik)
+    print(zgodovina)
+    return template("zgodovina.html", uporabnik=uporabnik, zgodovina=zgodovina)
+
+
 @bottle.route("/dodaj_denar", method="post")
 @cookie_required
 def dodaj_denar():
@@ -156,7 +165,7 @@ def izvedi_nakup():
     
     repo.posodobi_stanje(uporabnik, -skupna_cena)
     datum = date.today().isoformat()
-    repo.transakcija_shrani(Transakcija(uporabnik=uporabnik, datum=datum,kosarica=kosarica.to_dict()))
+    repo.transakcija_shrani(Transakcija(uporabnik=uporabnik, datum=datum,kosarica=izdelki_v_kosarici,skupna_cena=skupna_cena))
     repo.kosarica_shrani(uporabnik, {})
     
     bottle.redirect("/kosarica/")
