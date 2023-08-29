@@ -138,7 +138,6 @@ def izbrisi_iz_kosarice(sku):
         "kolicina": kolicina,
         "cena": celotna_cena
     }
-    print(izdelek)
     trenutna_kosarica.izbrisi(izdelek)
     repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
 
@@ -167,9 +166,16 @@ def izvedi_nakup():
     datum = date.today().isoformat()
     repo.transakcija_shrani(Transakcija(uporabnik=uporabnik, datum=datum,kosarica=izdelki_v_kosarici,skupna_cena=skupna_cena))
     repo.kosarica_shrani(uporabnik, {})
-    
     bottle.redirect("/kosarica/")
 
+
+@bottle.route("/oceni_artikel/<sku>", method="post")
+@cookie_required
+def oceni_artikel(sku):
+    ocena = int(request.forms.get('ocena'))
+    uporabnik = request.get_cookie("uporabnik")
+    repo.oceni_artikel_uporabnik(uporabnik,sku,ocena)
+    bottle.redirect("/zgodovina")
 
 
 @bottle.route("/zaloga/")
@@ -814,7 +820,7 @@ def registracija_post():
     if rola == "guest":
         nova_kosarica = Kosarica(uporabnik=username)
         repo.dodaj_gen(nova_kosarica)
-        novo_stanje = Stanje(username=username)
+        novo_stanje = Stanje(uporabnik=username)
         print(novo_stanje)
         repo.dodaj_gen(novo_stanje,serial_col=None)
 
@@ -846,7 +852,7 @@ def prijava():
         artikli = repo.dobi_gen(Glavna)
         stanje = repo.dobi_stanje(uporabnik)
         if not stanje: 
-            stanje= Stanje(username=username)
+            stanje= Stanje(uporabnik=username)
             repo.dodaj_gen(stanje,serial_col=None)
         return template('artikli.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje)
         

@@ -44,7 +44,8 @@ T = TypeVar(
     Uporabnik,
     UporabnikDto,
     Kosarica, 
-    Ocene,
+    OcenePredmetov,
+    UporabnikOcene,
     Transakcija
     )
 
@@ -407,13 +408,25 @@ class Repo:
     def ustvari_tabelo_stanje(self):
         sql = """
         CREATE TABLE IF NOT EXISTS stanje (
-            username TEXT PRIMARY KEY,
+            uporabnik TEXT PRIMARY KEY,
             bilanca FLOAT
         );
         """
         self.cur.execute(sql)
         self.conn.commit()
         print("Tabela 'ocena' ustvarjena ali že obstaja.")
+
+    def ustvari_tabelo_uporabnik_ocene(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS uporabnik_ocene (
+            uporabnik TEXT PRIMARY KEY,
+            ocene JSONB
+        );
+        """
+        self.cur.execute(sql)
+        self.conn.commit()
+        print("Tabela 'ocena' ustvarjena ali že obstaja.")    
+        
 
     def transakcija_shrani(self, transakcija):
         uporabnik = transakcija.uporabnik
@@ -450,7 +463,42 @@ class Repo:
             zgodovina.append({"datum": datum, "kosarica": kosarica, "skupna_cena": skupna_cena})
         return zgodovina
 
+    def oceni_artikel(self, sku, nova_ocena):
+        self.cur.execute("SELECT * FROM ocene_predmetov WHERE  sku = %s;", (sku,))
+        trenutna_ocena = self.cur.fetchone()
 
+        if trenutna_ocena:
+            st_ocen = trenutna_ocena['st_ocen'] + 1
+            nova_povprecna_ocena = (trenutna_ocena['ocena'] * trenutna_ocena['st_ocen'] + nova_ocena) / st_ocen
+
+            self.cur.execute("UPDATE ocene_predmetov SET ocena = %s, st_ocen = %s WHERE  sku = %s;",
+                            (nova_povprecna_ocena, st_ocen, sku))
+        else:
+            self.cur.execute("INSERT INTO ocene_predmetov (sku, ocena, st_ocen) VALUES (%s, %s, 1);",
+                            (sku, nova_ocena))
+
+        self.conn.commit()
+
+    def oceni_artikel_uporabnik(self, uporabnik, sku, nova_ocena):
+        self.cur.execute("SELECT ocene FROM uporabnik_ocene WHERE uporabnik = %s;", (uporabnik,))
+        ocene_uporabnika = self.cur.fetchone()
+
+        if ocene_uporabnika:
+            ocene = ocene_uporabnika['ocene']
+            if sku in ocene:
+                print("Že ocenil")
+            else:
+                self.oceni_artikel(sku, nova_ocena)
+                ocene[sku] = nova_ocena
+                ocene_json = json.dumps(ocene)
+                self.cur.execute("UPDATE uporabnik_ocene SET ocene = %s WHERE uporabnik = %s;", (ocene_json, uporabnik))
+        
+        else:
+            self.oceni_artikel(sku, nova_ocena)
+            ocene_json = json.dumps({sku: nova_ocena})
+            self.cur.execute("INSERT INTO uporabnik_ocene (uporabnik, ocene) VALUES (%s, %s);", (uporabnik, ocene_json))
+        
+        self.conn.commit()
 
     def kosarica_shrani(self,uporabnik,izdelki):
         self.cur.execute("SELECT * FROM kosarica WHERE uporabnik = %s;", (uporabnik,))
@@ -472,21 +520,21 @@ class Repo:
         else:
             return None
            
-    def dobi_stanje(self, username):
-        self.cur.execute("SELECT bilanca FROM stanje WHERE username = %s", (username,))
+    def dobi_stanje(self, uporabnik):
+        self.cur.execute("SELECT bilanca FROM stanje WHERE uporabnik = %s", (uporabnik,))
         row = self.cur.fetchone()
         if row:
-            return Stanje(username,row[0])
+            return Stanje(uporabnik,row[0])
         else: 
             return None
         
     
-    def posodobi_stanje(self,username, vsota):
-        stanje = self.dobi_stanje(username=username)
+    def posodobi_stanje(self,uporabnik, vsota):
+        stanje = self.dobi_stanje(uporabnik=uporabnik)
         bilanca = stanje.bilanca
         bilanca += vsota
         bilanca = round(bilanca,2)
-        self.cur.execute("UPDATE stanje SET bilanca = %s WHERE username = %s;", (bilanca,username))
+        self.cur.execute("UPDATE stanje SET bilanca = %s WHERE uporabnik = %s;", (bilanca,uporabnik))
         self.conn.commit()
 
 

@@ -201,17 +201,17 @@ class Artikel:
         }
     
 @dataclass
-class Ocene: 
+class OcenePredmetov: 
     sku: str = field(default="")
     ocena: float = field(default=0)
     st_ocen: int = field(default=0)
 
     @classmethod
-    def from_dict(cls, data: dict[str, str]) -> 'Ocene':
+    def from_dict(cls, data: dict[str, str]) -> 'OcenePredmetov':
         return cls(
             sku=data.get('sku'),
             ocena=float(data.get('ocena', 0)), 
-            st_ocen=int(data.get('ocena', 0)), 
+            st_ocen=int(data.get('st_ocen', 0)), 
         )
 
     @classmethod
@@ -221,6 +221,31 @@ class Ocene:
             'ocena': self.ocena,
             'st_ocen': self.st_ocen
         }
+
+@dataclass
+class UporabnikOcene:
+    uporabnik: str = field(default="")
+    ocene: str = field(default=json.dumps({}))
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'UporabnikOcene':
+        return cls(
+            uporabnik_id=data.get('uporabnik', ''),
+            ocene=json.dumps(data.fet('ocene', {}))
+        )
+
+    def to_dict(self) -> dict:
+        if self.ocene:
+            return {
+                'uporabnik': self.uporabnik,
+                'ocene': json.loads(self.ocene)
+            }
+        else:
+            return {
+                'uporabnik': self.uporabnik,
+                'ocene': {}
+            }
+
 
 @dataclass
 class ArtikelDto:
@@ -360,18 +385,18 @@ class Uporabnik:
 
 @dataclass
 class Stanje:
-    username: str = field(default="")
+    uporabnik: str = field(default="")
     bilanca: float = field(default=0)
     @classmethod
     def from_dict(cls, data: dict[str, str]) -> 'Uporabnik':
         return cls(
-            username=data.get('username'),
+            uporabnik=data.get('uporabnik'),
             bilanca=float(data.get('bilanca', 0))
         )
     @classmethod
     def to_dict(self) -> dict[str, str]:
         return {
-            'username': self.username,
+            'uporabnik': self.uporabnik,
             'bilanca': str(self.bilanca)
         }
 
