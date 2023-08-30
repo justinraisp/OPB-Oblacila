@@ -1,6 +1,7 @@
 # uvozimo psycopg2
 import json
 import random
+import re
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE) # se znebimo problemov s šumniki
 
@@ -316,9 +317,6 @@ class Repo:
         self.cur.execute(sql_cmd)
         self.conn.commit()
 
- 
-
-
 
     def dobi_Artikel(self, sku):
         # Preverimo, če Artikel že obstaja
@@ -344,9 +342,6 @@ class Repo:
             Artikel.id = row[0]
             return Artikel
 
-        
-    
-
         # Sedaj dodamo Artikel
         self.cur.execute("""
             INSERT INTO Artikel (ime, kategorija)
@@ -354,9 +349,6 @@ class Repo:
         Artikel.id = self.cur.fetchone()[0]
         self.conn.commit()
         return Artikel
-
-
-        # Dodamo novo ceno izdelka
     
     def artikli(self) -> List[int]:
         artikli = self.cur.execute(
@@ -439,11 +431,29 @@ class Repo:
         self.conn.commit()
         print("Tabela 'zaloga' ustvarjena ali že obstaja.")     
         
+    def glavna_nalozi_iskanje(self, iskalni_niz):
+        pattern = f"%{iskalni_niz}%"
+        self.cur.execute("""SELECT * FROM glavna WHERE "Sku" ILIKE %s;""", (pattern,))
+        rows = self.cur.fetchall()
+        columns = []
+        for atribut in fields(Glavna):
+            columns += [atribut.name]
+        artikli = [dict(zip(columns, row)) for row in rows]
+        return [Glavna.from_dict(artikel) for artikel in artikli]
+
+    def zaloga_nalozi_iskanje(self, iskalni_niz):
+        pattern = f"%{iskalni_niz}%"
+        self.cur.execute("""SELECT * FROM zaloga WHERE Sku ILIKE %s;""", (pattern,))
+        rows = self.cur.fetchall()
+        columns = []
+        for atribut in fields(Zaloga):
+            columns += [atribut.name]
+        artikli = [dict(zip(columns, row)) for row in rows]
+        return [Zaloga.from_dict(artikel) for artikel in artikli]        
 
     def transakcija_shrani(self, transakcija):
         uporabnik = transakcija.uporabnik
         datum = transakcija.datum
-        print(datum)
         kosarica = transakcija.kosarica
         
         skupna_cena = transakcija.skupna_cena
@@ -455,7 +465,6 @@ class Repo:
     def transakcija_nalozi(self, uporabnik):
         self.cur.execute("SELECT datum, kosarica, skupna_cena FROM transakcija WHERE uporabnik = %s;", (uporabnik,))
         row = self.cur.fetchone()
-        print(row)
         if row:
             datum = row[0]
             kosarica = row[1]
@@ -565,7 +574,6 @@ class Repo:
                 ocena += nakljucna_ocena
             ocena = ocena / st
             self.cur.execute("INSERT INTO ocene_predmetov (sku, ocena, st_ocen) VALUES (%s,%s,%s);", (artikel[0], ocena, st))
-
         self.conn.commit()
 
     def generiraj_nakljucno_zalogo(self, max_kolicina):
@@ -574,5 +582,4 @@ class Repo:
         for artikel in artikli:
             kolicina = random.randint(max_kolicina //2, max_kolicina)
             self.cur.execute("INSERT INTO zaloga (sku, kolicina) VALUES (%s,%s);", (artikel[0], kolicina))
-            print(1)
         self.conn.commit()

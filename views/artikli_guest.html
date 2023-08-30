@@ -282,12 +282,7 @@
                 </tbody>
             </table>
         </div>
-
-
-
-
-
-
+        % 
         <div class="block" style="padding-top: 50px; padding-bottom: 50px">
             <nav class="pagination is-centered">
 
@@ -296,16 +291,15 @@
                     Prejšnja stran
                 </a>
                 % else:
-                <a href="/?stran={{trenutna_stran - 1}}" style="float:left" class="pagination-previous btn">
+                <a href="/{{poizvedba}}?stran={{ trenutna_stran - 1 }}" style="float:left" class="pagination-previous btn">
                     Prejšnja stran
                 </a>
                 % end
 
-
                 <ul class="pagination-list is-primary">
                     % if trenutna_stran > 3:
                     <li>
-                        <a href="/?stran=1" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        <a href="/{{poizvedba}}?stran=1" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                         border-color: hsl(171,100%, 41%);
                         color: white">
                             1
@@ -317,12 +311,11 @@
                     </li>
                     % end
 
-
                     % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):
                     % if i == trenutna_stran :
 
                     <li>
-                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
+                        <a href="/{{poizvedba}}?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
                         border-color: hsl(171,70%, 41%);
                         color: lightgray">
                             {{i}}
@@ -332,7 +325,7 @@
                     %else:
 
                     <li>
-                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        <a href="/{{poizvedba}}?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                         border-color: hsl(171,100%, 41%);
                         color: white">
                             {{i}}
@@ -347,7 +340,7 @@
                         </li>
 
                         <li>
-                            <a href="/?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            <a href="/{{poizvedba}}?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                         border-color: hsl(171,100%, 41%);
                         color: white">
                                 {{max_stran}}
@@ -358,7 +351,7 @@
                 </ul>
 
                 % if trenutna_stran != max_stran:
-                <a href="/?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
+                <a href="/{{poizvedba}}?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
                     Naslednja stran
                 </a>
                 % else:
@@ -370,13 +363,10 @@
         </div>
 
 
-
     </div>
 
 
-
 </body>
-
 
 
 </html>

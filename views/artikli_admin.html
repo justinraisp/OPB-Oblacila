@@ -14,7 +14,7 @@
         integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <title>Artikli</title>
+    <title>Zaloga</title>
 </head>
 <style>
     /* Hide the default checkbox */
@@ -133,7 +133,7 @@
         <section class="hero is-primary">
             <div class="hero-body">
 
-                <form action="/poizvedba-zaloga/" method="POST">
+                <form action="/poizvedba_zaloga/" method="POST">
 
 
 
@@ -215,7 +215,7 @@
 
                         %end
                         <th></th>
-                        <th></th>
+                        <th>Dodaj v zalogo</th>
 
                     </tr>
                 </thead>
@@ -271,7 +271,7 @@
                     Prejšnja stran
                 </a>
                 % else:
-                <a href="/zaloga/?stran={{trenutna_stran - 1}}" style="float:left" class="pagination-previous btn">
+                <a href="/{{poizvedba}}?stran={{ trenutna_stran - 1 }}" style="float:left" class="pagination-previous btn">
                     Prejšnja stran
                 </a>
                 % end
@@ -280,7 +280,7 @@
                 <ul class="pagination-list is-primary">
                     % if trenutna_stran > 3:
                     <li>
-                        <a href="/zaloga/?stran=1" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        <a href="/{{poizvedba}}?stran=1" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                             border-color: hsl(171,100%, 41%);
                             color: white">
                             1
@@ -297,7 +297,7 @@
                     % if i == trenutna_stran :
 
                     <li>
-                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
+                        <a href="/{{poizvedba}}?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
                             border-color: hsl(171,70%, 41%);
                             color: lightgray">
                             {{i}}
@@ -307,7 +307,7 @@
                     %else:
 
                     <li>
-                        <a href="/?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                        <a href="/{{poizvedba}}?stran={{i}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                             border-color: hsl(171,100%, 41%);
                             color: white">
                             {{i}}
@@ -323,7 +323,7 @@
                         </li>
 
                         <li>
-                            <a href="/?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
+                            <a href="/{{poizvedba}}?stran={{max_stran}}" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 100%, 41%);
                             border-color: hsl(171,100%, 41%);
                             color: white">
                                 {{max_stran}}
@@ -334,7 +334,7 @@
                 </ul>
 
                 % if trenutna_stran != max_stran:
-                <a href="/?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
+                <a href="/{{poizvedba}}?stran={{trenutna_stran + 1}}" class="pagination-next btn" style="float:right">
                     Naslednja stran
                 </a>
                 % else:

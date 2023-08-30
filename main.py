@@ -2,7 +2,6 @@ from math import ceil
 import bottle
 from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
 
-
 from Data.Database import Repo
 from Data.Modeli import *
 from Data.Services import AuthService
@@ -50,12 +49,10 @@ def prikaz_strani_artikel():
     artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
     if rola == "guest":
         artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
-        return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik)
+        return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba= "")
     if rola == "admin":
         artikli = repo.dobi_gen(Zaloga,take=artikli_na_stran,skip=zacetni_indeks)
-        return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik)
-
-
+        return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="")
 
 @bottle.route("/artikel/<sku>")
 @cookie_required
@@ -171,6 +168,9 @@ def izvedi_nakup():
         return template("kosarica.html", artikli=izdelki_v_kosarici, uporabnik=uporabnik, stanje=trenutno_stanje,
                         napaka="Nimate dovolj sredstev za nakup.")
     
+    for izdelek in izdelki_v_kosarici.keys():
+        repo.posodobi_zaloga(izdelek, izdelki_v_kosarici[izdelek]["kolicina"],dodaj=False)
+
     repo.posodobi_stanje(uporabnik, -skupna_cena)
     datum = date.today().isoformat()
     repo.transakcija_shrani(Transakcija(uporabnik=uporabnik, datum=datum,kosarica=izdelki_v_kosarici,skupna_cena=skupna_cena))
@@ -276,13 +276,39 @@ def tocno_kaj_izbrisi_zalogo():
     #dodaj v zalogo
     return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola )
 
+@bottle.route("/poizvedba_prikazi/<iskanje>")
+@cookie_required
+def prikaz_strani_artikel(iskanje):
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
+    rola= request.get_cookie("rola")
+    rezultati_iskanja = repo.glavna_nalozi_iskanje(iskanje)
+    artikli_na_stran = 10
+    max_stran = ceil(len(rezultati_iskanja) / artikli_na_stran)
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
+    artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
+    poizvedba = "poizvedba_prikazi/" + iskanje
+    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba)
+
+
 @bottle.post("/poizvedba/")
 @cookie_required
 def poizvedba():
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
+    rola= request.get_cookie("rola")
+    artikli_na_stran = 10
+    max_stran = ceil(106871 / artikli_na_stran)
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
     try:
-        iskanje = bottle.request.forms["iskanje"];
+        iskanje = bottle.request.forms["iskanje"]
     except UnicodeError:
         iskanje = False
+        rezultati_iskanja = None
     try:
         SKU = bottle.request.forms["SKU"]
         SKU = True
@@ -448,13 +474,39 @@ def poizvedba():
         vrsta = True
     except:
         vrsta = False
-    bottle.redirect("/")
+    bottle.redirect(f"/poizvedba_prikazi/{iskanje}" )
 
-@bottle.post("/poizvedba-zaloga/")
+
+@bottle.route("/poizvedba_zaloga_prikazi/<iskanje>")
+@cookie_required
+def prikaz_strani_artikel(iskanje):
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
+    rola= request.get_cookie("rola")
+    rezultati_iskanja = repo.zaloga_nalozi_iskanje(iskanje)
+    artikli_na_stran = 10
+    max_stran = ceil(len(rezultati_iskanja) / artikli_na_stran)
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
+    artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
+    poizvedba = "poizvedba_zaloga_prikazi/" + iskanje
+    return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba)
+
+
+@bottle.post("/poizvedba_zaloga/")
 @cookie_required
 def poizvedba_zaloga():
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
+    rola= request.get_cookie("rola")
+    artikli_na_stran = 10
+    max_stran = ceil(106871 / artikli_na_stran)
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
     try:
-        iskanje = bottle.request.forms["iskanje"];
+        iskanje = bottle.request.forms["iskanje"]
     except UnicodeError:
         iskanje = False
     try:
@@ -622,7 +674,7 @@ def poizvedba_zaloga():
         vrsta = True
     except:
         vrsta = False
-    bottle.redirect("/zaloga/")
+    bottle.redirect(f"/poizvedba_zaloga_prikazi/{iskanje}")
 
 @bottle.post("/poizvedba-dodaj/")
 @cookie_required
@@ -855,11 +907,12 @@ def prijava():
         # Uporabimo kar template, kot v sami "index" funkciji
         artikli = repo.dobi_gen(Glavna)
         stanje = repo.dobi_stanje(uporabnik)
+        print(rola)
         if not stanje: 
             stanje= Stanje(uporabnik=username)
             repo.dodaj_gen(stanje,serial_col=None)
-        return template(f'artikli_{rola}.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje, uporabnik=uporabnik)
-        
+        #return template(f'artikli_{rola}.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje, uporabnik=uporabnik)
+        redirect("/")
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
    
