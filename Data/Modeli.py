@@ -110,7 +110,6 @@ class Transakcija:
 
 @dataclass
 class Glavna:
-    id: int = field(default=0)
     sku: str = field(default="")
     style: str = field(default="")
     name: str = field(default="")
@@ -128,7 +127,6 @@ class Glavna:
     @classmethod
     def from_dict(cls, data: dict[str, str]) -> 'Glavna':
         return cls(
-            id=int(data.get('id', 0)),
             sku=data.get('sku', ''),
             style=data.get('style', ''),
             name=data.get('name', ''),
@@ -162,20 +160,19 @@ class Glavna:
         }
     def create_glavna_from_row(row):
         return Glavna(
-            id=row[0],
-            sku=row[1],
-            style=row[2],
-            name=row[3],
-            size=row[4],
-            manufacturer=row[5],
-            category=row[6],
-            price=float(row[7]),
-            name2=row[8],
-            colour=row[9],
-            status=row[10],
-            material=row[11],
-            description=row[12],
-            origin=row[13]
+            sku=row[0],
+            style=row[1],
+            name=row[2],
+            size=row[3],
+            manufacturer=row[4],
+            category=row[5],
+            price=float(row[6]),
+            name2=row[7],
+            colour=row[8],
+            status=row[9],
+            material=row[10],
+            description=row[11],
+            origin=row[12]
         )
 
 

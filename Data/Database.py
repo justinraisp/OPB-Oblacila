@@ -58,25 +58,26 @@ class Repo:
         self.cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 
-    def dobi_gen(self, typ: Type[T], take=10, skip=0) -> List[T]:
+    def dobi_gen(self, typ: Type[T], take=10, skip=0, sort_by=None, smer="DESC") -> List[T]:
         """Generična metoda, ki za podan vhodni dataclass vrne seznam teh objektov iz baze.
         Predpostavljamo, da je tabeli ime natanko tako kot je ime posameznemu dataclassu.
         """
 
         # ustvarimo sql select stavek, kjer je ime tabele typ.__name__ oz. ime razreda
         tbl_name = typ.__name__
-        sql_cmd = f'''SELECT * FROM {tbl_name} LIMIT {take} OFFSET {skip};'''
+        sql_cmd = f'''SELECT * FROM {tbl_name}'''
+        if sort_by :
+            sql_cmd += f' ORDER BY {sort_by} {smer}'
+
+        sql_cmd += f' LIMIT {take} OFFSET {skip};'
         self.cur.execute(sql_cmd)
 
-        # Assuming the database columns are named id, sku, and proizvajalcev_sku
         columns = []
         for atribut in fields(typ):
             columns += [atribut.name]
 
-        # Map the fetched data to a list of dictionaries, where each dictionary represents a row
         fetched_data = [dict(zip(columns, row)) for row in self.cur.fetchall()]
 
-        # Use the from_dict method to create Artikel objects from the fetched data
         return [typ.from_dict(data) for data in fetched_data]
 
 
@@ -105,7 +106,6 @@ class Repo:
         self.cur.execute(sql_cmd, (id,))
         self.conn.commit()
 
-       
 
     
     def dodaj_gen(self, typ: T, serial_col="id", auto_commit=True):
@@ -317,18 +317,32 @@ class Repo:
         self.cur.execute(sql_cmd)
         self.conn.commit()
 
-
     def dobi_Artikel(self, sku):
         # Preverimo, če Artikel že obstaja
         print(sku)
-        self.cur.execute(f"""SELECT * FROM glavna WHERE "Sku" = '{sku}';""")
+        self.cur.execute("""SELECT * FROM glavna WHERE sku = %s;""",(sku,))
         row = self.cur.fetchone()
         if row:
             return(Glavna.create_glavna_from_row(row))
         
         raise Exception("Artikel z imenom " + sku + " ne obstaja")
-
     
+    def dobi_Artikle(self, sku_list):
+        skus = tuple(sku_list) 
+        placeholders = ",".join(["%s"] * len(sku_list)) 
+        query = f"""SELECT * FROM glavna WHERE sku IN ({placeholders});"""
+        
+        self.cur.execute(query, skus)
+        rows = self.cur.fetchall()
+        artikli = []
+
+        for row in rows:
+            artikli.append(Glavna.create_glavna_from_row(row))
+
+        return artikli
+
+
+
     def dodaj_Artikel(self, Artikel: Artikel) -> Artikel:
 
         # Preverimo, če Artikel že obstaja
@@ -359,12 +373,32 @@ class Repo:
 
         return [id for id in artikli]
     
+    def ustvari_tabelo_glavna(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS glavna (
+            sku TEXT PRIMARY KEY,
+            style TEXT,
+            name TEXT,
+            size TEXT,
+            manufacturer TEXT,
+            categories TEXT,
+            price FLOAT,
+            name2 TEXT, 
+            colour TEXT,
+            status TEXT, 
+            material TEXT, 
+            description TEXT,
+            origin TEXT
+        );
+        """
+        self.cur.execute(sql)
+        self.conn.commit()
+        print("Tabela 'glavna' ustvarjena ali že obstaja.")
 
     def ustvari_tabelo_kosarica(self):
         sql = """
         CREATE TABLE IF NOT EXISTS kosarica (
-            id SERIAL PRIMARY KEY,
-            Uporabnik TEXT NOT NULL,
+            Uporabnik TEXT PRIMARY KEY,
             Izdelki JSONB
         );
         """
@@ -430,10 +464,36 @@ class Repo:
         self.cur.execute(sql)
         self.conn.commit()
         print("Tabela 'zaloga' ustvarjena ali že obstaja.")     
+
+    def join_tables(self, tabela1, tabela2, join_column):
+
+        sql = f"""
+        SELECT *
+        FROM {tabela1}
+        LEFT JOIN {tabela2} ON {tabela1}.{join_column} = {tabela2}.{join_column};
+        """
+        self.cur.execute(sql)
+        result = self.cur.fetchall()
+        print(result[0:3])
+        return result
+
+    def pridobi_ocene(self, artikli, max=False):
+        skuji = [artikel.sku for artikel in artikli]
+        ocene = []
+        if max: 
+            self.cur.execute("")
+        for sku in skuji:
+            self.cur.execute("""SELECT sku, ocena, st_ocen FROM ocenepredmetov WHERE sku = %s;""", (sku,))
+            result = self.cur.fetchone()
+            if result:
+                sku, ocena, st_ocen = result
+                ocene.append(OcenePredmetov(sku,ocena,st_ocen))
         
-    def glavna_nalozi_iskanje(self, iskalni_niz):
+        return ocene
+
+    def glavna_nalozi_iskanje(self, iskalni_niz, stolpec):
         pattern = f"%{iskalni_niz}%"
-        self.cur.execute("""SELECT * FROM glavna WHERE "Sku" ILIKE %s;""", (pattern,))
+        self.cur.execute(f"""SELECT * FROM glavna WHERE {stolpec} ILIKE %s;""", (pattern,))
         rows = self.cur.fetchall()
         columns = []
         for atribut in fields(Glavna):
@@ -485,7 +545,7 @@ class Repo:
         return zgodovina
 
     def oceni_artikel(self, sku, nova_ocena):
-        self.cur.execute("SELECT * FROM ocene_predmetov WHERE  sku = %s;", (sku,))
+        self.cur.execute("SELECT * FROM ocenepredmetov WHERE  sku = %s;", (sku,))
         trenutna_ocena = self.cur.fetchone()
         if trenutna_ocena:
             st_ocen = int(trenutna_ocena['st_ocen']) + 1
@@ -493,7 +553,7 @@ class Repo:
             self.cur.execute("UPDATE ocene_predmetov SET ocena = %s, st_ocen = %s WHERE  sku = %s;",
                             (nova_povprecna_ocena, st_ocen, sku,))
         else:
-            self.cur.execute("INSERT INTO ocene_predmetov (sku, ocena, st_ocen) VALUES (%s, %s, 1);",
+            self.cur.execute("INSERT INTO ocenepredmetov (sku, ocena, st_ocen) VALUES (%s, %s, 1);",
                             (sku, nova_ocena,))
         self.conn.commit()
 

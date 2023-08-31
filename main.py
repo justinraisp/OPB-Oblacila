@@ -1,3 +1,4 @@
+from dataclasses import fields
 from math import ceil
 import bottle
 from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
@@ -22,6 +23,19 @@ filtri2 = [ "SKU","proizvajalcev_SKU","stil","tip_barve","tip_velikosti","barva"
 filtri11 = [ "Proizvajalčev SKU","Tip barve","Tip velikosti","Koda barve", "Sortirni red barve","Koda proizvajalca","CMYK","RGB","Evropska številka artikla","Število v paketu","Število v kartonu","Teža","Ime (Nemščina)","Ime (Češčina)","Opis materiala (Nemščina)","Opis materiala (Češčina)","Opis artikla (Nemščina)","Opis artikla (Češčina)","Stran kataloga" ]
 filtri22 = [ "proizvajalcev_SKU","tip_barve","tip_velikosti","koda_barve","sortirni_red_barve","koda_proizvajalca","CMYK","RGB","evropska_stevilka_artikla","stevilo_v_paketu","stevilo_v_kartonu","teza","ime","ime_nemscina","ime_cescina","opis_materiala_nemscina","opis_materiala_cescina","opis_artikla_nemscina","opis_artikla_cescina","stran_kataloga"]
 
+glavna_stolpci = ["sku", 
+    "style", 
+    "name", 
+    "size", 
+    "manufacturer", 
+    "category", 
+    "price", 
+    "name2", 
+    "colour", 
+    "status", 
+    "material", 
+    "description", 
+    "origin"]
 
 def cookie_required(f):
     """
@@ -46,13 +60,40 @@ def prikaz_strani_artikel():
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
-    artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
     if rola == "guest":
         artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
-        return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba= "")
+        ocene = repo.pridobi_ocene(artikli)
+        return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba= "", ocene=ocene,glavna_stolpci=glavna_stolpci)
     if rola == "admin":
         artikli = repo.dobi_gen(Zaloga,take=artikli_na_stran,skip=zacetni_indeks)
         return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="")
+
+@bottle.route("/razvrsti", method=["POST", "GET"])
+def poizvedba():
+    uporabnik = request.get_cookie("uporabnik")
+    print(uporabnik)
+    stanje = repo.dobi_stanje(uporabnik)
+    rola= request.get_cookie("rola")
+    if request.forms.get("sortiranje"):
+        stolpec = request.forms.get("sortiranje").split()[0]
+        smer = request.forms.get("sortiranje").split()[1]
+        response.set_cookie("sortiranje", request.forms.get("sortiranje"))
+    else:
+        stolpec = request.get_cookie("sortiranje").split()[0]
+        smer = request.get_cookie("sortiranje").split()[1]
+    trenutna_stran = int(request.query.get("stran", 1))
+    artikli_na_stran = 10
+    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
+    koncni_indeks = zacetni_indeks + artikli_na_stran
+    if stolpec == "price":
+        artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks,sort_by=stolpec, smer=smer)
+        ocene = repo.pridobi_ocene(artikli)
+    else:
+        ocene = repo.dobi_gen(OcenePredmetov,take=artikli_na_stran,skip=zacetni_indeks,sort_by=stolpec, smer=smer)
+        skuji = [ocena.sku for ocena in ocene]
+        artikli = repo.dobi_Artikle(skuji)
+    max_stran = ceil(106871 / artikli_na_stran)
+    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="razvrsti", ocene=ocene,glavna_stolpci=glavna_stolpci)
 
 @bottle.route("/artikel/<sku>")
 @cookie_required
@@ -156,21 +197,14 @@ def izvedi_nakup():
     trenutno_stanje = repo.dobi_stanje(uporabnik)
     skupna_cena = 0
     kosarica = repo.kosarica_nalozi(uporabnik)
-    #trenutna_transakcija = repo.transakcija_nalozi(uporabnik)
-    #print(trenutna_transakcija)
-    
-    izdelki_v_kosarici = kosarica.to_dict().get("izdelki", {}) 
-    
+    izdelki_v_kosarici = kosarica.to_dict().get("izdelki", {})  
     for izdelek in izdelki_v_kosarici.values():
         skupna_cena += izdelek["cena"]
-
     if trenutno_stanje.bilanca < skupna_cena:
         return template("kosarica.html", artikli=izdelki_v_kosarici, uporabnik=uporabnik, stanje=trenutno_stanje,
-                        napaka="Nimate dovolj sredstev za nakup.")
-    
+                        napaka="Nimate dovolj sredstev za nakup.")  
     for izdelek in izdelki_v_kosarici.keys():
         repo.posodobi_zaloga(izdelek, izdelki_v_kosarici[izdelek]["kolicina"],dodaj=False)
-
     repo.posodobi_stanje(uporabnik, -skupna_cena)
     datum = date.today().isoformat()
     repo.transakcija_shrani(Transakcija(uporabnik=uporabnik, datum=datum,kosarica=izdelki_v_kosarici,skupna_cena=skupna_cena))
@@ -209,18 +243,27 @@ def dodaj_zalogo(sku):
     bottle.redirect("/")
 
 
-@bottle.route("/dodaj-zalogo/")
+@bottle.route("/dodaj_zalogo_stran/")
 @cookie_required
 def prikaz_strani_zaloga():
-    artikli_na_stran = 10
-    max_stran = ceil(106871 / artikli_na_stran)
-    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
-    zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
-    koncni_indeks = zacetni_indeks + artikli_na_stran
-    artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
     uporabnik = request.get_cookie("uporabnik")
     rola= request.get_cookie("rola")
-    return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22,artikli=artikli,max_stran=max_stran,trenutna_stran=trenutna_stran)
+    artikel = Glavna()
+    artikli = repo.dobi_gen(Glavna)
+    print(artikel)
+    return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22,artikel = artikel,artikli=artikli)
+
+@bottle.route("/dodaj_zalogo_novo/", method="post")
+@cookie_required
+def dodaj_zalogo():
+    podatki = {}
+    for atribut in fields(Glavna()):
+        podatki[atribut.name] = bottle.request.forms.get(atribut.name)
+    artikel = Glavna(**podatki)
+    print(artikel)
+    repo.dodaj_gen(artikel,serial_col=None)
+    #repo.posodobi_zaloga(sku, kolicina_dodaj,dodaj=True)
+    bottle.redirect("/")
 
 @bottle.route("/zaloga/izbrisi")
 @cookie_required
@@ -276,21 +319,24 @@ def tocno_kaj_izbrisi_zalogo():
     #dodaj v zalogo
     return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola )
 
-@bottle.route("/poizvedba_prikazi/<iskanje>")
+@bottle.route("/poizvedba_prikazi/<iskanje>/<atribut>")
 @cookie_required
-def prikaz_strani_artikel(iskanje):
+def prikaz_strani_artikel(iskanje,atribut):
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
-    rezultati_iskanja = repo.glavna_nalozi_iskanje(iskanje)
+    rezultati_iskanja = repo.glavna_nalozi_iskanje(iskanje,stolpec=atribut)
     artikli_na_stran = 10
     max_stran = ceil(len(rezultati_iskanja) / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
-    poizvedba = "poizvedba_prikazi/" + iskanje
-    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba)
+    poizvedba = "poizvedba_prikazi/" + iskanje + "/" + atribut
+    ocene = repo.pridobi_ocene(artikli)
+    print(artikli)
+    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci)
+
 
 
 @bottle.post("/poizvedba/")
@@ -304,177 +350,14 @@ def poizvedba():
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
+    atribut = request.forms.get("iskanje_atribut")
     try:
         iskanje = bottle.request.forms["iskanje"]
     except UnicodeError:
         iskanje = False
         rezultati_iskanja = None
-    try:
-        SKU = bottle.request.forms["SKU"]
-        SKU = True
-    except:
-        SKU = False
-    try:
-        stil = bottle.request.forms["stil"]
-        stil = True
-    except:
-        stil = False
-    try:
-        proizvajalcev_SKU = bottle.request.forms["proizvajalcev_SKU"]
-        proizvajalcev_SKU = True
-    except:
-        proizvajalcev_SKU = False
-    try:
-        tip_barve = bottle.request.forms["tip_barve"]
-        tip_barve = True
-    except:
-        tip_barve = False
-    try:    
-        tip_velikosti = bottle.request.forms["tip_velikosti"]
-        tip_velikosti = True
-    except:
-        tip_velikosti = False
-    try:
-        barva = bottle.request.forms["barva"]
-        barva = True
-    except:
-        barva = False
-    try:    
-        koda_barve = bottle.request.forms["koda_barve"]
-        koda_barve = True
-    except:
-        koda_barve = False
-    try:
-        ime_barve = bottle.request.forms["ime_barve"]
-        ime_barve=True
-    except:
-      ime_barve=False
-    try:
-        sortirni_red_barve = bottle.request.forms["sortirni_red_barve"]
-        sortirni_red_barve = True
-    except:
-        sortirni_red_barve = False
-    try:
-        koda_proizvajalca = bottle.request.forms["koda_proizvajalca"]
-        koda_proizvajalca = True
-    except:
-        koda_proizvajalca = False
-    try:
-        CMYK = bottle.request.forms["CMYK"]
-        CMYK = True
-    except:
-        CMYK = False
-    try:
-        RGB = bottle.request.forms["RGB"]
-        RGB = True
-    except:
-        RGB = False
-    try:
-        evropska_stevilka_artikla = bottle.request.forms["evropska_stevilka_artikla"]
-        evropska_stevilka_artikla = True
-    except:
-        evropska_stevilka_artikla = False
-    try:
-        ime_proizvajalca = bottle.request.forms["ime_proizvajalca"]
-        ime_proizvajalca = True
-    except:
-        ime_proizvajalca = False
-    try:
-        stevilo_v_paketu = bottle.request.forms["stevilo_v_paketu"]
-        stevilo_v_paketu = True
-    except:
-        stevilo_v_paketu = False
-    try:
-        stevilo_v_kartonu = bottle.request.forms["stevilo_v_kartonu"]
-        tevilo_v_kartonu = True
-    except:
-        stevilo_v_kartonu = False
-    try:
-        velikost = bottle.request.forms["velikost"]
-        velikost = True
-    except:
-        velikost = False
-    try:
-        status = bottle.request.forms["status"]
-        status = True
-    except:
-        status = False
-    try:
-        teza = bottle.request.forms["teza"]
-        teza = True
-    except:
-        teza = False
-    try:
-        ime = bottle.request.forms["ime"]
-        ime = True
-    except:
-        ime= False
-    try:
-        ime_nemscina = bottle.request.forms["ime_nemscina"]
-        ime_nemscina = True
-    except:
-        ime_nemscina = False
-    try:
-        ime_anglescina = bottle.request.forms["ime_anglescina"]
-        ime_anglescina = True
-    except:
-        ime_anglescina = False
-    try:
-        ime_cescina = bottle.request.forms["ime_cescina"]
-        ime_cescina = True
-    except:
-        ime_cescina = False
-    try:
-        opis_materiala_nemscina = bottle.request.forms["opis_materiala_nemscina"]
-        opis_materiala_nemscina = True
-    except:
-        opis_materiala_nemscina = False
-    try:
-        opis_materiala_anglescina = bottle.request.forms["opis_materiala_anglescina"]
-        opis_materiala_anglescina = True
-    except:
-        opis_materiala_anglescina = False
-    try:
-        opis_materiala_cescina = bottle.request.forms["opis_materiala_cescina"]
-        opis_materiala_cescina = True
-    except:
-        opis_materiala_cescina = False
-    try:
-        opis_artikla_anglescina= bottle.request.forms["opis_artikla_anglescina"]
-        opis_artikla_anglescina = True
-    except:
-        opis_artikla_anglescina = False
-    try:
-        opis_artikla_nemscina = bottle.request.forms["opis_artikla_nemscina"]
-        opis_artikla_nemscina = True
-    except:
-        opis_artikla_nemscina = False
-    try:
-        opis_artikla_cescina = bottle.request.forms["opis_artikla_cescina"]
-        opis_artikla_cescina = True
-    except:
-        opis_artikla_cescina = False
-    try:
-        stran_kataloga = bottle.request.forms["stran_kataloga"]
-        stran_kataloga = True
-    except:
-        stran_kataloga = False
-    try:
-        cena = bottle.request.forms["cena"]
-        cena= True
-    except:
-        cena = False
-    try:
-        izvor = bottle.request.forms["izvor"]
-        izvor = True
-    except:
-        izvor = False
-    try:
-        vrsta = bottle.request.forms["vrsta"]
-        vrsta = True
-    except:
-        vrsta = False
-    bottle.redirect(f"/poizvedba_prikazi/{iskanje}" )
+
+    bottle.redirect(f"/poizvedba_prikazi/{iskanje}/{atribut}" )
 
 
 @bottle.route("/poizvedba_zaloga_prikazi/<iskanje>")
@@ -509,171 +392,7 @@ def poizvedba_zaloga():
         iskanje = bottle.request.forms["iskanje"]
     except UnicodeError:
         iskanje = False
-    try:
-        SKU = bottle.request.forms["SKU"]
-        SKU = True
-    except:
-        SKU = False
-    try:
-        stil = bottle.request.forms["stil"]
-        stil = True
-    except:
-        stil = False
-    try:
-        proizvajalcev_SKU = bottle.request.forms["proizvajalcev_SKU"]
-        proizvajalcev_SKU = True
-    except:
-        proizvajalcev_SKU = False
-    try:
-        tip_barve = bottle.request.forms["tip_barve"]
-        tip_barve = True
-    except:
-        tip_barve = False
-    try:    
-        tip_velikosti = bottle.request.forms["tip_velikosti"]
-        tip_velikosti = True
-    except:
-        tip_velikosti = False
-    try:
-        barva = bottle.request.forms["barva"]
-        barva = True
-    except:
-        barva = False
-    try:    
-        koda_barve = bottle.request.forms["koda_barve"]
-        koda_barve = True
-    except:
-        koda_barve = False
-    try:
-        ime_barve = bottle.request.forms["ime_barve"]
-        ime_barve=True
-    except:
-      ime_barve=False
-    try:
-        sortirni_red_barve = bottle.request.forms["sortirni_red_barve"]
-        sortirni_red_barve = True
-    except:
-        sortirni_red_barve = False
-    try:
-        koda_proizvajalca = bottle.request.forms["koda_proizvajalca"]
-        koda_proizvajalca = True
-    except:
-        koda_proizvajalca = False
-    try:
-        CMYK = bottle.request.forms["CMYK"]
-        CMYK = True
-    except:
-        CMYK = False
-    try:
-        RGB = bottle.request.forms["RGB"]
-        RGB = True
-    except:
-        RGB = False
-    try:
-        evropska_stevilka_artikla = bottle.request.forms["evropska_stevilka_artikla"]
-        evropska_stevilka_artikla = True
-    except:
-        evropska_stevilka_artikla = False
-    try:
-        ime_proizvajalca = bottle.request.forms["ime_proizvajalca"]
-        ime_proizvajalca = True
-    except:
-        ime_proizvajalca = False
-    try:
-        stevilo_v_paketu = bottle.request.forms["stevilo_v_paketu"]
-        stevilo_v_paketu = True
-    except:
-        stevilo_v_paketu = False
-    try:
-        stevilo_v_kartonu = bottle.request.forms["stevilo_v_kartonu"]
-        tevilo_v_kartonu = True
-    except:
-        stevilo_v_kartonu = False
-    try:
-        velikost = bottle.request.forms["velikost"]
-        velikost = True
-    except:
-        velikost = False
-    try:
-        status = bottle.request.forms["status"]
-        status = True
-    except:
-        status = False
-    try:
-        teza = bottle.request.forms["teza"]
-        teza = True
-    except:
-        teza = False
-    try:
-        ime = bottle.request.forms["ime"]
-        ime = True
-    except:
-        ime= False
-    try:
-        ime_nemscina = bottle.request.forms["ime_nemscina"]
-        ime_nemscina = True
-    except:
-        ime_nemscina = False
-    try:
-        ime_anglescina = bottle.request.forms["ime_anglescina"]
-        ime_anglescina = True
-    except:
-        ime_anglescina = False
-    try:
-        ime_cescina = bottle.request.forms["ime_cescina"]
-        ime_cescina = True
-    except:
-        ime_cescina = False
-    try:
-        opis_materiala_nemscina = bottle.request.forms["opis_materiala_nemscina"]
-        opis_materiala_nemscina = True
-    except:
-        opis_materiala_nemscina = False
-    try:
-        opis_materiala_anglescina = bottle.request.forms["opis_materiala_anglescina"]
-        opis_materiala_anglescina = True
-    except:
-        opis_materiala_anglescina = False
-    try:
-        opis_materiala_cescina = bottle.request.forms["opis_materiala_cescina"]
-        opis_materiala_cescina = True
-    except:
-        opis_materiala_cescina = False
-    try:
-        opis_artikla_anglescina= bottle.request.forms["opis_artikla_anglescina"]
-        opis_artikla_anglescina = True
-    except:
-        opis_artikla_anglescina = False
-    try:
-        opis_artikla_nemscina = bottle.request.forms["opis_artikla_nemscina"]
-        opis_artikla_nemscina = True
-    except:
-        opis_artikla_nemscina = False
-    try:
-        opis_artikla_cescina = bottle.request.forms["opis_artikla_cescina"]
-        opis_artikla_cescina = True
-    except:
-        opis_artikla_cescina = False
-    try:
-        stran_kataloga = bottle.request.forms["stran_kataloga"]
-        stran_kataloga = True
-    except:
-        stran_kataloga = False
-    try:
-        cena = bottle.request.forms["cena"]
-        cena= True
-    except:
-        cena = False
-    try:
-        izvor = bottle.request.forms["izvor"]
-        izvor = True
-    except:
-        izvor = False
-    try:
-        vrsta = bottle.request.forms["vrsta"]
-        vrsta = True
-    except:
-        vrsta = False
+
     bottle.redirect(f"/poizvedba_zaloga_prikazi/{iskanje}")
 
 @bottle.post("/poizvedba-dodaj/")
@@ -683,171 +402,7 @@ def poizvedba_dodaj():
         iskanje = bottle.request.forms["iskanje"];
     except UnicodeError:
         iskanje = False
-    try:
-        SKU = bottle.request.forms["SKU"]
-        SKU = True
-    except:
-        SKU = False
-    try:
-        stil = bottle.request.forms["stil"]
-        stil = True
-    except:
-        stil = False
-    try:
-        proizvajalcev_SKU = bottle.request.forms["proizvajalcev_SKU"]
-        proizvajalcev_SKU = True
-    except:
-        proizvajalcev_SKU = False
-    try:
-        tip_barve = bottle.request.forms["tip_barve"]
-        tip_barve = True
-    except:
-        tip_barve = False
-    try:    
-        tip_velikosti = bottle.request.forms["tip_velikosti"]
-        tip_velikosti = True
-    except:
-        tip_velikosti = False
-    try:
-        barva = bottle.request.forms["barva"]
-        barva = True
-    except:
-        barva = False
-    try:    
-        koda_barve = bottle.request.forms["koda_barve"]
-        koda_barve = True
-    except:
-        koda_barve = False
-    try:
-        ime_barve = bottle.request.forms["ime_barve"]
-        ime_barve=True
-    except:
-      ime_barve=False
-    try:
-        sortirni_red_barve = bottle.request.forms["sortirni_red_barve"]
-        sortirni_red_barve = True
-    except:
-        sortirni_red_barve = False
-    try:
-        koda_proizvajalca = bottle.request.forms["koda_proizvajalca"]
-        koda_proizvajalca = True
-    except:
-        koda_proizvajalca = False
-    try:
-        CMYK = bottle.request.forms["CMYK"]
-        CMYK = True
-    except:
-        CMYK = False
-    try:
-        RGB = bottle.request.forms["RGB"]
-        RGB = True
-    except:
-        RGB = False
-    try:
-        evropska_stevilka_artikla = bottle.request.forms["evropska_stevilka_artikla"]
-        evropska_stevilka_artikla = True
-    except:
-        evropska_stevilka_artikla = False
-    try:
-        ime_proizvajalca = bottle.request.forms["ime_proizvajalca"]
-        ime_proizvajalca = True
-    except:
-        ime_proizvajalca = False
-    try:
-        stevilo_v_paketu = bottle.request.forms["stevilo_v_paketu"]
-        stevilo_v_paketu = True
-    except:
-        stevilo_v_paketu = False
-    try:
-        stevilo_v_kartonu = bottle.request.forms["stevilo_v_kartonu"]
-        tevilo_v_kartonu = True
-    except:
-        stevilo_v_kartonu = False
-    try:
-        velikost = bottle.request.forms["velikost"]
-        velikost = True
-    except:
-        velikost = False
-    try:
-        status = bottle.request.forms["status"]
-        status = True
-    except:
-        status = False
-    try:
-        teza = bottle.request.forms["teza"]
-        teza = True
-    except:
-        teza = False
-    try:
-        ime = bottle.request.forms["ime"]
-        ime = True
-    except:
-        ime= False
-    try:
-        ime_nemscina = bottle.request.forms["ime_nemscina"]
-        ime_nemscina = True
-    except:
-        ime_nemscina = False
-    try:
-        ime_anglescina = bottle.request.forms["ime_anglescina"]
-        ime_anglescina = True
-    except:
-        ime_anglescina = False
-    try:
-        ime_cescina = bottle.request.forms["ime_cescina"]
-        ime_cescina = True
-    except:
-        ime_cescina = False
-    try:
-        opis_materiala_nemscina = bottle.request.forms["opis_materiala_nemscina"]
-        opis_materiala_nemscina = True
-    except:
-        opis_materiala_nemscina = False
-    try:
-        opis_materiala_anglescina = bottle.request.forms["opis_materiala_anglescina"]
-        opis_materiala_anglescina = True
-    except:
-        opis_materiala_anglescina = False
-    try:
-        opis_materiala_cescina = bottle.request.forms["opis_materiala_cescina"]
-        opis_materiala_cescina = True
-    except:
-        opis_materiala_cescina = False
-    try:
-        opis_artikla_anglescina= bottle.request.forms["opis_artikla_anglescina"]
-        opis_artikla_anglescina = True
-    except:
-        opis_artikla_anglescina = False
-    try:
-        opis_artikla_nemscina = bottle.request.forms["opis_artikla_nemscina"]
-        opis_artikla_nemscina = True
-    except:
-        opis_artikla_nemscina = False
-    try:
-        opis_artikla_cescina = bottle.request.forms["opis_artikla_cescina"]
-        opis_artikla_cescina = True
-    except:
-        opis_artikla_cescina = False
-    try:
-        stran_kataloga = bottle.request.forms["stran_kataloga"]
-        stran_kataloga = True
-    except:
-        stran_kataloga = False
-    try:
-        cena = bottle.request.forms["cena"]
-        cena= True
-    except:
-        cena = False
-    try:
-        izvor = bottle.request.forms["izvor"]
-        izvor = True
-    except:
-        izvor = False
-    try:
-        vrsta = bottle.request.forms["vrsta"]
-        vrsta = True
-    except:
-        vrsta = False
+
     bottle.redirect("/dodaj-zalogo/")
 
 

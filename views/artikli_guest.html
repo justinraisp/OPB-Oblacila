@@ -74,8 +74,6 @@
         /* Underline the text on hover */
     }
 
-
-
     .btn:hover {
 
         background-color: hsl(171, 80%, 41%);
@@ -140,7 +138,6 @@
                     </div>
                     % end
 
-
                 </div>
             </nav>
         </div>
@@ -148,8 +145,6 @@
         <section class="hero is-primary">
             <div class="hero-body">
                 <form action="/poizvedba/" method="POST">
-
-
 
                     <div class="field has-addons">
                         <label for="" class="label">
@@ -159,6 +154,17 @@
                             <input type="text" name="iskanje" class="input is-primary" placeholder="Išči...">
                         </p>
                         <p class="control">
+                            <div class="select">
+                                <select name="iskanje_atribut">
+                                    %for stolpec in glavna_stolpci:
+                                    %if stolpec not in ["material", "origin", "description"]:
+                                    <option value={{stolpec}}>{{stolpec}}</option>
+                                    %end
+                                    %end
+                                </select>
+                            </div>
+                        </p>
+                        <p class="control">
                             <button type="submit" class="button" href=""
                                 style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
                                 <i class="fas fa-search"></i>
@@ -166,11 +172,7 @@
                         </p>
 
                     </div>
-
-
-
-
-
+<!--
                     <div class="table-container">
                         <table class="table"
                             style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
@@ -182,16 +184,9 @@
                                     % if k <= 18: 
                                     <label class="custom-checkbox">
                                         <input type="checkbox" name={{filtri2[k]}}>
-
-                                        <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
+                                        <span class="checkmark"></span> 
                                         {{filtri1[k]}}
                                         </label>
-
-
-
-
-
-
                                         % end
                                 </td>
                                 % if j != 5:
@@ -203,17 +198,38 @@
                             % end
                         </table>
                     </div>
-
+-->
                 </form>
+
+                <form id="sorting-form" action="/razvrsti" method="POST">
+                
+                    <div class="field">
+                        <label class="label">Razvrsti:</label>
+                        <div class="control">
+                            <div class="select">
+                                <select id="sortiranje" name="sortiranje">
+                                    <option value="">Brez razvrščanja</option>
+                                    <option value="price ASC">Cenejši naprej</option>
+                                    <option value="price DESC">Dražji naprej</option>
+                                    <option value="ocena DESC">Najbolje ocenjeni</option>
+                                    <option value="ocena ASC">Najslabše ocenjeni</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="artikli" value="{{ artikli }}">
+                </form>
+                
+                <script>
+                    document.getElementById("sortiranje").addEventListener("change", function() {
+                        document.getElementById("sorting-form").submit();
+                    });
+                </script>
 
             </div>
 
-
-
         </section>
-
-
-
+        %if artikli:
 
         <div class="table-container" style="padding-top:25px">
 
@@ -225,20 +241,20 @@
                             <th>{{atribut.name}}</th>
                             %end
                             %if atribut.name == "material":
+                            <th>Ocena</th>
                             <th></th>
                             %end
                         %end
-                        % if rola=="guest":
                         <th >Dodaj v košarico</th>
-                        % end
                     </tr>
                 </thead>
                 <tbody>
-                    %for artikel in artikli:
+                    %for i, artikel in enumerate(artikli):
                     <tr class="vrstica">
                         %for atribut in fields(artikli[0]):
                         % k = atribut.name
                         % if atribut.name == "material":
+                        <td>{{ round(ocene[i].ocena,2) }}</td>
                         <td>
                             <a href="/artikel/{{ artikel.sku }}" class="button is-small">
                                 <span>Prikaži več</span>
@@ -254,29 +270,20 @@
                         % else:
                         <td> {{getattr(artikel, atribut.name)}}</td>
                         % end
-                        %end
-
-                        % if rola=="guest":
+                        % end
+                        
                         <td>
-
-                            
-
                                 <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="post">
-                                    <input type="hidden" name="artikel_cena" value="{{artikel.price}}">
-                                    
+                                    <input type="hidden" name="artikel_cena" value="{{artikel.price}}">                                    
                                       
                                         <input type="number" min=1 name="kolicina_za_v_kosarico" style="width: 100%;" class="input is-primary"
-                                            placeholder="Količina" required>
+                                            placeholder="Količina" required>                                   
                                     
-                                    
-                                        <button type="submit" style="width: 100%;" class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>
-                                    
-                                    
+                                        <button type="submit" style="width: 100%;" class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>                                    
                                     
                                 </form>
 
                         </td>
-                        % end
                     </tr>
                     %end
                 </tbody>
@@ -360,13 +367,11 @@
                 </a>
                 % end
             </nav>
+            %else:
+            <p>Seznam rezultatov je prazen.</p>
+            %end
         </div>
-
-
     </div>
-
-
 </body>
-
 
 </html>

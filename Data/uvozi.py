@@ -19,10 +19,11 @@ def uvozi_csv(pot, ime):
     df.replace(to_replace="-", value="", inplace=True)
 
     # Naredimo tabelo z dodatnim serial primary key stolpcem
-    repo.df_to_sql_create(df, ime, add_serial=True, use_camel_case=True)
+    #repo.df_to_sql_create(df, ime, add_serial=False, use_camel_case=True)
+    repo.ustvari_tabelo_glavna()
 
     # uvozimo podatke v to isto tabelo
-    repo.df_to_sql_insert(df, ime, use_camel_case=True)
+    repo.df_to_sql_insert(df, ime, use_camel_case=False)
 
 #repo.ustvari_tabelo_kosarica()
 #repo.ustvari_tabelo_ocene()
