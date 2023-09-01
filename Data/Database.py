@@ -622,6 +622,8 @@ class Repo:
         self.conn.commit()
 
     
+
+    
     def generiraj_nakljucne_ocene(self, st_ocen):
         self.cur.execute("""SELECT "Sku" FROM glavna;""")
         artikli = self.cur.fetchall()

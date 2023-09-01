@@ -60,6 +60,7 @@ def prikaz_strani_artikel():
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
+    print(repo.dobi_statistiko())
     if rola == "guest":
         artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
         ocene = repo.pridobi_ocene(artikli)
