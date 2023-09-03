@@ -1,66 +1,225 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistika</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-        h1 {
-            margin-bottom: 10px;
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+        integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        p {
-            margin-bottom: 5px;
-        }
-
-        .button {
-            display: inline-block;
-            margin: 5px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .popup {
-            display: none;
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            z-index: 1000;
-        }
-
-        .popup-content {
-            background-color: white;
-            width: 50%;
-            padding: 20px;
-            position: absolute;
-            left: 25%;
-            top: 20%;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+    <title>Artikli</title>
 </head>
-<body>
-    <h1>Statistika naročil</h1>
-    <p>Število vseh naročil: {{ stevilo_vseh_narocil }}</p>
-    <p>Število naročil v tem mesecu: {{ stevilo_narocil_v_mesecu }}</p>
-    <p>Skupen znesek naročil: {{ skupen_znesek_narocil }} €</p>
-    <a href="/zgodovina" class="button">Poglej zgodovino nakupov</a>
+<style>
+    /* Hide the default checkbox */
+    .custom-checkbox input[type="checkbox"] {
+        display: none;
+    }
 
-    <a href="/" class="button">Nazaj na glavno stran</a>
+    /* Style the custom checkbox container */
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+        /* Align the text with the checkbox */
+        cursor: pointer;
+        /* Show the pointer cursor on hover */
+        margin-bottom: 10px;
+        /* Optional: Add some spacing between each checkbox */
+    }
+
+    /* Style the custom checkbox */
+    .custom-checkbox .checkmark {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border: 1px solid hsl(171, 80%, 41%);
+        ;
+        position: relative;
+        margin-right: 8px;
+        /* Optional: Add some spacing between checkbox and text */
+    }
+
+    /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+        content: "\2713";
+        /* Unicode for checkmark symbol */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        color: #fff;
+        /* Color of the checkmark when checked */
+    }
+
+    /* Customize the background color when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+        background-color: hsl(171, 100%, 41%);
+        ;
+        /* Red background when checked */
+        border-color: white;
+        /* Red border color when checked */
+    }
+
+    /* Style the text when hovered */
+    .custom-checkbox:hover {
+        text-decoration: underline;
+        /* Underline the text on hover */
+    }
+
+
+
+    .btn:hover {
+
+        background-color: hsl(171, 80%, 41%);
+        color: white;
+        border-color: hsl(171, 100%, 41%);
+
+    }
+
+    .btn {
+
+        background-color: white;
+        color: hsl(171, 100%, 41%);
+        border-color: hsl(171, 100%, 41%);
+    }
+
+    .vrstica:hover {
+        background-color: hsl(171, 100%, 41%);
+    }
+</style>
+
+<body>
+
+
+    <div class="container is-max">
+
+        <div class="block">
+            <nav class="navbar is-transparent">
+
+
+                <div id="navbarExampleTransparentExample" class="navbar-menu">
+                    <div class="navbar-start">
+
+
+                        % if rola == "admin" :
+                        <a class="navbar-item" href="/">
+                            Zaloga
+                        </a>
+                        <a class="navbar-item" href="/statistika/"
+                            style="text-decoration: underline;color: hsl(171, 100%, 41%) ;">
+                            Statistika
+                        </a>
+                        % else :
+                        <a class="navbar-item" href="/kosarica/">
+                            <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                            Košarica
+                        </a>
+                        % end
+                        <a class="navbar-item" href="/odjava">
+                            Odjava
+                        </a>
+                    </div>
+                    <div class="navbar-end">
+                        <a class="navbar-item" href="/uporabnik_admin/">
+                            Uporabniško ime: {{ uporabnik }}
+                        </a>
+                    </div>
+
+
+                </div>
+            </nav>
+        </div>
+
+        <section class="hero is-primary">
+            <div class="hero-body">
+
+
+
+                <div class="title">Statistika naročil</div>
+
+                <table class="table" style="background-color: hsl(171, 80%, 41%);color: white;">
+                    <tr class="vrstica">
+                        <td>
+                            <p> <b class="title is-5">Število vseh naročil</b>: stevilo_vseh_narocil </p>
+                        </td>
+                    
+                        <td>
+                            <p> <b class="title is-5">Število naročil v tem mesecu</b>: stevilo_narocil_v_mesecu </p>
+                        </td>
+
+                        <td>
+                            <p> <b class="title is-5">Število naročil v prejšnjem mesecu</b>: stevilo_narocil_v_prejsnjem_mesecu </p>
+                        </td>
+                    </tr>
+
+                    <tr class="vrstica">
+                        <td>
+                            <p><b class="title is-5">Skupen znesek naročil</b>: skupen_znesek_narocil €</p>
+                        </td>
+                        <td>
+                            <p><b class="title is-5">Skupen znesek naročil v tem mesecu</b>: skupen_znesek_narocil_v_mesecu €</p>
+                        </td>
+                        <td>
+                            <p><b class="title is-5">Skupen znesek naročil v prejšnjem mesecu</b>: skupen_znesek_narocil €</p>
+                        </td>
+                    </tr>
+
+                    <tr class="vrstica">
+                        <td>
+                            <p><b class="title is-5">Najbolj prodajan izdelek</b>: izdelek</p>
+                        </td>
+                        <td>
+                            <p><b class="title is-5">Najbolj prodajan izdelek v tem mesecu</b>: izdelek</p>
+                        </td>
+                        <td>
+                            <p><b class="title is-5">Najbolj prodajan izdelek v prejšnjem mesecu</b>: izdelek</p>
+                        </td>
+                    </tr>
+
+                    <tr class="vrstica">
+                        <td>
+                            <p><b class="title is-5">Največja stranka</b>: uporabnik</p>
+                        </td>
+                        <td>
+                            <p><b class="title is-5">Največja strankav tem mesecu</b>: uporabnik</p>
+                        </td>
+                        <td>
+                            <p><b class="title is-5">Največja stranka v prejšnjem mesecu</b>: uporabnik</p>
+                        </td>
+                    </tr>
+
+
+
+
+                </table>
+
+
+
+
+                <a href="/zgodovina" class="button btn" style="float: left;">Poglej zgodovino nakupov</a>
+
+                <a href="/" class="button btn" style="float: right;">Nazaj na glavno stran</a>
+
+
+            </div>
+
+
+
+        </section>
+
+
+
+    </div>
+
+
+
 </body>
+
 </html>
