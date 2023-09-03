@@ -172,7 +172,7 @@
                                 % end
                                 <td>
                                     <ul>
-                                        % if rola=="guest"
+                                        % if rola=="guest":
                                         % for izdelek, podatki in transakcija['kosarica'].items():
                                             <li>{{ izdelek }} ({{ podatki['kolicina'] }} kosov) (Cena: {{podatki['cena']}}€)
                                                 % if izdelek in ocene_predmetov:
