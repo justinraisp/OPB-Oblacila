@@ -613,12 +613,15 @@ class Repo:
         else: 
             return None
         
-    def posodobi_zaloga(self, sku, kolicina_sprememba):
+    def posodobi_zaloga(self, sku, kolicina_sprememba,dodaj=True):
         self.cur.execute("SELECT kolicina FROM zaloga WHERE sku = %s;", (sku,))
         row = self.cur.fetchone()
         if row:
             kolicina = row[0]
-            kolicina += kolicina_sprememba
+            if dodaj:
+                kolicina += kolicina_sprememba
+            else: 
+                kolicina -= kolicina_sprememba
             self.cur.execute("UPDATE zaloga SET kolicina = %s WHERE sku = %s;", (kolicina,sku,))
         else:
             self.cur.execute("INSERT INTO zaloga (sku, kolicina) VALUES (%s, %s);", (sku, kolicina_sprememba,))

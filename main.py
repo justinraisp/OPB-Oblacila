@@ -159,7 +159,7 @@ def dodaj_denar():
     vsota = float(request.forms.get("vsota"))
     credit_card = request.forms.get("credit-card")
     repo.posodobi_stanje(uporabnik, vsota)
-    bottle.redirect("/uporabnik/")
+    bottle.redirect("/uporabnik_guest/")
 
 
 @bottle.route("/dodaj_v_kosarico/<sku>", method="post")
