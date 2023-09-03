@@ -147,27 +147,21 @@
                 <table class="table" style="background-color: hsl(171, 80%, 41%);color: white;">
                     <tr class="vrstica">
                         <td>
-                            <p> <b class="title is-5">Število vseh naročil</b>: stevilo_vseh_narocil </p>
+                            <p> <b class="title is-5">Število vseh naročil</b>: {{stevilo_vseh_narocil}} </p>
                         </td>
                     
                         <td>
-                            <p> <b class="title is-5">Število naročil v tem mesecu</b>: stevilo_narocil_v_mesecu </p>
+                            <p> <b class="title is-5">Število naročil v tem mesecu</b>: {{stevilo_narocil_v_mesecu}} </p>
                         </td>
 
-                        <td>
-                            <p> <b class="title is-5">Število naročil v prejšnjem mesecu</b>: stevilo_narocil_v_prejsnjem_mesecu </p>
-                        </td>
                     </tr>
 
                     <tr class="vrstica">
                         <td>
-                            <p><b class="title is-5">Skupen znesek naročil</b>: skupen_znesek_narocil €</p>
+                            <p><b class="title is-5">Skupen znesek naročil</b>: {{round(skupen_znesek_narocil,2)}} €</p>
                         </td>
                         <td>
-                            <p><b class="title is-5">Skupen znesek naročil v tem mesecu</b>: skupen_znesek_narocil_v_mesecu €</p>
-                        </td>
-                        <td>
-                            <p><b class="title is-5">Skupen znesek naročil v prejšnjem mesecu</b>: skupen_znesek_narocil €</p>
+                            <p><b class="title is-5">Skupen znesek naročil v tem mesecu</b>: {{round(skupen_znesek_narocil_v_mesecu,2)}} €</p>
                         </td>
                     </tr>
 
@@ -178,9 +172,6 @@
                         <td>
                             <p><b class="title is-5">Najbolj prodajan izdelek v tem mesecu</b>: izdelek</p>
                         </td>
-                        <td>
-                            <p><b class="title is-5">Najbolj prodajan izdelek v prejšnjem mesecu</b>: izdelek</p>
-                        </td>
                     </tr>
 
                     <tr class="vrstica">
@@ -189,9 +180,6 @@
                         </td>
                         <td>
                             <p><b class="title is-5">Največja strankav tem mesecu</b>: uporabnik</p>
-                        </td>
-                        <td>
-                            <p><b class="title is-5">Največja stranka v prejšnjem mesecu</b>: uporabnik</p>
                         </td>
                     </tr>
 

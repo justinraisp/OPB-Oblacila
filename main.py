@@ -130,7 +130,11 @@ def prikaz_statistike():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
-    return template("statistika.html", stanje=stanje, uporabnik=uporabnik,rola=rola)
+    trenutni_mesec = date.today().strftime('%m')
+    stevilo_vseh_narocil, stevilo_narocil_v_mesecu, skupen_znesek_narocil, skupen_znesek_narocil_v_mesecu = repo.transakcija_statistika(trenutni_mesec)
+    return template("statistika.html", stanje=stanje, uporabnik=uporabnik,rola=rola,
+                    stevilo_vseh_narocil=stevilo_vseh_narocil,stevilo_narocil_v_mesecu=stevilo_narocil_v_mesecu,
+                    skupen_znesek_narocil=skupen_znesek_narocil, skupen_znesek_narocil_v_mesecu=skupen_znesek_narocil_v_mesecu)
 
 @bottle.route("/uporabnik_admin/")
 @cookie_required

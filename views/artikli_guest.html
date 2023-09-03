@@ -254,7 +254,11 @@
                         %for atribut in fields(artikli[0]):
                         % k = atribut.name
                         % if atribut.name == "material":
+                        %if i < len(ocene):
                         <td>{{ round(ocene[i].ocena,2) }}</td>
+                        %else:
+                        <td>0</td>
+                        %end
                         <td>
                             <a href="/artikel/{{ artikel.sku }}" class="button is-small">
                                 <span>Prikaži več</span>

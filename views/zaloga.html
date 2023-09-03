@@ -164,43 +164,6 @@
 
                     </div>
 
-
-
-
-
-                    <div class="table-container">
-                        <table class="table"
-                            style="width:100%;background-color: hsl(171, 80%, 41%); color:white;font-size: small;">
-                            % k = 0
-                            % for i in range(4):
-                            <tr>
-                                % for j in range(6):
-                                <td>
-                                    % if k <= 18: 
-                                    <label class="custom-checkbox">
-                                        <input type="checkbox" name={{filtri2[k]}}>
-
-                                        <span class="checkmark"></span> <!-- This is the custom-styled checkbox -->
-                                        {{filtri1[k]}}
-                                        </label>
-
-
-
-
-
-
-                                        % end
-                                </td>
-                                % if j != 5:
-                                % k = k+1
-                                % end
-                                % end
-                            </tr>
-                            %k = k+1
-                            % end
-                        </table>
-                    </div>
-
                 </form>
 
             </div>

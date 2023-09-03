@@ -63,7 +63,6 @@
     }
     
     
-    
         .btn:hover {
     
             background-color: hsl(171, 80%, 41%);
@@ -85,14 +84,9 @@
     </style>
 <body>
 
-
-
     <div class="container is-max" style="padding-top: 20px;">
         <section class="hero is-primary">
           <div class="hero-body">
-      
-
-
 
             <div class="title">Registracija</div>
 
@@ -101,11 +95,6 @@
                 <div style="padding-bottom: 10px;">
                     <label for="username" class="title is-5">Uporabniško ime:</label>
                     <input type="text" id="username"  name="username" class="input is-primary" required>
-                </div>
-
-                <div style="padding-bottom: 10px;">
-                    <label for="mail" class="title is-5">Email:</label>
-                    <input type="text" id="email"  name="email" class="input is-primary" required>
                 </div>
                 
                 <div style="padding-bottom: 10px;">
@@ -127,7 +116,6 @@
                         </div>
                     </p>
                     
-                    
                 </div>
                 <div>
                     <input class="button is-medium" style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ; float: right;" type="submit" value="Registracija">
@@ -137,20 +125,12 @@
             % if napaka:
             <div class="notification is-warning" style="width: 30%;">
             <p class="opozorilo">{{napaka}}</p>
-            </div>
-            
+            </div>      
             % end
-
-
-
 
           </div>
         </section>
       </div>
-
-
-
-
 
 
 </body>

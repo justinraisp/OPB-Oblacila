@@ -636,8 +636,21 @@ class Repo:
         self.cur.execute("UPDATE stanje SET bilanca = %s WHERE uporabnik = %s;", (bilanca,uporabnik))
         self.conn.commit()
 
-    
+    def transakcija_statistika(self, mesec):
+        self.cur.execute("SELECT COUNT(*) FROM transakcija")
+        stevilo_transakcij = self.cur.fetchone()[0]
 
+        self.cur.execute("SELECT COUNT(*) FROM transakcija WHERE SUBSTRING(datum, 6, 2) = %s;", (mesec,))
+        stevilo_transakcij_v_mesecu = self.cur.fetchone()[0]
+
+        self.cur.execute("SELECT SUM(skupna_cena) FROM transakcija WHERE SUBSTRING(datum, 6, 2) = %s;", (mesec,))
+        skupen_znesek_narocil_v_mesecu = self.cur.fetchone()[0] 
+
+        self.cur.execute("SELECT SUM(skupna_cena) FROM transakcija;")
+        skupen_znesek = self.cur.fetchone()[0]
+
+        self.conn.commit()
+        return stevilo_transakcij, stevilo_transakcij_v_mesecu, skupen_znesek, skupen_znesek_narocil_v_mesecu
     
     def generiraj_nakljucne_ocene(self, st_ocen):
         self.cur.execute("""SELECT "Sku" FROM glavna;""")
