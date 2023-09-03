@@ -1,48 +1,257 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+<html>
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upravljanje Administratorja</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+        integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <title>Artikli</title>
 </head>
+<style>
+    /* Hide the default checkbox */
+    .custom-checkbox input[type="checkbox"] {
+        display: none;
+    }
+
+    /* Style the custom checkbox container */
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+        /* Align the text with the checkbox */
+        cursor: pointer;
+        /* Show the pointer cursor on hover */
+        margin-bottom: 10px;
+        /* Optional: Add some spacing between each checkbox */
+    }
+
+    /* Style the custom checkbox */
+    .custom-checkbox .checkmark {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border: 1px solid hsl(171, 80%, 41%);
+        ;
+        position: relative;
+        margin-right: 8px;
+        /* Optional: Add some spacing between checkbox and text */
+    }
+
+    /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+        content: "\2713";
+        /* Unicode for checkmark symbol */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        color: #fff;
+        /* Color of the checkmark when checked */
+    }
+
+    /* Customize the background color when the checkbox is checked */
+    .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+        background-color: hsl(171, 100%, 41%);
+        ;
+        /* Red background when checked */
+        border-color: white;
+        /* Red border color when checked */
+    }
+
+    /* Style the text when hovered */
+    .custom-checkbox:hover {
+        text-decoration: underline;
+        /* Underline the text on hover */
+    }
+
+
+
+    .btn:hover {
+
+        background-color: hsl(171, 80%, 41%);
+        color: white;
+        border-color: hsl(171, 100%, 41%);
+
+    }
+
+    .btn {
+
+        background-color: white;
+        color: hsl(171, 100%, 41%);
+        border-color: hsl(171, 100%, 41%);
+    }
+
+    .vrstica:hover {
+        background-color: hsl(171, 100%, 41%);
+    }
+</style>
+
 <body>
-    <h1>Upravljanje Administratorja</h1>
 
-    <h2>Upravljanje Uporabnikov</h2>
-    <table border="1">
-        <tr>
-            <th>Uporabniško Ime</th>
-            <th>Email</th>
-            <th>Akcije</th>
-        </tr>
-        <tr>
-            <td>uporabnik1</td>
-            <td>uporabnik1@example.com</td>
-            <td>
-                <button>Blokiraj</button>
-                <button>Uredi</button>
-                <button>Obriši</button>
-            </td>
-        </tr>
-    </table>
 
-    <h2>Pregled naročil</h2>
-    <table border="1">
-        <tr>
-            <th>Naročilo ID</th>
-            <th>Uporabnik</th>
-            <th>Status</th>
-            <th>Akcije</th>
-        </tr>
-        <tr>
-            <td>123</td>
-            <td>uporabnik1</td>
-            <td>Naročeno</td>
-            <td>
-                <button>Spremeni Status</button>
-                <button>Prikaži Podrobnosti</button>
-            </td>
-        </tr>
-    </table>
+    <div class="container is-max">
+
+        <div class="block">
+            <nav class="navbar is-transparent">
+
+
+                <div id="navbarExampleTransparentExample" class="navbar-menu">
+                    <div class="navbar-start">
+
+
+                        % if rola == "admin" :
+                        <a class="navbar-item" href="/">
+                            Zaloga
+                        </a>
+                        <a class="navbar-item" href="/statistika/">
+                            Statistika
+                        </a>
+                        % else :
+                        <a class="navbar-item" href="/kosarica/">
+                            <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                            Košarica
+                        </a>
+                        % end
+                        <a class="navbar-item" href="/odjava">
+                            Odjava
+                        </a>
+                    </div>
+                    <div class="navbar-end">
+                        <a class="navbar-item" href="/uporabnik_admin/" style="text-decoration: underline; color:hsl(171, 100%, 41%); ;">
+                            Uporabniško ime: {{ uporabnik }}
+                        </a>
+                    </div>
+
+
+                </div>
+            </nav>
+        </div>
+
+        <section class="hero is-primary">
+            <div class="hero-body">
+
+
+
+                <div class="title">Upravljanje Administratorja</div>
+
+                <div class="columns">
+
+                    <div class="column">
+                        <h2 class="title is-4">Upravljanje Uporabnikov</h2>
+                        <form action="?" method="POST">
+
+                            <div class="field has-addons">
+                                
+                                <p class="control" >
+                                    <input type="text" name="iskanje" class="input is-primary" placeholder="Išči uporabnika...">
+                                </p>
+
+                                <p class="control">
+                                    <button type="submit" class="button" href=""
+                                        style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </p>
+        
+                            </div>
+                        </form>
+                        <table class="table" style="background-color: hsl(171, 100%, 41%);color: white;">
+                            <tr class="vrstica" >
+                                <th style="color: white;">Uporabniško Ime</th>
+                                <th style="color: white;">Email</th>
+                                <th style="color: white;">Akcije</th>
+                            </tr>
+                            <tr class="vrstica" >
+                                <td>uporabnik1</td>
+                                <td>uporabnik1@example.com</td>
+                                <td>
+                                    <button class="button btn is-small">Blokiraj</button>
+                                    <button class="button btn is-small">Uredi</button>
+                                    <button class="button btn is-small">Obriši</button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+
+                    <div class="column">
+
+                        <h2 class="title is-4">Pregled naročil</h2>
+
+                        <form action="?" method="POST">
+
+                            <div class="field has-addons">
+                                
+                                <p class="control" >
+                                    <input type="text" name="iskanje" class="input is-primary" placeholder="Išči ID...">
+                                </p>
+
+                                <p class="control">
+                                    <button type="submit" class="button" href=""
+                                        style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </p>
+        
+                            </div>
+                        </form>
+                        <table class="table" style="background-color: hsl(171, 100%, 41%);color: white;">
+                            <tr style="color: white;" class="vrstica" >
+                                <th style="color: white;">Naročilo ID</th>
+                                <th style="color: white;">Uporabnik</th>
+                                <th style="color: white;">Status</th>
+                                <th style="color: white;">Akcije</th>
+                            </tr>
+                            <tr class="vrstica" >
+                                <td>123</td>
+                                <td>uporabnik1</td>
+                                <td>Naročeno</td>
+                                <td>
+                                    <button class="button btn is-small">Spremeni Status</button>
+                                    <button class="button btn is-small">Prikaži Podrobnosti</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+        </section>
+
+
+
+    </div>
+
+
+
+
+
+
+
 </body>
+
 </html>

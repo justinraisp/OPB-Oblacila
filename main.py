@@ -60,7 +60,7 @@ def prikaz_strani_artikel():
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
-    print(repo.dobi_statistiko())
+    #print(repo.dobi_statistiko())
     if rola == "guest":
         artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
         ocene = repo.pridobi_ocene(artikli)
@@ -102,7 +102,8 @@ def prikaz_artikla(sku):
     uporabnik = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
     artikel = repo.dobi_Artikel(sku)
-    return template("artikel.html", artikel=artikel, rola=rola, uporabnik=uporabnik)
+    stanje= repo.dobi_stanje(uporabnik)
+    return template("artikel.html", artikel=artikel, rola=rola, uporabnik=uporabnik, stanje=stanje)
 
 
 @bottle.route("/kosarica/")
@@ -120,14 +121,24 @@ def prikaz_strani_kosarica():
 def prikaz_uporabnik():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
-    return template("uporabnik_guest.html", stanje=stanje, uporabnik=uporabnik)
+    rola= request.get_cookie("rola")
+    return template("uporabnik_guest.html", stanje=stanje, uporabnik=uporabnik, rola= rola)
+
+@bottle.route("/statistika/")
+@cookie_required
+def prikaz_statistike():
+    uporabnik = request.get_cookie("uporabnik")
+    stanje = repo.dobi_stanje(uporabnik)
+    rola= request.get_cookie("rola")
+    return template("statistika.html", stanje=stanje, uporabnik=uporabnik,rola=rola)
 
 @bottle.route("/uporabnik_admin/")
 @cookie_required
 def prikaz_uporabnik():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje("admin")
-    return template("uporabnik_admin.html", stanje=stanje, uporabnik=uporabnik)
+    rola= request.get_cookie("rola")
+    return template("uporabnik_admin.html",rola=rola , stanje=stanje, uporabnik=uporabnik)
 
 @bottle.route("/zgodovina")
 @cookie_required
@@ -135,7 +146,9 @@ def prikazi_zgodovino():
     uporabnik = request.get_cookie("uporabnik")
     zgodovina = repo.pridobi_zgodovino_nakupov(uporabnik)
     ocene_predmetov = repo.pridobi_zgodovino_ocen(uporabnik)
-    return template("zgodovina.html", uporabnik=uporabnik, zgodovina=zgodovina, ocene_predmetov=ocene_predmetov)
+    rola= request.get_cookie("rola")
+    stanje= repo.dobi_stanje(uporabnik)
+    return template("zgodovina.html", uporabnik=uporabnik, zgodovina=zgodovina, ocene_predmetov=ocene_predmetov,rola=rola,stanje=stanje)
 
 
 @bottle.route("/dodaj_denar", method="post")
@@ -219,7 +232,8 @@ def oceni_artikel(sku):
     ocena = int(request.forms.get('ocena'))
     uporabnik = request.get_cookie("uporabnik")
     repo.oceni_artikel_uporabnik(uporabnik,sku,ocena)
-    bottle.redirect("/zgodovina")
+    rola= request.get_cookie("rola")
+    bottle.redirect("/zgodovina",rola=rola,ocena=ocena,uporabnik=uporabnik)
 
 
 @bottle.route("/zaloga/")
