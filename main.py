@@ -144,10 +144,10 @@ def prikaz_uporabnik():
 @cookie_required
 def prikazi_zgodovino():
     uporabnik = request.get_cookie("uporabnik")
-    zgodovina = repo.pridobi_zgodovino_nakupov(uporabnik)
     ocene_predmetov = repo.pridobi_zgodovino_ocen(uporabnik)
     rola= request.get_cookie("rola")
     stanje= repo.dobi_stanje(uporabnik)
+    zgodovina = repo.pridobi_zgodovino_nakupov(uporabnik,rola)
     return template("zgodovina.html", uporabnik=uporabnik, zgodovina=zgodovina, ocene_predmetov=ocene_predmetov,rola=rola,stanje=stanje)
 
 
@@ -156,13 +156,9 @@ def prikazi_zgodovino():
 def dodaj_denar():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
-
-    # Get the amount and credit card info from the form
     vsota = float(request.forms.get("vsota"))
     credit_card = request.forms.get("credit-card")
-
     repo.posodobi_stanje(uporabnik, vsota)
-
     bottle.redirect("/uporabnik/")
 
 
@@ -233,7 +229,7 @@ def oceni_artikel(sku):
     uporabnik = request.get_cookie("uporabnik")
     repo.oceni_artikel_uporabnik(uporabnik,sku,ocena)
     rola= request.get_cookie("rola")
-    bottle.redirect("/zgodovina",rola=rola,ocena=ocena,uporabnik=uporabnik)
+    bottle.redirect("/zgodovina")
 
 
 @bottle.route("/zaloga/")
@@ -254,7 +250,7 @@ def prikaz_strani_zaloga():
 @cookie_required
 def dodaj_zalogo(sku):
     kolicina_dodaj = int(request.forms.get("kolicina"))
-    repo.posodobi_zaloga(sku, kolicina_dodaj,dodaj=True)
+    repo.posodobi_zaloga(sku, kolicina_dodaj)
     bottle.redirect("/")
 
 
@@ -273,8 +269,10 @@ def prikaz_strani_zaloga():
 def dodaj_zalogo():
     podatki = {}
     for atribut in fields(Glavna()):
-        podatki[atribut.name] = bottle.request.forms.get(atribut.name)
+        podatki[atribut.name] = request.forms.get(atribut.name)
     artikel = Glavna(**podatki)
+    kolicina = int(request.forms.get("kolicina"))
+    repo.posodobi_zaloga(podatki["sku"], kolicina)
     print(artikel)
     repo.dodaj_gen(artikel,serial_col=None)
     #repo.posodobi_zaloga(sku, kolicina_dodaj,dodaj=True)
@@ -287,52 +285,6 @@ def izbrisi_zalogo():
     uporabnik = request.get_cookie("uporabnik")
     rola= request.get_cookie("rola")
     return template("izbrisi.html",EAN=EAN,rola=rola)
-
-@bottle.post("/zaloga/tocno-izbrisi")
-@cookie_required
-def tocno_kaj_izbrisi_zalogo():
-    uporabnik = request.get_cookie("uporabnik")
-    rola= request.get_cookie("rola")
-    EAN = bottle.request.query.EAN
-    try:
-        stevilo = int(bottle.request.forms["stevilo"]);
-    except UnicodeError:
-        stevilo = 0
-    try:
-        stevilo_kartonov = int(bottle.request.forms["stevilo_kartonov"]);
-    except UnicodeError:
-        stevilo_kartonov = 0
-    try:
-        stevilo_paketov = int(bottle.request.forms["stevilo_paketov"]);
-    except UnicodeError:
-        stevilo_paketov = 0
-    #izbrisi iz zaloge
-    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola)
-
-
-@bottle.post("/zaloga/dodaj")
-@cookie_required
-def tocno_kaj_izbrisi_zalogo():
-    uporabnik = request.get_cookie("uporabnik")
-    rola= request.get_cookie("rola")
-    try:
-        EAN = int(bottle.request.forms["EAN"]);
-    except UnicodeError:
-        EAN = 0
-    try:
-        stevilo = int(bottle.request.forms["stevilo"]);
-    except UnicodeError:
-        stevilo = 0
-    try:
-        stevilo_kartonov = int(bottle.request.forms["stevilo_kartonov"]);
-    except UnicodeError:
-        stevilo_kartonov = 0
-    try:
-        stevilo_paketov = int(bottle.request.forms["stevilo_paketov"]);
-    except UnicodeError:
-        stevilo_paketov = 0
-    #dodaj v zalogo
-    return template("zaloga.html",filtri1=filtri11,filtri2=filtri22,rola=rola )
 
 @bottle.route("/poizvedba_prikazi/<iskanje>/<atribut>")
 @cookie_required
@@ -351,8 +303,6 @@ def prikaz_strani_artikel(iskanje,atribut):
     ocene = repo.pridobi_ocene(artikli)
     print(artikli)
     return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci)
-
-
 
 @bottle.post("/poizvedba/")
 @cookie_required
@@ -433,7 +383,6 @@ def registracija_post():
     rola = request.forms.get('role')
     password = request.forms.get('password')
     confirm_password = request.forms.get('confirm_password')
-
 
     try:
         if auth.obstaja_uporabnik(username):

@@ -381,7 +381,7 @@ class Repo:
             name TEXT,
             size TEXT,
             manufacturer TEXT,
-            categories TEXT,
+            category TEXT,
             price FLOAT,
             name2 TEXT, 
             colour TEXT,
@@ -418,9 +418,9 @@ class Repo:
         self.conn.commit()
         print("Tabela 'ocena' ustvarjena ali že obstaja.")
 
-    def ustvari_tabelo_transakcije(self):
+    def ustvari_tabelo_transakcija(self):
         sql = """
-        CREATE TABLE IF NOT EXISTS transakcije (
+        CREATE TABLE IF NOT EXISTS transakcija (
             uporabnik TEXT,
             datum TEXT,
             kosarica JSONB,
@@ -517,7 +517,7 @@ class Repo:
         kosarica = transakcija.kosarica
         
         skupna_cena = transakcija.skupna_cena
-        self.cur.execute("INSERT INTO transakcije (uporabnik, datum, kosarica, skupna_cena) VALUES (%s, %s, %s, %s);",
+        self.cur.execute("INSERT INTO transakcija (uporabnik, datum, kosarica, skupna_cena) VALUES (%s, %s, %s, %s);",
                             (uporabnik, datum, json.dumps(kosarica), skupna_cena))
 
         self.conn.commit()
@@ -533,15 +533,26 @@ class Repo:
         else:
             return None
         
-    def pridobi_zgodovino_nakupov(self, uporabnik):
-        self.cur.execute("SELECT datum, kosarica, skupna_cena FROM transakcije WHERE uporabnik = %s;", (uporabnik,))
-        rows = self.cur.fetchall()
-        zgodovina = []
-        for row in rows:
-            datum = row[0]
-            kosarica = row[1]
-            skupna_cena = row[2]
-            zgodovina.append({"datum": datum, "kosarica": kosarica, "skupna_cena": skupna_cena})
+    def pridobi_zgodovino_nakupov(self, uporabnik,rola):
+        if rola == "guest":
+            self.cur.execute("SELECT datum, kosarica, skupna_cena FROM transakcija WHERE uporabnik = %s;", (uporabnik,))
+            rows = self.cur.fetchall()
+            zgodovina = []
+            for row in rows:
+                datum = row[0]
+                kosarica = row[1]
+                skupna_cena = row[2]
+                zgodovina.append({"datum": datum, "kosarica": kosarica, "skupna_cena": skupna_cena})
+        else:     
+            self.cur.execute("SELECT * FROM transakcija;")
+            rows = self.cur.fetchall()
+            zgodovina = []
+            for row in rows:
+                uporabnik = row[0]
+                datum = row[1]
+                kosarica = row[2]
+                skupna_cena = row[3]
+                zgodovina.append({"uporabnik": uporabnik, "datum": datum, "kosarica": kosarica, "skupna_cena": skupna_cena})
         return zgodovina
 
     def oceni_artikel(self, sku, nova_ocena):
@@ -550,7 +561,7 @@ class Repo:
         if trenutna_ocena:
             st_ocen = int(trenutna_ocena['st_ocen']) + 1
             nova_povprecna_ocena = float((trenutna_ocena['ocena'] * trenutna_ocena['st_ocen'] + nova_ocena) / st_ocen)
-            self.cur.execute("UPDATE ocene_predmetov SET ocena = %s, st_ocen = %s WHERE  sku = %s;",
+            self.cur.execute("UPDATE ocenepredmetov SET ocena = %s, st_ocen = %s WHERE  sku = %s;",
                             (nova_povprecna_ocena, st_ocen, sku,))
         else:
             self.cur.execute("INSERT INTO ocenepredmetov (sku, ocena, st_ocen) VALUES (%s, %s, 1);",
@@ -602,17 +613,18 @@ class Repo:
         else: 
             return None
         
-    def posodobi_zaloga(self, sku, kolicina_sprememba, dodaj):
+    def posodobi_zaloga(self, sku, kolicina_sprememba):
         self.cur.execute("SELECT kolicina FROM zaloga WHERE sku = %s;", (sku,))
         row = self.cur.fetchone()
-        kolicina = row[0]
-        if dodaj:
+        if row:
+            kolicina = row[0]
             kolicina += kolicina_sprememba
-        else: 
-            kolicina -= kolicina_sprememba
-        self.cur.execute("UPDATE zaloga SET kolicina = %s WHERE sku = %s;", (kolicina,sku,))
+            self.cur.execute("UPDATE zaloga SET kolicina = %s WHERE sku = %s;", (kolicina,sku,))
+        else:
+            self.cur.execute("INSERT INTO zaloga (sku, kolicina) VALUES (%s, %s);", (sku, kolicina_sprememba,))
+            self.cur.execute("INSERT INTO ocenepredmetov (sku, ocena, st_ocen) VALUES (%s,%s,%s);", (sku,0,0,))
         self.conn.commit()        
-    
+
     def posodobi_stanje(self,uporabnik, vsota):
         stanje = self.dobi_stanje(uporabnik=uporabnik)
         bilanca = stanje.bilanca

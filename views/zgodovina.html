@@ -94,18 +94,15 @@
         }
     </style>
     
-    <body>
-    
+    <body>   
     
         <div class="container is-max">
     
             <div class="block">
                 <nav class="navbar is-transparent">
-    
-    
+       
                     <div id="navbarExampleTransparentExample" class="navbar-menu">
                         <div class="navbar-start">
-    
     
                             % if rola == "admin" :
                             <a class="navbar-item" href="/">
@@ -142,16 +139,13 @@
                     </div>
                     % end
     
-    
                     </div>
                 </nav>
             </div>
     
             <section class="hero is-primary">
                 <div class="hero-body">
-    
-    
-    
+      
                     <div class="title">Zgodovina</div>
     
                     <table class="table"
@@ -168,7 +162,7 @@
                             <tr class="vrstica">
                                 <td>{{ transakcija['datum'] }}</td>
                                 % if rola=="admin":
-                                <td>{uporabnik}</td>
+                                <td>{{transakcija['uporabnik']}}</td>
                                 % end
                                 <td>
                                     <ul>
@@ -190,7 +184,6 @@
                                                         </div>
                                                          </div>
                                                     </form>
-
                                                
                                                 % end
                                             </li>   
@@ -203,20 +196,10 @@
                         % end
                     </table>
     
-    
-    
-    
-    
-    
-    
                 </div>
-    
-    
-    
+
             </section>
-    
-    
-    
+
         </div>
 
 </body>
