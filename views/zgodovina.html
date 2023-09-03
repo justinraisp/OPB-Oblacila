@@ -1,39 +1,223 @@
 <!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
-    <h1>Zgodovina Nakupov</h1>
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
     
-    <table>
-        <tr>
-            <th>Datum</th>
-            <th>Artikli</th>
-            <th>Skupna Cena</th>
-        </tr>
-        % for transakcija in zgodovina:
-            <tr>
-                <td>{{ transakcija['datum'] }}</td>
-                <td>
-                    <ul>
-                        % for izdelek, podatki in transakcija['kosarica'].items():
-                            <li>{{ izdelek }} ({{ podatki['kolicina'] }} kosov) (Cena: {{podatki['cena']}}€)
-                                % if izdelek in ocene_predmetov:
-                                    (Predmet že ocenjen.)
-                                % else:
-                                    <form action="/oceni_artikel/{{ izdelek }}" method="post">
-                                        <input type="number" name="ocena" id="ocena_{{ izdelek }}" min="1" max="5" required>
-                                        <button type="submit">Oceni</button>
-                                    </form>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+            integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+        <title>Artikli</title>
+    </head>
+    <style>
+        /* Hide the default checkbox */
+        .custom-checkbox input[type="checkbox"] {
+            display: none;
+        }
+    
+        /* Style the custom checkbox container */
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            /* Align the text with the checkbox */
+            cursor: pointer;
+            /* Show the pointer cursor on hover */
+            margin-bottom: 10px;
+            /* Optional: Add some spacing between each checkbox */
+        }
+    
+        /* Style the custom checkbox */
+        .custom-checkbox .checkmark {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 1px solid hsl(171, 80%, 41%);
+            ;
+            position: relative;
+            margin-right: 8px;
+            /* Optional: Add some spacing between checkbox and text */
+        }
+    
+        /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+        .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+            content: "\2713";
+            /* Unicode for checkmark symbol */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #fff;
+            /* Color of the checkmark when checked */
+        }
+    
+        /* Customize the background color when the checkbox is checked */
+        .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+            background-color: hsl(171, 100%, 41%);
+            ;
+            /* Red background when checked */
+            border-color: white;
+            /* Red border color when checked */
+        }
+    
+        /* Style the text when hovered */
+        .custom-checkbox:hover {
+            text-decoration: underline;
+            /* Underline the text on hover */
+        }
+    
+    
+    
+        .btn:hover {
+    
+            background-color: hsl(171, 80%, 41%);
+            color: white;
+            border-color: hsl(171, 100%, 41%);
+    
+        }
+    
+        .btn {
+    
+            background-color: white;
+            color: hsl(171, 100%, 41%);
+            border-color: hsl(171, 100%, 41%);
+        }
+    
+        .vrstica:hover {
+            background-color: hsl(171, 100%, 41%);
+        }
+    </style>
+    
+    <body>
+    
+    
+        <div class="container is-max">
+    
+            <div class="block">
+                <nav class="navbar is-transparent">
+    
+    
+                    <div id="navbarExampleTransparentExample" class="navbar-menu">
+                        <div class="navbar-start">
+    
+    
+                            % if rola == "admin" :
+                            <a class="navbar-item" href="/">
+                                Zaloga
+                            </a>
+                            <a class="navbar-item" href="/statistika/">
+                                Statistika
+                            </a>
+                           
+                            % else :
+                            <a class="navbar-item" href="/" >
+                            Artikli
+                        </a>
+                            <a class="navbar-item" href="/kosarica/">
+                                <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                                Košarica
+                            </a>
+                            % end
+                            <a class="navbar-item" href="/odjava">
+                                Odjava
+                            </a>
+                        </div>
+                        % if rola == "guest":
+                    <div class="navbar-end">
+                        <a class="navbar-item" href="/uporabnik_guest/">
+                            Uporabniško ime: {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
+                        </a>
+                    </div>
+                    % else:
+                    <div class="navbar-end">
+                        <a class="navbar-item" href="/uporabnik_admin/">
+                            Uporabniško ime: {{ uporabnik }} 
+                        </a>
+                    </div>
+                    % end
+    
+    
+                    </div>
+                </nav>
+            </div>
+    
+            <section class="hero is-primary">
+                <div class="hero-body">
+    
+    
+    
+                    <div class="title">Zgodovina</div>
+    
+                    <table class="table"
+                        style="background-color: hsl(171, 80%, 41%);color: white;">
+                        <tr class="vrstica">
+                            <th style="color: white;">Datum</th>
+                            % if rola=="admin":
+                            <th style="color: white;">Uporabnik</th>
+                            %end
+                            <th style="color: white;">Artikli</th>
+                            <th style="color: white;">Skupna Cena</th>
+                        </tr>
+                        % for transakcija in zgodovina:
+                            <tr class="vrstica">
+                                <td>{{ transakcija['datum'] }}</td>
+                                % if rola=="admin":
+                                <td>{uporabnik}</td>
                                 % end
-                            </li>
+                                <td>
+                                    <ul>
+                                        % if rola=="guest"
+                                        % for izdelek, podatki in transakcija['kosarica'].items():
+                                            <li>{{ izdelek }} ({{ podatki['kolicina'] }} kosov) (Cena: {{podatki['cena']}}€)
+                                                % if izdelek in ocene_predmetov:
+                                                    (Predmet že ocenjen.)
+                                                % else:
+                                                
+                                                    <form action="/oceni_artikel/{{ izdelek }}" method="post">
+                                                        <div class="field has-addons" style="width: 100%;">
+                                                        <div class="control">
+                                                            <input type="number" class="input is-primary" name="ocena" id="ocena_{{ izdelek }}" min="1" max="5" required>
+                                                        
+                                                        </div>
+                                                        <div class="control">
+                                                           <button class="button btn" type="submit">Oceni</button> 
+                                                        </div>
+                                                         </div>
+                                                    </form>
+
+                                               
+                                                % end
+                                            </li>   
+                                        % end
+                                        % end
+                                    </ul>
+                                </td>
+                                <td>{{ transakcija['skupna_cena'] }} €</td>
+                            </tr>
                         % end
-                    </ul>
-                </td>
-                <td>{{ transakcija['skupna_cena'] }} €</td>
-            </tr>
-        % end
-    </table>
-    <a href="/">Nazaj na glavno stran</a>
+                    </table>
+    
+    
+    
+    
+    
+    
+    
+                </div>
+    
+    
+    
+            </section>
+    
+    
+    
+        </div>
+
 </body>
 </html>

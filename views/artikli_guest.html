@@ -154,11 +154,11 @@
                             <input type="text" name="iskanje" class="input is-primary" placeholder="Išči...">
                         </p>
                         <p class="control">
-                            <div class="select">
-                                <select name="iskanje_atribut">
+                            <div  class="select is-primary">
+                                <select  name="iskanje_atribut">
                                     %for stolpec in glavna_stolpci:
                                     %if stolpec not in ["material", "origin", "description"]:
-                                    <option value={{stolpec}}>{{stolpec}}</option>
+                                    <option  value={{stolpec}}>{{stolpec}}</option>
                                     %end
                                     %end
                                 </select>
@@ -206,7 +206,7 @@
                     <div class="field">
                         <label class="label">Razvrsti:</label>
                         <div class="control">
-                            <div class="select">
+                            <div class="select is-primary">
                                 <select id="sortiranje" name="sortiranje">
                                     <option value="">Brez razvrščanja</option>
                                     <option value="price ASC">Cenejši naprej</option>
@@ -275,11 +275,19 @@
                         <td>
                                 <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="post">
                                     <input type="hidden" name="artikel_cena" value="{{artikel.price}}">                                    
-                                      
-                                        <input type="number" min=1 name="kolicina_za_v_kosarico" style="width: 100%;" class="input is-primary"
-                                            placeholder="Količina" required>                                   
+                                      <div class="field has-addons">
+<div class="control">
+<input type="number" min=1 name="kolicina_za_v_kosarico"  class="input is-primary"
+                                            placeholder="Količina" required>  
+</div>
+
+<div class="control">
+
+                                        <button type="submit"  class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>                                    
                                     
-                                        <button type="submit" style="width: 100%;" class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>                                    
+</div>
+                                      </div>
+                                                                         
                                     
                                 </form>
 
