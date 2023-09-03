@@ -1,24 +1,222 @@
 <html>
+    <html>
+
     <head>
+
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Artikel</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+            integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <title>Artikli</title>
     </head>
+    <style>
+        /* Hide the default checkbox */
+        .custom-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        /* Style the custom checkbox container */
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            /* Align the text with the checkbox */
+            cursor: pointer;
+            /* Show the pointer cursor on hover */
+            margin-bottom: 10px;
+            /* Optional: Add some spacing between each checkbox */
+        }
+
+        /* Style the custom checkbox */
+        .custom-checkbox .checkmark {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 1px solid hsl(171, 80%, 41%);
+            ;
+            position: relative;
+            margin-right: 8px;
+            /* Optional: Add some spacing between checkbox and text */
+        }
+
+        /* Add a tick symbol using a pseudo-element when the checkbox is checked */
+        .custom-checkbox input[type="checkbox"]:checked+.checkmark::before {
+            content: "\2713";
+            /* Unicode for checkmark symbol */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #fff;
+            /* Color of the checkmark when checked */
+        }
+
+        /* Customize the background color when the checkbox is checked */
+        .custom-checkbox input[type="checkbox"]:checked+.checkmark {
+            background-color: hsl(171, 100%, 41%);
+            ;
+            /* Red background when checked */
+            border-color: white;
+            /* Red border color when checked */
+        }
+
+        /* Style the text when hovered */
+        .custom-checkbox:hover {
+            text-decoration: underline;
+            /* Underline the text on hover */
+        }
+
+
+
+        .btn:hover {
+
+            background-color: hsl(171, 80%, 41%);
+            color: white;
+            border-color: hsl(171, 100%, 41%);
+
+        }
+
+        .btn {
+
+            background-color: white;
+            color: hsl(171, 100%, 41%);
+            border-color: hsl(171, 100%, 41%);
+        }
+
+        .vrstica:hover {
+            background-color: hsl(171, 100%, 41%);
+        }
+    </style>
+
     <body>
-        <h1>Podrobnosti artikla</h1>
-        <p>Sku: {{ artikel.sku }}</p>
-        <p>Stil: {{ artikel.style }}</p>
-        <p>Ime: {{ artikel.name }}</p>
-        <p>Velikost: {{ artikel.size }}</p>
-        <p>Proizvajalec: {{ artikel.manufacturer }}</p>
-        <p>Kategorija: {{ artikel.category }}</p>
-        <p>Cena: {{ artikel.price }}</p>
-        <p>Ime 2: {{ artikel.name2 }}</p>
-        <p>Barva: {{ artikel.colour }}</p>
-        <p>Status: {{ artikel.status }}</p>
-        <p>Material: {{ artikel.material }}</p>
-        <p>Opis: {{ artikel.description }}</p>
-        <p>Država izvora: {{ artikel.origin }}</p>
+
+
+        <div class="container is-max">
+
+            <div class="block">
+                <nav class="navbar is-transparent">
+
+
+                    <div id="navbarExampleTransparentExample" class="navbar-menu">
+                        <div class="navbar-start">
+
+
+                            % if rola == "admin" :
+                            <a class="navbar-item" href="/">
+                                Zaloga
+                            </a>
+                            <a class="navbar-item" href="/statistika/">
+                                Statistika
+                            </a>
+                            % else :
+                            <a class="navbar-item" href="/" >
+                                Artikli
+                            </a>
+                            <a class="navbar-item" href="/kosarica/">
+                                <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                                Košarica
+                            </a>
+                            % end
+                            <a class="navbar-item" href="/odjava">
+                                Odjava
+                            </a>
+                        </div>
+                        % if rola == "guest":
+                        <div class="navbar-end">
+                            <a class="navbar-item" href="/uporabnik_guest/">
+                                Uporabniško ime: {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
+                            </a>
+                        </div>
+                        % else:
+                        <div class="navbar-end">
+                            <a class="navbar-item" href="/uporabnik_admin/">
+                                Uporabniško ime: {{ uporabnik }} 
+                            </a>
+                        </div>
+                        % end
+
+
+                    </div>
+                </nav>
+            </div>
+
+            <section class="hero is-primary">
+                <div class="hero-body">
+
+
+
+                    <div class="title">Podrobnosti artikla</div>
+
+                    <table class="table"
+                        style="background-color: hsl(171, 80%, 41%);color: white;">
+                        <tr class="vrstica"> <td>
+                            
+                            <p><b class="title is-5">SKU</b>: {{ artikel.sku }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Stil</b>: {{ artikel.style }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Ime</b>: {{ artikel.name }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Velikost</b>: {{ artikel.size }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Proizvajalec</b>: {{ artikel.manufacturer }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Kategorija</b>: {{ artikel.category }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Cena</b>: {{ artikel.price }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Ime 2</b>: {{ artikel.name2 }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Barva</b>: {{ artikel.colour }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Status</b>: {{ artikel.status }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Material</b>: {{ artikel.material }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Opis</b>: {{ artikel.description }}</p>
+                        </td></tr>
+                        <tr class="vrstica"> <td>
+                            <p><b class="title is-5">Država izvora</b>: {{ artikel.origin }}</p>
+                        </td></tr>
+                    </table>
+
+
+
+
+
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+        </div>
+
+
+
 
     </body>
+
     </html>

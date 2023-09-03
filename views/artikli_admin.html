@@ -111,8 +111,7 @@
                             style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
                             Zaloga
                         </a>
-                        <a class="navbar-item" href="/statistika"
-                        style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
+                        <a class="navbar-item" href="/statistika/">
                             Statistika
                         </a>
                         <a class="navbar-item" href="/odjava">
@@ -121,7 +120,7 @@
                     </div>
                     <div class="navbar-end">
                         <a class="navbar-item" href="/uporabnik_admin/">
-                            Uporabniško ime: {{ uporabnik }} 
+                            Uporabniško ime: {{ uporabnik }}
                         </a>
                     </div>
                 </div>
@@ -163,7 +162,9 @@
                             <tr>
                                 % for j in range(6):
                                 <td>
+
                                     % if k <= 18: 
+
                                     <label class="custom-checkbox">
                                         <input type="checkbox" name={{filtri2[k]}}>
 
@@ -211,7 +212,7 @@
                     <tr class="vrstica">
                         %for atribut in fields(artikli[0]):
                         % k = atribut.name
-                            <td> {{getattr(artikel, atribut.name)}}</td>
+                        <td> {{getattr(artikel, atribut.name)}}</td>
                         % end
 
                         <td>
@@ -224,26 +225,36 @@
                         </td>
                         <td>
 
-                            
+
                             <form action="/dodaj_zalogo/{{artikel.sku}}" method="post">
-                                
-                                  
-                                    <input type="number" min=1 name="kolicina" style="width: 70%;" class="input is-primary"
-                                        placeholder="Količina" required>
-                                
-                                
-                                    <button type="submit" style="width: 70%;" class="button is-primary"> <i class="fa fa-shopping-basket" aria-hidden="true" ></i></button>
-                                
-                                
-                                
+
+                                <div class="field has-addons">
+                                    <div class="control">
+                                        <input type="number" min=1 name="kolicina" 
+                                            class="input is-primary" placeholder="Količina" required>
+                                    </div>
+
+                                    <div class="control">
+
+                                        <button type="submit"  class="button is-primary"> <i
+                                                class="fa fa-shopping-basket" aria-hidden="true"></i></button>
+
+                                    </div>
+                                </div>
+
+
+
+
+
+
                             </form>
 
-                    </td>
+                        </td>
 
 
                         % end
                     </tr>
-                    
+
                 </tbody>
             </table>
         </div>
@@ -257,7 +268,8 @@
                     Prejšnja stran
                 </a>
                 % else:
-                <a href="/{{poizvedba}}?stran={{ trenutna_stran - 1 }}" style="float:left" class="pagination-previous btn">
+                <a href="/{{poizvedba}}?stran={{ trenutna_stran - 1 }}" style="float:left"
+                    class="pagination-previous btn">
                     Prejšnja stran
                 </a>
                 % end
@@ -302,7 +314,7 @@
                     % end
                     %end
 
-                    % if trenutna_stran < max_stran - 2: 
+                    % if trenutna_stran < max_stran - 2:
                     
                     <li>
                         <span class="pagination-ellipsis">&hellip;</span>
