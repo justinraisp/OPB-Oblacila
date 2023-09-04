@@ -13,7 +13,7 @@ from functools import wraps
 
 import os
 
-SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
+SERVER_PORT = os.environ.get('BOTTLE_PORT', 8081)
 RELOADER = os.environ.get('BOTTLE_RELOADER', True)
 
 
