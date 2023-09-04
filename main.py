@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- encoding: utf-8 -*-
+
 from dataclasses import fields
 from math import ceil
 import bottle
