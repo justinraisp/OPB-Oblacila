@@ -493,7 +493,11 @@ class Repo:
 
     def glavna_nalozi_iskanje(self, iskalni_niz, stolpec):
         pattern = f"%{iskalni_niz}%"
-        self.cur.execute(f"""SELECT * FROM glavna WHERE {stolpec} ILIKE %s;""", (pattern,))
+        if stolpec == "price":
+            pattern = f"{iskalni_niz}%"
+            self.cur.execute(f"""SELECT * FROM glavna WHERE CAST(price AS TEXT) ILIKE %s;""", (pattern,))
+        else:
+            self.cur.execute(f"""SELECT * FROM glavna WHERE {stolpec} ILIKE %s;""", (pattern,))
         rows = self.cur.fetchall()
         columns = []
         for atribut in fields(Glavna):

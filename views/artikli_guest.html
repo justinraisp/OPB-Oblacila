@@ -156,11 +156,22 @@
                         <p class="control">
                             <div  class="select is-primary">
                                 <select  name="iskanje_atribut">
+                                    
                                     %for stolpec in glavna_stolpci:
                                     %if stolpec not in ["material", "origin", "description"]:
                                     <option  value={{stolpec}}>{{stolpec}}</option>
                                     %end
                                     %end
+                                    <option value="sku">SKU</option>
+                                    <option value="style">Koda stila</option>
+                                    <option value="name">Stil</option>
+                                    <option value="size">Velikost</option>
+                                    <option value="manufacturer">Proizvajalec</option>
+                                    <option value="category">Kategorija</option>
+                                    <option value="price">Cena</option>
+                                    <option value="name2">Ime</option>
+                                    <option value="colour">Barva</option>
+                                    <option value="status">Status</option>
                                 </select>
                             </div>
                         </p>
@@ -236,15 +247,18 @@
             <table class="table" style="width:100%">
                 <thead>
                     <tr>
-                        %for atribut in fields(artikli[0]):
-                            %if atribut.name not in ["material", "origin", "description"]:
-                            <th>{{atribut.name}}</th>
-                            %end
-                            %if atribut.name == "material":
-                            <th>Ocena</th>
-                            <th></th>
-                            %end
-                        %end
+                        <th>SKU</th>
+                        <th>Koda stila</th>
+                        <th>Stil</th>
+                        <th>Velikost</th>
+                        <th>Proizvajalec</th>
+                        <th>Kategorija</th>
+                        <th>Cena</th>
+                        <th>Ime</th>
+                        <th>Barva</th>
+                        <th>Status</th>
+                        <th>Ocena</th>
+                        <th>Drugo</th>
                         <th >Dodaj v košarico</th>
                     </tr>
                 </thead>
