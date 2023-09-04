@@ -23,3 +23,5 @@ Potem pa se preko lokalnega url-ja registriramo glede na naše želje, se prijav
 ### Spletni dostop
 Lahko pa dostopamo do spletne aplikacije kar preko povezave:
 * [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/justinraisp/OPB-Oblacila.git/HEAD?urlpath=proxy%2F8080)
+* https://mybinder.org/v2/gh/justinraisp/OPB-Oblacila.git/HEAD?urlpath=proxy%2F8080
+
