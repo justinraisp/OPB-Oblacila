@@ -10,7 +10,7 @@ from Data.Database import Repo
 from Data.Modeli import *
 from Data.Services import AuthService
 from functools import wraps
-
+import Data.auth
 import os
 
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
@@ -473,8 +473,8 @@ def autorizacija():
         return template("autorizacija.html", napaka="Napačna koda!", username=username, password=password)
 
 
-conn = psycopg2.connect(database=auth.db, host=auth.host,
-                        user=auth.user, password=auth.password, port=DB_PORT)
+conn = psycopg2.connect(database=Data.auth.db, host=Data.auth.host,
+                        user=Data.auth.user, password=Data.auth.password, port=DB_PORT)
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 cur1 = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
