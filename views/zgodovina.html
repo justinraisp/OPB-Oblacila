@@ -105,20 +105,20 @@
                         <div class="navbar-start">
     
                             % if rola == "admin" :
-                            <a class="navbar-item" href="/glavna/">
+                            <a class="navbar-item" href="/">
                                 Zaloga
                             </a>
-                            <a class="navbar-item" href="/statistika">
+                            <a class="navbar-item" href="/statistika/">
                                 Statistika
                             </a>
                             <a class="navbar-item" href="/zgodovina" style="text-decoration: underline;color: hsl(171, 100%, 41%);">
                                 Zgodovina nakupov
                             </a>
                             % else :
-                            <a class="navbar-item" href="/glavna/" >
+                            <a class="navbar-item" href="/" >
                             Artikli
                         </a>
-                            <a class="navbar-item" href="/kosarica">
+                            <a class="navbar-item" href="/kosarica/">
                                 <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                                 Košarica
                             </a>
@@ -129,7 +129,7 @@
                         </div>
                         % if rola == "guest":
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_guest">
+                        <a class="navbar-item" href="/uporabnik_guest/">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>

@@ -54,11 +54,6 @@ def cookie_required(f):
     return decorated
 
 @bottle.route("/")
-def glavna():
-        return bottle.redirect("/glavna/")
-
-
-@bottle.route("/glavna/")
 @cookie_required
 def prikaz_strani_artikel():
     uporabnik = request.get_cookie("uporabnik")
@@ -115,7 +110,7 @@ def prikaz_artikla(sku):
     return template("artikel.html", artikel=artikel, rola=rola, uporabnik=uporabnik, stanje=stanje)
 
 
-@bottle.route("/kosarica")
+@bottle.route("/kosarica/")
 @cookie_required
 def prikaz_strani_kosarica():
     uporabnik = request.get_cookie("uporabnik")
@@ -125,7 +120,7 @@ def prikaz_strani_kosarica():
     stanje= repo.dobi_stanje(uporabnik)
     return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik, stanje=stanje, napaka=None)
 
-@bottle.route("/uporabnik_guest")
+@bottle.route("/uporabnik_guest/")
 @cookie_required
 def prikaz_uporabnik():
     uporabnik = request.get_cookie("uporabnik")
@@ -133,7 +128,7 @@ def prikaz_uporabnik():
     rola= request.get_cookie("rola")
     return template("uporabnik_guest.html", stanje=stanje, uporabnik=uporabnik, rola= rola)
 
-@bottle.route("/statistika")
+@bottle.route("/statistika/")
 @cookie_required
 def prikaz_statistike():
     uporabnik = request.get_cookie("uporabnik")
@@ -150,7 +145,7 @@ def prikaz_statistike():
                     najbolj_prodajan_izdelek=najbolj_prodajan_izdelek,najbolj_prodajan_izdelek_v_mesecu=najbolj_prodajan_izdelek_v_mesecu,
                     najboljsi_uporabnik=najboljsi_uporabnik,najboljsi_uporabnik_mesec=najboljsi_uporabnik_mesec)
 
-@bottle.route("/uporabnik_admin")
+@bottle.route("/uporabnik_admin/")
 @cookie_required
 def prikaz_uporabnik():
     uporabnik = request.get_cookie("uporabnik")
@@ -177,7 +172,7 @@ def dodaj_denar():
     vsota = float(request.forms.get("vsota"))
     credit_card = request.forms.get("credit-card")
     repo.posodobi_stanje(uporabnik, vsota)
-    bottle.redirect("/uporabnik_guest")
+    bottle.redirect("/uporabnik_guest/")
 
 
 @bottle.route("/dodaj_v_kosarico/<sku>", method="post")
@@ -196,7 +191,7 @@ def dodaj_v_kosarico(sku):
     trenutna_kosarica.dodaj_izdelek(izdelek)
     repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
 
-    bottle.redirect("/glavna/")
+    bottle.redirect("/")
 
 
 @bottle.route("/izbrisi_iz_kosarice/<sku>", method="post")
@@ -216,7 +211,7 @@ def izbrisi_iz_kosarice(sku):
     trenutna_kosarica.izbrisi(izdelek)
     repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
 
-    bottle.redirect("/kosarica")    
+    bottle.redirect("/kosarica/")    
 
 @bottle.route("/izvedi_nakup", method="post")
 @cookie_required
@@ -237,7 +232,7 @@ def izvedi_nakup():
     datum = date.today().isoformat()
     repo.transakcija_shrani(Transakcija(uporabnik=uporabnik, datum=datum,kosarica=izdelki_v_kosarici,skupna_cena=skupna_cena))
     repo.kosarica_shrani(uporabnik, {})
-    bottle.redirect("/kosarica")
+    bottle.redirect("/kosarica/")
 
 
 @bottle.route("/oceni_artikel/<sku>", method="post")
@@ -250,7 +245,7 @@ def oceni_artikel(sku):
     bottle.redirect("/zgodovina")
 
 
-@bottle.route("/zaloga")
+@bottle.route("/zaloga/")
 @cookie_required
 def prikaz_strani_zaloga():
     artikli_na_stran = 10
@@ -269,10 +264,10 @@ def prikaz_strani_zaloga():
 def dodaj_zalogo(sku):
     kolicina_dodaj = int(request.forms.get("kolicina"))
     repo.posodobi_zaloga(sku, kolicina_dodaj)
-    bottle.redirect("/glavna/")
+    bottle.redirect("/")
 
 
-@bottle.route("/dodaj_zalogo_stran")
+@bottle.route("/dodaj_zalogo_stran/")
 @cookie_required
 def prikaz_strani_zaloga():
     uporabnik = request.get_cookie("uporabnik")
@@ -282,7 +277,7 @@ def prikaz_strani_zaloga():
     print(artikel)
     return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22,artikel = artikel,artikli=artikli)
 
-@bottle.route("/dodaj_zalogo_novo", method="post")
+@bottle.route("/dodaj_zalogo_novo/", method="post")
 @cookie_required
 def dodaj_zalogo():
     podatki = {}
@@ -294,7 +289,7 @@ def dodaj_zalogo():
     print(artikel)
     repo.dodaj_gen(artikel,serial_col=None)
     #repo.posodobi_zaloga(sku, kolicina_dodaj,dodaj=True)
-    bottle.redirect("/glavna/")
+    bottle.redirect("/")
 
 @bottle.route("/zaloga/izbrisi")
 @cookie_required
@@ -317,12 +312,12 @@ def prikaz_strani_artikel(iskanje,atribut):
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
-    poizvedba = "poizvedba_prikazi" + iskanje + "/glavna/" + atribut
+    poizvedba = "poizvedba_prikazi/" + iskanje + "/" + atribut
     ocene = repo.pridobi_ocene(artikli)
     print(artikli)
     return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci)
 
-@bottle.post("/poizvedba")
+@bottle.post("/poizvedba/")
 @cookie_required
 def poizvedba():
     uporabnik = request.get_cookie("uporabnik")
@@ -356,11 +351,11 @@ def prikaz_strani_artikel(iskanje):
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
-    poizvedba = "poizvedba_zaloga_prikazi" + iskanje
+    poizvedba = "poizvedba_zaloga_prikazi/" + iskanje
     return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba)
 
 
-@bottle.post("/poizvedba_zaloga")
+@bottle.post("/poizvedba_zaloga/")
 @cookie_required
 def poizvedba_zaloga():
     uporabnik = request.get_cookie("uporabnik")
@@ -378,7 +373,7 @@ def poizvedba_zaloga():
 
     bottle.redirect(f"/poizvedba_zaloga_prikazi/{iskanje}")
 
-@bottle.post("/poizvedba-dodaj")
+@bottle.post("/poizvedba-dodaj/")
 @cookie_required
 def poizvedba_dodaj():
     try:
@@ -386,7 +381,7 @@ def poizvedba_dodaj():
     except UnicodeError:
         iskanje = False
 
-    bottle.redirect("/dodaj-zalogo")
+    bottle.redirect("/dodaj-zalogo/")
 
 
 @get('/registracija')
@@ -450,7 +445,7 @@ def prijava():
             stanje= Stanje(uporabnik=username)
             repo.dodaj_gen(stanje,serial_col=None)
         #return template(f'artikli_{rola}.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje, uporabnik=uporabnik)
-        redirect("/glavna/")
+        redirect("/")
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
    

@@ -104,17 +104,17 @@
 
                 <div id="navbarExampleTransparentExample" class="navbar-menu">
                     <div class="navbar-start">
-                        <a class="navbar-item" href="/glavna/"
+                        <a class="navbar-item" href="/"
                             style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
                             Artikli
                         </a>
 
                         % if rola == "admin" :
-                        <a class="navbar-item" href="/zaloga">
+                        <a class="navbar-item" href="/zaloga/">
                             Zaloga
                         </a>
                         % else :
-                        <a class="navbar-item" href="/kosarica">
+                        <a class="navbar-item" href="/kosarica/">
 
                             Košarica <i class="fa fa-shopping-basket" aria-hidden="true" style="padding-left: 5px;"></i>
                         </a>
@@ -126,13 +126,13 @@
                     </div>
                     % if rola == "guest":
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_guest">
+                        <a class="navbar-item" href="/uporabnik_guest/">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
                     % else:
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_admin">
+                        <a class="navbar-item" href="/uporabnik_admin/">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} 
                         </a>
                     </div>
@@ -144,7 +144,7 @@
 
         <section class="hero is-primary">
             <div class="hero-body">
-                <form action="/poizvedba" method="POST">
+                <form action="/poizvedba/" method="POST">
 
                     <div class="field has-addons">
                         <label for="" class="label">
@@ -157,7 +157,6 @@
                             <div  class="select is-primary">
                                 <select  name="iskanje_atribut">
                                     
-                                
                                     <option value="sku">SKU</option>
                                     <option value="style">Koda stila</option>
                                     <option value="name">Stil</option>
