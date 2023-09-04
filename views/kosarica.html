@@ -105,18 +105,18 @@
 
                 <div id="navbarExampleTransparentExample" class="navbar-menu">
                     <div class="navbar-start">
-                        <a class="navbar-item" href="/glavna/">
+                        <a class="navbar-item" href="{{url("glavna")}}">
                             Artikli
-                    <a class="navbar-item" href="/kosarica/" style="color: hsl(171, 100%, 41%); ">
+                    <a class="navbar-item" href="{{url("kosarica")}}" style="color: hsl(171, 100%, 41%); ">
                         
                         <p style="text-decoration: underline;color: hsl(171, 100%, 41%);">Košarica</p>    <i class="fa fa-shopping-basket" aria-hidden="true" style="padding-left: 5px;"></i>
                       </a>
-                        <a class="navbar-item" href="/odjava">
+                        <a class="navbar-item" href="{{url("odjava")}}">
                             Odjava
                           </a>
                     </div>
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_guest/">
+                        <a class="navbar-item" href="{{url("uporabnik_guest")}}">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ stanje.uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
@@ -149,7 +149,7 @@
                             % for sku in artikli.keys():
                             <tr class="vrstica">
                                 <td >
-                                    <form action="/izbrisi_iz_kosarice/{{sku}}"  method="post">
+                                    <form action="{{url("izbrisi_iz_kosarice",sku=sku)}}"  method="post">
 
                                         <div class="field has-addons" >
 <div class="control">
@@ -193,7 +193,7 @@
             </div>
             % end
             %if artikli:
-            <form action="/izvedi_nakup" method="post">
+            <form action="{{url("izvedi_nakup")}}" method="post">
                 <button class="button is-medium btn" type="submit" style="float: right;" aria-hidden="true"> Kupi</button>
             </form>
             %end

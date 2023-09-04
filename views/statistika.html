@@ -109,23 +109,23 @@
 
 
                         % if rola == "admin" :
-                        <a class="navbar-item" href="/glavna/">
+                        <a class="navbar-item" href="{{url("glavna")}}">
                             Zaloga
                         </a>
-                        <a class="navbar-item" href="/statistika/"
+                        <a class="navbar-item" href="{{url("statistika")}}"
                             style="text-decoration: underline;color: hsl(171, 100%, 41%) ;">
                             Statistika
                         </a>
-                        <a class="navbar-item" href="/zgodovina">
+                        <a class="navbar-item" href="{{url("zgodovina")}}">
                             Zgodovina nakupov
                         </a>
                         % else :
-                        <a class="navbar-item" href="/kosarica/">
+                        <a class="navbar-item" href="{{url("kosarica")}}">
                             <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                             Košarica
                         </a>
                         % end
-                        <a class="navbar-item" href="/odjava">
+                        <a class="navbar-item" href="{{url("odjava")}}">
                             Odjava
                         </a>
                     </div>
@@ -187,7 +187,7 @@
                     </tr>
                 </table>
 
-                <a href="/glavna/" class="button btn" style="float: right;">Nazaj na glavno stran</a>
+                <a href="{{url("glavna")}}" class="button btn" style="float: right;">Nazaj na glavno stran</a>
 
 
             </div>

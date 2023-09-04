@@ -109,24 +109,24 @@
 
 
                         % if rola == "admin" :
-                        <a class="navbar-item" href="/glavna/">
+                        <a class="navbar-item" href="{{url("glavna")}}">
                             Zaloga
                         </a>
-                        <a class="navbar-item" href="/statistika/">
+                        <a class="navbar-item" href="{{url("statistika")}}">
                             Statistika
                         </a>
                         % else :
-                        <a class="navbar-item" href="/kosarica/">
+                        <a class="navbar-item" href="{{url("kosarica")}}">
                             <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                             Košarica
                         </a>
                         % end
-                        <a class="navbar-item" href="/odjava">
+                        <a class="navbar-item" href="{{url("odjava")}}">
                             Odjava
                         </a>
                     </div>
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_admin/" style="text-decoration: underline; color:hsl(171, 100%, 41%); ;">
+                        <a class="navbar-item" href="{{url("uporabnik_admin")}}" style="text-decoration: underline; color:hsl(171, 100%, 41%); ;">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }}
                         </a>
                     </div>

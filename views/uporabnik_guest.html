@@ -157,34 +157,34 @@
 
 
                         % if rola == "admin" :
-                        <a class="navbar-item" href="/glavna/">
+                        <a class="navbar-item" href="{{url("glavna")}}">
                             Zaloga
                         </a>
-                        <a class="navbar-item" href="/statistika/">
+                        <a class="navbar-item" href="{{url("statistika")}}">
                             Statistika
                         </a>
                         % else :
-                        <a class="navbar-item" href="/glavna/">
+                        <a class="navbar-item" href="{{url("glavna")}}">
                             Artikli
                         </a>
-                        <a class="navbar-item" href="/kosarica/">
+                        <a class="navbar-item" href="{{url("kosarica")}}">
                             <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                             Košarica
                         </a>
                         % end
-                        <a class="navbar-item" href="/odjava">
+                        <a class="navbar-item" href="{{url("odjava")}}">
                             Odjava
                         </a>
                     </div>
                     % if rola == "guest":
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_guest/" style="text-decoration: underline ;color: hsl(171, 100%, 41%);">
+                        <a class="navbar-item" href="{{url("uporabnik_guest")}}" style="text-decoration: underline ;color: hsl(171, 100%, 41%);">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
                     % else:
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_admin/">
+                        <a class="navbar-item" >
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} 
                         </a>
                     </div>
@@ -205,14 +205,14 @@
                 <p style="padding-bottom: 10px;"><b class="title is-5">Uporabniško ime</b>: {{ uporabnik }}</p>
                 <p><b class="title is-5">Stanje</b>: {{ stanje.bilanca }} €</p>
                 
-                <a href="/zgodovina" class="button btn" style="float: right;">Poglej zgodovino nakupov</a>
+                <a href="{{url("zgodovina")}}" class="button btn" style="float: right;">Poglej zgodovino nakupov</a>
             
                 <button id="open-popup-btn" class=" button btn" style="float: left;">Dodaj denar</button>
             
                 <div class="popup" id="add-money-popup">
                     <div class="popup-content">
                         <h2 style="color: hsl(171, 100%, 41%) ;padding-bottom: 15px;" class="title is-3">Add Money to Balance</h2>
-                        <form action="/dodaj_denar" method="post">
+                        <form action="{{url("dodaj_denar")}}" method="post">
                             <label style="color: hsl(171, 100%, 41%) ;" for="vsota">Vsota:</label>
                             <input type="number" id="vsota" name="vsota" min="1" required>
                             <label style="color: hsl(171, 100%, 41%) ;" for="credit-card">Credit Card:</label>

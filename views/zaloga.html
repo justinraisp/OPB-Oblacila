@@ -107,26 +107,26 @@
                 <div id="navbarExampleTransparentExample" class="navbar-menu">
                     <div class="navbar-start">
 
-                        <a class="navbar-item" href="/glavna/">
+                        <a class="navbar-item" href="{{url("glavna")}}">
                             Artikli
                         </a>
                         % if rola == "admin" :
-                        <a class="navbar-item" href="/zaloga/"
+                        <a class="navbar-item" href="{{url("zaloga")}}"
                             style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
                             Zaloga
                         </a>
                         % else :
-                        <a class="navbar-item" href="/kosarica/">
+                        <a class="navbar-item" href="{{url("kosarica")}}">
                             <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                             Košarica
                         </a>
                         % end
-                        <a class="navbar-item" href="/odjava">
+                        <a class="navbar-item" href="{{url("odjava")}}">
                             Odjava
                         </a>
                     </div>
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_admin/">
+                        <a class="navbar-item" href="{{url("uporabnik_admin")}}">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} 
                         </a>
                     </div>
@@ -139,14 +139,14 @@
         <section class="hero is-primary">
             <div class="hero-body">
 
-                <form action="/poizvedba-zaloga/" method="POST">
+                <form action="{{url("poizvedba_zaloga")}}" method="POST">
 
 
 
                     <div class="field has-addons">
                         <label for="" class="label">
                             <p class="control">
-                                <a class="button" href="/dodaj-zalogo/"
+                                <a class="button" href="{{url("dodaj_zalogo")}}"
                                     style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
                                     Dodaj novo zalogo
                                 </a>
