@@ -312,6 +312,174 @@
         </div>
         % 
         <div class="block" style="padding-top: 50px; padding-bottom: 50px">
+
+            <nav class="pagination is-centered">
+        
+                % if trenutna_stran == 1:
+                <button class="pagination-previous btn" style="float:left" disabled>
+                    Prejšnja stran
+                </button>
+                % else:
+                % if poizvedba == "":
+                <form action="{{url("prikaz_strani_artikel")}}" style="float: left;">
+                    % elif "poizvedba_zaloga_prikazi" in poizvedba:
+                    <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}" style="float: left;">
+                        % elif "poizvedba_prikazi" in poizvedba:
+                        <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                        % end
+                        <input type="hidden" name="stran" value="{{ trenutna_stran - 1 }}">
+        
+                        <button style="float:left" type="submit" class="pagination-previous btn">
+                            Prejšnja stran
+                        </button>
+        
+                    </form>
+                    <!-- 
+                        
+        <a href="/{{poizvedba}}?stran={{ trenutna_stran - 1 }}" style="float:left"
+                            class="pagination-previous btn">
+                            Prejšnja stran
+                        </a>
+        
+                     -->
+        
+                    % end
+        
+        
+                    <ul class="pagination-list is-primary">
+                        % if trenutna_stran > 3:
+                        <li>
+                            % if poizvedba == "":
+                            <form action="{{url("prikaz_strani_artikel")}}">
+                                % elif "poizvedba_zaloga_prikazi" in poizvedba:
+                                <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
+                                    % elif "poizvedba_prikazi" in poizvedba:
+                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                    % end
+                                    <input type="hidden" name="stran" value="{{ 1 }}">
+                                    <button type="submit" class="pagination-link btn " style="background-color: hsl(171, 100%, 41%);
+                                    border-color: hsl(171,100%, 41%);
+                                    color: white">
+                                        1
+                                    </button>
+        
+                                </form>
+        
+                        </li>
+        
+                        <li>
+                            <span class="pagination-ellipsis">&hellip;</span>
+                        </li>
+                        % end
+        
+        
+                        % for i in range(max(1, trenutna_stran - 2), min(max_stran + 1, trenutna_stran + 3)):
+                        % if i == trenutna_stran :
+        
+                        <li>
+                            % if poizvedba == "":
+                            <form action="{{url("prikaz_strani_artikel")}}">
+                                % elif "poizvedba_zaloga_prikazi" in poizvedba:
+                                <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
+                                    % elif "poizvedba_prikazi" in poizvedba:
+                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                    % end
+                                    <input type="hidden" name="stran" value="{{ i }}">
+        
+                                    <button type="submit" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
+                                        border-color: hsl(171,70%, 41%);
+                                        color: lightgray">
+                                        {{i}}
+                                    </button>
+        
+                                </form>
+        
+        
+                        </li>
+        
+                        %else:
+        
+                        <li>
+                            % if poizvedba == "":
+                            <form action="{{url("prikaz_strani_artikel")}}">
+                                % elif "poizvedba_zaloga_prikazi" in poizvedba:
+                                <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
+                                    % elif "poizvedba_prikazi" in poizvedba:
+                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                    % end
+                                    <input type="hidden" name="stran" value="{{ i }}">
+        
+                                    <button type="submit" class="pagination-link btn " style="background-color: hsl(171, 100%, 41%);
+                                        border-color: hsl(171,100%, 41%);
+                                        color: white">
+                                        {{i}}
+                                    </button>
+        
+                                </form>
+                        </li>
+                        % end
+                        %end
+        
+                        % if trenutna_stran < max_stran - 2: 
+                        <li>
+                            <span class="pagination-ellipsis">&hellip;</span>
+                            </li>
+        
+                            <li>
+                                % if poizvedba == "":
+                                <form action="{{url("prikaz_strani_artikel")}}">
+                                    % elif "poizvedba_zaloga_prikazi" in poizvedba:
+                                    <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
+                                        % elif "poizvedba_prikazi" in poizvedba:
+                                        <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                        % end
+                                        <input type="hidden" name="stran" value="{{ max_stran }}">
+        
+                                        <button type="submit" class="pagination-link btn " style="background-color: hsl(171, 100%, 41%);
+                                    border-color: hsl(171,100%, 41%);
+                                    color: white">
+                                            {{max_stran}}
+                                        </button>
+        
+                                    </form>
+        
+        
+        
+                            </li>
+        
+                            % end
+                    </ul>
+        
+                    % if trenutna_stran != max_stran:
+        
+        
+                    % if poizvedba == "":
+                    <form action="{{url("prikaz_strani_artikel")}}" style="float:right">
+                        % elif "poizvedba_zaloga_prikazi" in poizvedba:
+                        <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}" style="float:right">
+                            % elif "poizvedba_prikazi" in poizvedba:
+                            <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                            % end
+                            <input type="hidden" name="stran" value="{{ trenutna_stran + 1 }}">
+        
+                            <button style="float:right" type="submit" class="pagination-next btn">
+                                Naslednja stran
+                            </button>
+        
+                        </form>
+        
+        
+        
+                        % else:
+                        <button class="pagination-next btn" style="float:right" disabled>
+                            Naslednja stran
+                        </button>
+                        % end
+            </nav>
+
+
+
+<!-- 
             <nav class="pagination is-centered">
 
                 % if trenutna_stran == 1:
@@ -388,6 +556,7 @@
                 </a>
                 % end
             </nav>
+                -->
             %else:
             <p>Seznam rezultatov je prazen.</p>
             %end

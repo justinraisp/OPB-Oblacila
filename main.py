@@ -55,13 +55,13 @@ def cookie_required(f):
 
 @bottle.route("/")
 @cookie_required
-def prikaz_strani_artikel(stran=1):
+def prikaz_strani_artikel():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
     max_stran = ceil(106871 / artikli_na_stran)
-    trenutna_stran = stran
+    trenutna_stran = int(request.query.get("stran", 1))
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     #print(repo.dobi_statistiko())
@@ -74,7 +74,7 @@ def prikaz_strani_artikel(stran=1):
         return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="")
 
 
-@bottle.route("/glavna/<stran>")
+@bottle.route("/glavna/")
 @cookie_required
 def glavna(stran=1):
     uporabnik = request.get_cookie("uporabnik")
@@ -82,7 +82,7 @@ def glavna(stran=1):
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
     max_stran = ceil(106871 / artikli_na_stran)
-    trenutna_stran = stran  #Default stran je prva
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     #print(repo.dobi_statistiko())
@@ -96,8 +96,8 @@ def glavna(stran=1):
 
 
 
-@bottle.route("/razvrsti/<stran>", method=["POST", "GET"])
-def razvrsti(stran):
+@bottle.route("/razvrsti/", method=["POST", "GET"])
+def razvrsti():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
@@ -108,7 +108,7 @@ def razvrsti(stran):
     else:
         stolpec = request.get_cookie("sortiranje").split()[0]
         smer = request.get_cookie("sortiranje").split()[1]
-    trenutna_stran = stran
+    trenutna_stran = int(request.query.get("stran", 1))
     artikli_na_stran = 10
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
@@ -160,7 +160,7 @@ def statistika():
     stevilo_vseh_narocil, stevilo_narocil_v_mesecu, skupen_znesek_narocil, skupen_znesek_narocil_v_mesecu = repo.transakcija_statistika(trenutni_mesec)
     najbolj_prodajan_izdelek, najbolj_prodajan_izdelek_v_mesecu = repo.izdelek_statistika(trenutni_mesec)
     najboljsi_uporabnik, najboljsi_uporabnik_mesec = repo.uporabnik_statistika(trenutni_mesec)
-    print(najboljsi_uporabnik, najboljsi_uporabnik_mesec)
+  
     return template("statistika.html", stanje=stanje, uporabnik=uporabnik,rola=rola,
                     stevilo_vseh_narocil=stevilo_vseh_narocil,stevilo_narocil_v_mesecu=stevilo_narocil_v_mesecu,
                     skupen_znesek_narocil=skupen_znesek_narocil, skupen_znesek_narocil_v_mesecu=skupen_znesek_narocil_v_mesecu,
@@ -267,12 +267,12 @@ def oceni_artikel(sku):
     bottle.redirect(url("zgodovina"))
 
 
-@bottle.route("/zaloga/<stran>")
+@bottle.route("/zaloga/")
 @cookie_required
-def zaloga(stran=1):
+def zaloga():
     artikli_na_stran = 10
     max_stran = ceil(106871 / artikli_na_stran)
-    trenutna_stran = stran #Default stran je prva
+    trenutna_stran = int(request.query.get("stran", 1)) #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
@@ -296,7 +296,7 @@ def dodaj_zalogo_stran():
     rola= request.get_cookie("rola")
     artikel = Glavna()
     artikli = repo.dobi_gen(Glavna)
-    print(artikel)
+   
     return template_user("dodaj-zalogo.html",filtri1=filtri11,filtri2=filtri22,artikel = artikel,artikli=artikli)
 
 @bottle.route("/dodaj_zalogo_novo/", method="post")
@@ -308,7 +308,7 @@ def dodaj_zalogo_novo():
     artikel = Glavna(**podatki)
     kolicina = int(request.forms.get("kolicina"))
     repo.posodobi_zaloga(podatki["sku"], kolicina)
-    print(artikel)
+   
     repo.dodaj_gen(artikel,serial_col=None)
     #repo.posodobi_zaloga(sku, kolicina_dodaj,dodaj=True)
     bottle.redirect(url("glavna"))
@@ -321,33 +321,33 @@ def izbrisi_zalogo():
     rola= request.get_cookie("rola")
     return template("izbrisi.html",EAN=EAN,rola=rola)
 
-@bottle.route("/poizvedba_prikazi/<iskanje>/<atribut>/<stran>")
+@bottle.route("/poizvedba_prikazi/<iskanje>/<atribut>/")
 @cookie_required
-def poizvedba_prikazi(iskanje,atribut,stran):
+def poizvedba_prikazi(iskanje,atribut):
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     rezultati_iskanja = repo.glavna_nalozi_iskanje(iskanje,stolpec=atribut)
     artikli_na_stran = 10
     max_stran = ceil(len(rezultati_iskanja) / artikli_na_stran)
-    trenutna_stran = stran  #Default stran je prva
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
     poizvedba = "poizvedba_prikazi/" + iskanje + "/" + atribut
     ocene = repo.pridobi_ocene(artikli)
-    print(artikli)
-    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci)
+    
+    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci,iskanje=iskanje,atribut=atribut)
 
-@bottle.post("/poizvedba/<stran>")
+@bottle.post("/poizvedba/")
 @cookie_required
-def poizvedba(stran):
+def poizvedba():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
     max_stran = ceil(106871 / artikli_na_stran)
-    trenutna_stran =  stran #Default stran je prva
+    trenutna_stran =  int(request.query.get("stran", 1)) #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     atribut = request.forms.get("iskanje_atribut")
@@ -360,32 +360,32 @@ def poizvedba(stran):
     bottle.redirect(url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut))
 
 
-@bottle.route("/poizvedba_zaloga_prikazi/<iskanje>/<stran>")
+@bottle.route("/poizvedba_zaloga_prikazi/<iskanje>")
 @cookie_required
-def poizvedba_zaloga_prikazi(stran):
+def poizvedba_zaloga_prikazi(iskanje):
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     rezultati_iskanja = repo.zaloga_nalozi_iskanje(iskanje)
     artikli_na_stran = 10
     max_stran = ceil(len(rezultati_iskanja) / artikli_na_stran)
-    trenutna_stran = stran #Default stran je prva
+    trenutna_stran = int(request.query.get("stran", 1)) #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
     poizvedba = "poizvedba_zaloga_prikazi/" + iskanje
-    return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba)
+    return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba,iskanje=iskanje)
 
 
-@bottle.post("/poizvedba_zaloga/<stran>")
+@bottle.post("/poizvedba_zaloga/")
 @cookie_required
-def poizvedba_zaloga(stran):
+def poizvedba_zaloga():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
     max_stran = ceil(106871 / artikli_na_stran)
-    trenutna_stran = stran  #Default stran je prva
+    trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     try:
@@ -462,7 +462,7 @@ def prijava():
         # Uporabimo kar template, kot v sami "index" funkciji
         artikli = repo.dobi_gen(Glavna)
         stanje = repo.dobi_stanje(uporabnik)
-        print(rola)
+        
         if not stanje: 
             stanje= Stanje(uporabnik=username)
             repo.dodaj_gen(stanje,serial_col=None)
@@ -493,6 +493,11 @@ def autorizacija():
         return template("prijava.html", napaka=None)
     else : 
         return template("autorizacija.html", napaka="Napačna koda!", username=username, password=password)
+    
+@get("/print/")
+def print():
+    printek = request.forms.get('print')
+    
 
 
 conn = psycopg2.connect(database=Data.auth.db, host=Data.auth.host,
