@@ -1,6 +1,11 @@
 pandas
-Data
+typing
+datetime
+dataclasses
+dataclasses_json
+bcrypt
 bottle
 bcrypt
 psycopg2
 jupyter-server-proxy
+simplejson
