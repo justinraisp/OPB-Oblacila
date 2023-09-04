@@ -179,13 +179,13 @@
                     % if rola == "guest":
                     <div class="navbar-end">
                         <a class="navbar-item" href="/uporabnik_guest/" style="text-decoration: underline ;color: hsl(171, 100%, 41%);">
-                            Uporabniško ime: {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
+                            <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
                     % else:
                     <div class="navbar-end">
                         <a class="navbar-item" href="/uporabnik_admin/">
-                            Uporabniško ime: {{ uporabnik }} 
+                            <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} 
                         </a>
                     </div>
                     % end

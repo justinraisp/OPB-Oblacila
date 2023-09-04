@@ -394,24 +394,26 @@ def registracija_post():
     rola = request.forms.get('role')
     password = request.forms.get('password')
     confirm_password = request.forms.get('confirm_password')
+    if password==confirm_password:
+        try:
+            if auth.obstaja_uporabnik(username):
+                return template("registracija.html", napaka="Uporabnik s tem imenom že obstaja")
+        except Exception as e:
+                if rola == "guest":
+                    auth.dodaj_uporabnika(username,rola,password)
+                    nova_kosarica = Kosarica(uporabnik=username)
+                    repo.dodaj_gen(nova_kosarica)
+                    novo_stanje = Stanje(uporabnik=username)
+                    repo.dodaj_gen(novo_stanje,serial_col=None)
+                    nove_ocene = Uporabnik_ocene(uporabnik=username)
+                    repo.dodaj_gen(nove_ocene,serial_col=None)
 
-    try:
-        if auth.obstaja_uporabnik(username):
-            return template("registracija.html", napaka="Uporabnik s tem imenom že obstaja")
-    except Exception as e:
-            if rola == "guest":
-                auth.dodaj_uporabnika(username,rola,password)
-                nova_kosarica = Kosarica(uporabnik=username)
-                repo.dodaj_gen(nova_kosarica)
-                novo_stanje = Stanje(uporabnik=username)
-                repo.dodaj_gen(novo_stanje,serial_col=None)
-                nove_ocene = Uporabnik_ocene(uporabnik=username)
-                repo.dodaj_gen(nove_ocene,serial_col=None)
+                if rola == "admin":
+                    return template("autorizacija.html", napaka=None, username=username, rola=rola, password=password)
 
-            if rola == "admin":
-                return template("autorizacija.html", napaka=None, username=username, rola=rola, password=password)
-
-            return template("prijava.html", napaka=None)
+                return template("prijava.html", napaka=None)
+    else:
+        return template("registracija.html", napaka="Gesli se ne ujemata")
 
 
 @post('/prijava')

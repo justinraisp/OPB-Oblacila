@@ -111,7 +111,7 @@
                             <a class="navbar-item" href="/statistika/">
                                 Statistika
                             </a>
-                            <a class="navbar-item" href="/zgodovina">
+                            <a class="navbar-item" href="/zgodovina" style="text-decoration: underline;color: hsl(171, 100%, 41%);">
                                 Zgodovina nakupov
                             </a>
                             % else :
@@ -130,13 +130,13 @@
                         % if rola == "guest":
                     <div class="navbar-end">
                         <a class="navbar-item" href="/uporabnik_guest/">
-                            Uporabniško ime: {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
+                            <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
                     % else:
                     <div class="navbar-end">
                         <a class="navbar-item">
-                            Uporabniško ime: {{ uporabnik }} 
+                            <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} 
                         </a>
                     </div>
                     % end
@@ -151,7 +151,7 @@
                     <div class="title">Zgodovina</div>
     
                     <table class="table"
-                        style="background-color: hsl(171, 80%, 41%);color: white;">
+                        style="background-color: hsl(171, 80%, 41%);color: white; width: 100%;">
                         <tr class="vrstica">
                             <th style="color: white;">Datum</th>
                             % if rola=="admin":

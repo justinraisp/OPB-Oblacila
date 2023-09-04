@@ -127,13 +127,13 @@
                     % if rola == "guest":
                     <div class="navbar-end">
                         <a class="navbar-item" href="/uporabnik_guest/">
-                            Uporabniško ime: {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
+                            <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
                     % else:
                     <div class="navbar-end">
                         <a class="navbar-item" href="/uporabnik_admin/">
-                            Uporabniško ime: {{ uporabnik }} 
+                            <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} 
                         </a>
                     </div>
                     % end
@@ -279,9 +279,9 @@
                         <td>
                                 <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="post">
                                     <input type="hidden" name="artikel_cena" value="{{artikel.price}}">                                    
-                                      <div class="field has-addons">
+                                      <div class="field has-addons" style="width: 180px;">
 <div class="control">
-<input type="number" min=1 name="kolicina_za_v_kosarico"  class="input is-primary"
+<input type="number" min=1 max="999999999" name="kolicina_za_v_kosarico"  class="input is-primary"
                                             placeholder="Količina" required>  
 </div>
 
