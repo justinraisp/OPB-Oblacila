@@ -54,6 +54,11 @@ def cookie_required(f):
     return decorated
 
 @bottle.route("/")
+def glavna():
+        return bottle.redirect("/glavna/")
+
+
+@bottle.route("/glavna/")
 @cookie_required
 def prikaz_strani_artikel():
     uporabnik = request.get_cookie("uporabnik")
@@ -191,7 +196,7 @@ def dodaj_v_kosarico(sku):
     trenutna_kosarica.dodaj_izdelek(izdelek)
     repo.kosarica_shrani(uporabnik,trenutna_kosarica.izdelki)
 
-    bottle.redirect("/")
+    bottle.redirect("/glavna/")
 
 
 @bottle.route("/izbrisi_iz_kosarice/<sku>", method="post")
@@ -264,7 +269,7 @@ def prikaz_strani_zaloga():
 def dodaj_zalogo(sku):
     kolicina_dodaj = int(request.forms.get("kolicina"))
     repo.posodobi_zaloga(sku, kolicina_dodaj)
-    bottle.redirect("/")
+    bottle.redirect("/glavna/")
 
 
 @bottle.route("/dodaj_zalogo_stran")
@@ -289,7 +294,7 @@ def dodaj_zalogo():
     print(artikel)
     repo.dodaj_gen(artikel,serial_col=None)
     #repo.posodobi_zaloga(sku, kolicina_dodaj,dodaj=True)
-    bottle.redirect("/")
+    bottle.redirect("/glavna/")
 
 @bottle.route("/zaloga/izbrisi")
 @cookie_required
@@ -312,7 +317,7 @@ def prikaz_strani_artikel(iskanje,atribut):
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
-    poizvedba = "poizvedba_prikazi" + iskanje + "/" + atribut
+    poizvedba = "poizvedba_prikazi" + iskanje + "/glavna/" + atribut
     ocene = repo.pridobi_ocene(artikli)
     print(artikli)
     return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci)
@@ -445,7 +450,7 @@ def prijava():
             stanje= Stanje(uporabnik=username)
             repo.dodaj_gen(stanje,serial_col=None)
         #return template(f'artikli_{rola}.html', filtri1=filtri11, filtri2=filtri22,artikli=artikli,rola=rola,trenutna_stran=1,max_stran=10, stanje=stanje, uporabnik=uporabnik)
-        redirect("/")
+        redirect("/glavna/")
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
    
