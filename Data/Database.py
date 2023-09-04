@@ -553,6 +553,7 @@ class Repo:
                 kosarica = row[2]
                 skupna_cena = row[3]
                 zgodovina.append({"uporabnik": uporabnik, "datum": datum, "kosarica": kosarica, "skupna_cena": skupna_cena})
+                print(zgodovina)
         return zgodovina
 
     def oceni_artikel(self, sku, nova_ocena):
@@ -652,6 +653,80 @@ class Repo:
         self.conn.commit()
         return stevilo_transakcij, stevilo_transakcij_v_mesecu, skupen_znesek, skupen_znesek_narocil_v_mesecu
     
+    def izdelek_statistika(self, mesec):
+        self.cur.execute("""
+            SELECT
+                key AS izdelek,
+                SUM((value->>'kolicina')::numeric) AS skupna_kolicina
+            FROM
+                transakcija,
+                jsonb_each(transakcija.kosarica)
+            GROUP BY
+                key
+            ORDER BY
+                skupna_kolicina DESC
+            LIMIT 1;
+        """)
+
+        najbolj_prodajan = self.cur.fetchone()[0]
+
+        self.cur.execute("""
+            SELECT
+                key AS izdelek,
+                SUM((value->>'kolicina')::numeric) AS skupna_kolicina
+            FROM
+                transakcija,
+                jsonb_each(transakcija.kosarica)
+            WHERE SUBSTRING(datum, 6, 2) = %s
+            GROUP BY
+                key
+            ORDER BY
+                skupna_kolicina DESC
+            LIMIT 1;
+        """, (mesec,))
+
+        najbolj_prodajan_v_mesecu = self.cur.fetchone()[0]
+        self.conn.commit()    
+        return najbolj_prodajan,najbolj_prodajan_v_mesecu
+    
+    def uporabnik_statistika(self,mesec ):
+        self.cur.execute("""
+            SELECT
+                uporabnik,
+                SUM(skupna_cena) AS skupna_vsota
+            FROM
+                transakcija
+            GROUP BY
+                uporabnik
+            ORDER BY
+                skupna_vsota DESC
+            LIMIT 1;
+        """)
+
+        najvisja_vsota = self.cur.fetchone()
+        
+        self.cur.execute("""
+            SELECT
+                uporabnik,
+                SUM(skupna_cena) AS skupna_vsota
+            FROM
+                transakcija
+            WHERE SUBSTRING(datum, 6, 2) = %s
+            GROUP BY
+                uporabnik
+            ORDER BY
+                skupna_vsota DESC
+            LIMIT 1;
+        """,(mesec,))
+        najvisja_vsota_mesec = self.cur.fetchone()
+
+        if najvisja_vsota:
+            uporabnik = najvisja_vsota[0]
+            uporabnik_mesec = najvisja_vsota_mesec[0]
+            return uporabnik,  uporabnik_mesec
+        else:
+            return None
+            
     def generiraj_nakljucne_ocene(self, st_ocen):
         self.cur.execute("""SELECT "Sku" FROM glavna;""")
         artikli = self.cur.fetchall()
