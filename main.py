@@ -68,15 +68,15 @@ def prikaz_strani_artikel():
     if rola == "guest":
         artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
         ocene = repo.pridobi_ocene(artikli)
-        return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba= "", ocene=ocene,glavna_stolpci=glavna_stolpci)
+        return template("artikli_guest.html",sortiranje="",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba= "", ocene=ocene,glavna_stolpci=glavna_stolpci)
     if rola == "admin":
         artikli = repo.dobi_gen(Zaloga,take=artikli_na_stran,skip=zacetni_indeks)
-        return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="")
+        return template("artikli_admin.html",sortiranje="",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="")
 
 
 @bottle.route("/glavna/")
 @cookie_required
-def glavna(stran=1):
+def glavna():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
@@ -89,7 +89,7 @@ def glavna(stran=1):
     if rola == "guest":
         artikli = repo.dobi_gen(Glavna,take=artikli_na_stran,skip=zacetni_indeks)
         ocene = repo.pridobi_ocene(artikli)
-        return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba= "", ocene=ocene,glavna_stolpci=glavna_stolpci)
+        return template("artikli_guest.html",sortiranje="",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba= "", ocene=ocene,glavna_stolpci=glavna_stolpci)
     if rola == "admin":
         artikli = repo.dobi_gen(Zaloga,take=artikli_na_stran,skip=zacetni_indeks)
         return template("artikli_admin.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="")
@@ -102,6 +102,7 @@ def razvrsti():
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     if request.forms.get("sortiranje"):
+        sortiranje = request.forms.get("sortiranje")
         stolpec = request.forms.get("sortiranje").split()[0]
         smer = request.forms.get("sortiranje").split()[1]
         response.set_cookie("sortiranje", request.forms.get("sortiranje"))
@@ -120,7 +121,7 @@ def razvrsti():
         skuji = [ocena.sku for ocena in ocene]
         artikli = repo.dobi_Artikle(skuji)
     max_stran = ceil(106871 / artikli_na_stran)
-    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="razvrsti", ocene=ocene,glavna_stolpci=glavna_stolpci)
+    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba="razvrsti", ocene=ocene,glavna_stolpci=glavna_stolpci,stolpec=stolpec,smer=smer,sortiranje="")
 
 @bottle.route("/artikel/<sku>")
 @cookie_required
@@ -321,23 +322,23 @@ def izbrisi_zalogo():
     rola= request.get_cookie("rola")
     return template("izbrisi.html",EAN=EAN,rola=rola)
 
-@bottle.route("/poizvedba_prikazi/<iskanje>/<atribut>/")
+@bottle.route("/poizvedba_prikazi/<iskanje>/<po_cem_iscemo>/")
 @cookie_required
-def poizvedba_prikazi(iskanje,atribut):
+def poizvedba_prikazi(iskanje, po_cem_iscemo):
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
-    rezultati_iskanja = repo.glavna_nalozi_iskanje(iskanje,stolpec=atribut)
+    rezultati_iskanja = repo.glavna_nalozi_iskanje(iskanje,stolpec= po_cem_iscemo)
     artikli_na_stran = 10
     max_stran = ceil(len(rezultati_iskanja) / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
     artikli = rezultati_iskanja[zacetni_indeks:koncni_indeks]
-    poizvedba = "poizvedba_prikazi/" + iskanje + "/" + atribut
+    poizvedba = "poizvedba_prikazi/" + iskanje + "/" +  po_cem_iscemo
     ocene = repo.pridobi_ocene(artikli)
     
-    return template("artikli_guest.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci,iskanje=iskanje,atribut=atribut)
+    return template("artikli_guest.html",sortiranje="",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,trenutna_stran=trenutna_stran, max_stran=max_stran, stanje=stanje, uporabnik=uporabnik, poizvedba=poizvedba, ocene=ocene,glavna_stolpci=glavna_stolpci,iskanje=iskanje, po_cem_iscemo= po_cem_iscemo)
 
 @bottle.post("/poizvedba/")
 @cookie_required
@@ -350,14 +351,14 @@ def poizvedba():
     trenutna_stran =  int(request.query.get("stran", 1)) #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
-    atribut = request.forms.get("iskanje_atribut")
+    po_cem_iscemo = request.forms.get("iskanje_po_cem_iscemo")
     try:
         iskanje = bottle.request.forms["iskanje"]
     except UnicodeError:
         iskanje = False
         rezultati_iskanja = None
 
-    bottle.redirect(url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut))
+    bottle.redirect(url("poizvedba_prikazi",iskanje=iskanje, po_cem_iscemo= po_cem_iscemo))
 
 
 @bottle.route("/poizvedba_zaloga_prikazi/<iskanje>")

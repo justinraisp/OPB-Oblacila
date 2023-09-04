@@ -162,7 +162,7 @@
 
 
         </section>
-
+        % if artikli:
         <div class="table-container" style="padding-top:25px">
 
             <table class="table" style="width:100%">
@@ -233,9 +233,18 @@
             <nav class="pagination is-centered">
         
                 % if trenutna_stran == 1:
-                <button class="pagination-previous btn" style="float:left" disabled>
+                <div class="containers">
+                    <div class="container is-1">
+
+                        <button class="pagination-previous btn" style="float:left" disabled>
                     Prejšnja stran
                 </button>
+                    </div>
+                
+                
+
+                
+
                 % else:
                 % if poizvedba == "":
                 <form action="{{url("prikaz_strani_artikel")}}" style="float: left;">
@@ -380,7 +389,11 @@
                             Naslednja stran
                         </button>
                         % end
+                    </div>
             </nav>
+            % else:
+            <p>Nič ni najdeno</p>
+            % end
         </div>
         
         </div>

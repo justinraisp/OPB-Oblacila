@@ -1,5 +1,6 @@
 %import math
 %from dataclasses import fields
+
 <html>
 
 <head>
@@ -155,7 +156,7 @@
                         </p>
                         <p class="control">
                             <div  class="select is-primary">
-                                <select  name="iskanje_atribut">
+                                <select  name="iskanje_po_cem_iscemo">
                                     
                                     <option value="sku">SKU</option>
                                     <option value="style">Koda stila</option>
@@ -325,10 +326,13 @@
                     % elif "poizvedba_zaloga_prikazi" in poizvedba:
                     <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}" style="float: left;">
                         % elif "poizvedba_prikazi" in poizvedba:
-                        <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                        % print(  po_cem_iscemo)
+                        <form action="{{url("poizvedba_prikazi",iskanje=iskanje, po_cem_iscemo= po_cem_iscemo)}}" style="float:left">
+                            % elif poizvedba=="razvrsti":
+                                <form action="{{url("razvrsti")}}" style="float:left">
                         % end
                         <input type="hidden" name="stran" value="{{ trenutna_stran - 1 }}">
-        
+                        <input type="hidden" name="sortiranje" value="{{ sortiranje }}">
                         <button style="float:left" type="submit" class="pagination-previous btn">
                             Prejšnja stran
                         </button>
@@ -354,9 +358,13 @@
                                 % elif "poizvedba_zaloga_prikazi" in poizvedba:
                                 <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
                                     % elif "poizvedba_prikazi" in poizvedba:
-                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                    % print(  po_cem_iscemo)
+                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje, po_cem_iscemo= po_cem_iscemo)}}" >
+                                        % elif poizvedba=="razvrsti":
+                                <form action="{{url("razvrsti")}}" >
                                     % end
                                     <input type="hidden" name="stran" value="{{ 1 }}">
+                                    <input type="hidden" name="sortiranje" value="{{ sortiranje }}">
                                     <button type="submit" class="pagination-link btn " style="background-color: hsl(171, 100%, 41%);
                                     border-color: hsl(171,100%, 41%);
                                     color: white">
@@ -382,10 +390,13 @@
                                 % elif "poizvedba_zaloga_prikazi" in poizvedba:
                                 <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
                                     % elif "poizvedba_prikazi" in poizvedba:
-                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                    % print(  po_cem_iscemo)
+                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje, po_cem_iscemo= po_cem_iscemo)}}" >
+                                        % elif poizvedba=="razvrsti":
+                                <form action="{{url("razvrsti")}}">
                                     % end
                                     <input type="hidden" name="stran" value="{{ i }}">
-        
+                                    <input type="hidden" name="sortiranje" value="{{ sortiranje }}">
                                     <button type="submit" class="pagination-link btn 'is-current'" style="background-color: hsl(171, 70%, 41%);
                                         border-color: hsl(171,70%, 41%);
                                         color: lightgray">
@@ -405,10 +416,13 @@
                                 % elif "poizvedba_zaloga_prikazi" in poizvedba:
                                 <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
                                     % elif "poizvedba_prikazi" in poizvedba:
-                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                    % print(  po_cem_iscemo)
+                                    <form action="{{url("poizvedba_prikazi",iskanje=iskanje, po_cem_iscemo= po_cem_iscemo)}}" >
+                                        % elif poizvedba=="razvrsti":
+                                <form action="{{url("razvrsti")}}" >
                                     % end
                                     <input type="hidden" name="stran" value="{{ i }}">
-        
+                                    <input type="hidden" name="sortiranje" value="{{ sortiranje }}">
                                     <button type="submit" class="pagination-link btn " style="background-color: hsl(171, 100%, 41%);
                                         border-color: hsl(171,100%, 41%);
                                         color: white">
@@ -431,10 +445,13 @@
                                     % elif "poizvedba_zaloga_prikazi" in poizvedba:
                                     <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}">
                                         % elif "poizvedba_prikazi" in poizvedba:
-                                        <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                                        % print(  po_cem_iscemo)
+                                        <form action="{{url("poizvedba_prikazi",iskanje=iskanje, po_cem_iscemo= po_cem_iscemo)}}" >
+                                            % elif poizvedba=="razvrsti":
+                                <form action="{{url("razvrsti")}}" >
                                         % end
                                         <input type="hidden" name="stran" value="{{ max_stran }}">
-        
+                                        <input type="hidden" name="sortiranje" value="{{ sortiranje }}">
                                         <button type="submit" class="pagination-link btn " style="background-color: hsl(171, 100%, 41%);
                                     border-color: hsl(171,100%, 41%);
                                     color: white">
@@ -458,10 +475,14 @@
                         % elif "poizvedba_zaloga_prikazi" in poizvedba:
                         <form action="{{url("poizvedba_zaloga_prikazi",iskanje=iskanje)}}" style="float:right">
                             % elif "poizvedba_prikazi" in poizvedba:
-                            <form action="{{url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut)}}" style="float:right">
+                            % print(  po_cem_iscemo)
+                            <form action="{{url("poizvedba_prikazi",iskanje=iskanje, po_cem_iscemo= po_cem_iscemo)}}" style="float:right">
+                                % elif poizvedba=="razvrsti":
+                                % print("tukaj")
+                                <form action="{{url("razvrsti")}}" style="float:right">
                             % end
                             <input type="hidden" name="stran" value="{{ trenutna_stran + 1 }}">
-        
+                            <input type="hidden" name="sortiranje" value="{{ sortiranje }}">
                             <button style="float:right" type="submit" class="pagination-next btn">
                                 Naslednja stran
                             </button>
