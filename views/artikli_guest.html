@@ -104,35 +104,35 @@
 
                 <div id="navbarExampleTransparentExample" class="navbar-menu">
                     <div class="navbar-start">
-                        <a class="navbar-item" href="/glavna/"
+                        <a class="navbar-item" href="{{url("glavna")}}"
                             style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
                             Artikli
                         </a>
 
                         % if rola == "admin" :
-                        <a class="navbar-item" href="/zaloga/">
+                        <a class="navbar-item" href="{{url("zaloga")}}">
                             Zaloga
                         </a>
                         % else :
-                        <a class="navbar-item" href="/kosarica/">
+                        <a class="navbar-item" href="{{url("kosarica")}}">
 
                             Košarica <i class="fa fa-shopping-basket" aria-hidden="true" style="padding-left: 5px;"></i>
                         </a>
                         % end
-                        <a class="navbar-item" href="/odjava">
+                        <a class="navbar-item" href="{{url("odjava")}}">
                             Odjava
                         </a>
                         
                     </div>
                     % if rola == "guest":
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_guest/">
+                        <a class="navbar-item" href="{{url("uporabnik_guest")}}">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} | Stanje na računu: {{ stanje.bilanca }} €
                         </a>
                     </div>
                     % else:
                     <div class="navbar-end">
-                        <a class="navbar-item" href="/uporabnik_admin/">
+                        <a class="navbar-item" href="{{url("uporabnik_admin")}}">
                             <i class="fa-solid fa-user" style="color: hsl(171, 100%, 41%); padding-right: 10px;"></i> {{ uporabnik }} 
                         </a>
                     </div>
@@ -144,7 +144,7 @@
 
         <section class="hero is-primary">
             <div class="hero-body">
-                <form action="/poizvedba/" method="POST">
+                <form action="{{url("poizvedba")}}" method="POST">
 
                     <div class="field has-addons">
                         <label for="" class="label">
@@ -207,7 +207,7 @@
 -->
                 </form>
 
-                <form id="sorting-form" action="/razvrsti" method="POST">
+                <form id="sorting-form" action="{{url("razvrsti")}}" method="POST">
                 
                     <div class="field">
                         <label class="label">Razvrsti:</label>
@@ -269,7 +269,7 @@
                         <td>0</td>
                         %end
                         <td>
-                            <a href="/artikel/{{ artikel.sku }}" class="button is-small">
+                            <a href="{{url('artikel',sku=artikel.sku)}}" class="button is-small">
                                 <span>Prikaži več</span>
                                 <span class="icon is-small">
                                     <i class="fas fa-angle-right"></i>
@@ -286,7 +286,7 @@
                         % end
                         
                         <td>
-                                <form action="/dodaj_v_kosarico/{{artikel.sku}}" method="post">
+                                <form action="{{url('dodaj_v_kosarico',sku=artikel.sku)}}" method="post">
                                     <input type="hidden" name="artikel_cena" value="{{artikel.price}}">                                    
                                       <div class="field has-addons" style="width: 180px;">
 <div class="control">

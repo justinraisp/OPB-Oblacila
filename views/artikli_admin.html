@@ -107,17 +107,17 @@
                 <div id="navbarExampleTransparentExample" class="navbar-menu">
                     <div class="navbar-start">
 
-                        <a class="navbar-item" href="/glavna/"
+                        <a class="navbar-item" href="{{url("glavna")}}"
                             style="color: hsl(171, 100%, 41%); text-decoration: underline hsl(171, 100%, 41%);">
                             Zaloga
                         </a>
-                        <a class="navbar-item" href="/statistika/">
+                        <a class="navbar-item" href="{{url("statistika")}}">
                             Statistika
                         </a>
-                        <a class="navbar-item" href="/zgodovina">
+                        <a class="navbar-item" href="{{url("zgodovina")}}">
                             Zgodovina nakupov
                         </a>
-                        <a class="navbar-item" href="/odjava">
+                        <a class="navbar-item" href="{{url("odjava")}}">
                             Odjava
                         </a>
                     </div>
@@ -133,12 +133,12 @@
         <section class="hero is-primary">
             <div class="hero-body">
 
-                <form action="/poizvedba_zaloga/" method="POST">
+                <form action="{{url("poizvedba_zaloga")}}" method="POST">
 
                     <div class="field has-addons">
                         <label for="" class="label">
                             <p class="control">
-                                <a class="button" href="/dodaj_zalogo_stran/"
+                                <a class="button" href="{{url("dodaj_zalogo_stran")}}"
                                     style="background-color:white;color:hsl(171, 100%, 41%);border-color: hsl(171, 80%, 41%) ;">
                                     Dodaj nov artikel
                                 </a>
@@ -185,7 +185,7 @@
                         % end
 
                         <td>
-                            <a href="/artikel/{{ artikel.sku }}" class="button is-small">
+                            <a href="{{url('artikel',sku=artikel.sku)}}" class="button is-small">
                                 <span>Prikaži več</span>
                                 <span class="icon is-small">
                                     <i class="fas fa-angle-right"></i>
@@ -195,7 +195,7 @@
                         <td>
 
 
-                            <form action="/dodaj_zalogo/{{artikel.sku}}" method="post">
+                            <form action="{{url('dodaj_zalogo',sku=artikel.sku)}}" method="post">
 
                                 <div class="field has-addons">
                                     <div class="control">

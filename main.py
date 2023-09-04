@@ -97,7 +97,7 @@ def glavna():
 
 
 @bottle.route("/razvrsti", method=["POST", "GET"])
-def poizvedba():
+def razvrsti():
     uporabnik = request.get_cookie("uporabnik")
     print(uporabnik)
     stanje = repo.dobi_stanje(uporabnik)
@@ -125,7 +125,7 @@ def poizvedba():
 
 @bottle.route("/artikel/<sku>")
 @cookie_required
-def prikaz_artikla(sku):
+def artikel(sku):
     uporabnik = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
     artikel = repo.dobi_Artikel(sku)
@@ -145,7 +145,7 @@ def kosarica():
 
 @bottle.route("/uporabnik_guest/")
 @cookie_required
-def prikaz_uporabnik():
+def uporabnik_guest():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
@@ -153,7 +153,7 @@ def prikaz_uporabnik():
 
 @bottle.route("/statistika/")
 @cookie_required
-def prikaz_statistike():
+def statistika():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
@@ -170,7 +170,7 @@ def prikaz_statistike():
 
 @bottle.route("/uporabnik_admin/")
 @cookie_required
-def prikaz_uporabnik():
+def uporabnik_admin():
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje("admin")
     rola= request.get_cookie("rola")
@@ -178,7 +178,7 @@ def prikaz_uporabnik():
 
 @bottle.route("/zgodovina")
 @cookie_required
-def prikazi_zgodovino():
+def zgodovina():
     uporabnik = request.get_cookie("uporabnik")
     ocene_predmetov = repo.pridobi_zgodovino_ocen(uporabnik)
     rola= request.get_cookie("rola")
@@ -270,7 +270,7 @@ def oceni_artikel(sku):
 
 @bottle.route("/zaloga/")
 @cookie_required
-def prikaz_strani_zaloga():
+def zaloga():
     artikli_na_stran = 10
     max_stran = ceil(106871 / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
@@ -292,7 +292,7 @@ def dodaj_zalogo(sku):
 
 @bottle.route("/dodaj_zalogo_stran/")
 @cookie_required
-def prikaz_strani_zaloga():
+def dodaj_zalogo_stran():
     uporabnik = request.get_cookie("uporabnik")
     rola= request.get_cookie("rola")
     artikel = Glavna()
@@ -302,7 +302,7 @@ def prikaz_strani_zaloga():
 
 @bottle.route("/dodaj_zalogo_novo/", method="post")
 @cookie_required
-def dodaj_zalogo():
+def dodaj_zalogo_novo():
     podatki = {}
     for atribut in fields(Glavna()):
         podatki[atribut.name] = request.forms.get(atribut.name)
@@ -324,7 +324,7 @@ def izbrisi_zalogo():
 
 @bottle.route("/poizvedba_prikazi/<iskanje>/<atribut>")
 @cookie_required
-def prikaz_strani_artikel(iskanje,atribut):
+def poizvedba_prikazi(iskanje,atribut):
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
@@ -358,12 +358,12 @@ def poizvedba():
         iskanje = False
         rezultati_iskanja = None
 
-    bottle.redirect(f"/poizvedba_prikazi/{iskanje}/{atribut}" )
+    bottle.redirect(url("poizvedba_prikazi",iskanje=iskanje,atribut=atribut))
 
 
 @bottle.route("/poizvedba_zaloga_prikazi/<iskanje>")
 @cookie_required
-def prikaz_strani_artikel(iskanje):
+def poizvedba_zaloga_prikazi(iskanje):
     uporabnik = request.get_cookie("uporabnik")
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
@@ -394,7 +394,7 @@ def poizvedba_zaloga():
     except UnicodeError:
         iskanje = False
 
-    bottle.redirect(f"/poizvedba_zaloga_prikazi/{iskanje}")
+    bottle.redirect(url("poizvedba_zaloga_prikazi",iskanje=iskanje))
 
 @bottle.post("/poizvedba-dodaj/")
 @cookie_required
