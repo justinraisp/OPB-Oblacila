@@ -5,7 +5,7 @@ from dataclasses import fields
 from math import ceil
 import bottle
 from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
-
+import psycopg2
 from Data.Database import Repo
 from Data.Modeli import *
 from Data.Services import AuthService
@@ -13,8 +13,9 @@ from functools import wraps
 
 import os
 
-SERVER_PORT = os.environ.get('BOTTLE_PORT', 8081)
+SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
 RELOADER = os.environ.get('BOTTLE_RELOADER', True)
+DB_PORT = os.environ.get("POSTGRES_PORT",5432)
 
 
 repo = Repo()
@@ -470,6 +471,12 @@ def autorizacija():
         return template("prijava.html", napaka=None)
     else : 
         return template("autorizacija.html", napaka="Napačna koda!", username=username, password=password)
+
+
+conn = psycopg2.connect(database=auth.db, host=auth.host,
+                        user=auth.user, password=auth.password, port=DB_PORT)
+cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+cur1 = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 if __name__ == "__main__":
     run(host='localhost', port=SERVER_PORT, reloader=RELOADER)
