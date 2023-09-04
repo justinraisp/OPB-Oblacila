@@ -132,9 +132,14 @@ def prikaz_statistike():
     rola= request.get_cookie("rola")
     trenutni_mesec = date.today().strftime('%m')
     stevilo_vseh_narocil, stevilo_narocil_v_mesecu, skupen_znesek_narocil, skupen_znesek_narocil_v_mesecu = repo.transakcija_statistika(trenutni_mesec)
+    najbolj_prodajan_izdelek, najbolj_prodajan_izdelek_v_mesecu = repo.izdelek_statistika(trenutni_mesec)
+    najboljsi_uporabnik, najboljsi_uporabnik_mesec = repo.uporabnik_statistika(trenutni_mesec)
+    print(najboljsi_uporabnik, najboljsi_uporabnik_mesec)
     return template("statistika.html", stanje=stanje, uporabnik=uporabnik,rola=rola,
                     stevilo_vseh_narocil=stevilo_vseh_narocil,stevilo_narocil_v_mesecu=stevilo_narocil_v_mesecu,
-                    skupen_znesek_narocil=skupen_znesek_narocil, skupen_znesek_narocil_v_mesecu=skupen_znesek_narocil_v_mesecu)
+                    skupen_znesek_narocil=skupen_znesek_narocil, skupen_znesek_narocil_v_mesecu=skupen_znesek_narocil_v_mesecu,
+                    najbolj_prodajan_izdelek=najbolj_prodajan_izdelek,najbolj_prodajan_izdelek_v_mesecu=najbolj_prodajan_izdelek_v_mesecu,
+                    najboljsi_uporabnik=najboljsi_uporabnik,najboljsi_uporabnik_mesec=najboljsi_uporabnik_mesec)
 
 @bottle.route("/uporabnik_admin/")
 @cookie_required
@@ -377,7 +382,6 @@ def poizvedba_dodaj():
 
 @get('/registracija')
 def registracija():
-
     return template("registracija.html", napaka=None)
 
 @post('/registracija')
