@@ -195,7 +195,7 @@ def dodaj_denar():
     vsota = float(request.forms.get("vsota"))
     credit_card = request.forms.get("credit-card")
     repo.posodobi_stanje(uporabnik, vsota)
-    bottle.redirect(url("prikaz_uporabnik"))
+    bottle.redirect(url("uporabnik_guest"))
 
 
 @bottle.route("/dodaj_v_kosarico/<sku>", method="post")
@@ -223,7 +223,9 @@ def izbrisi_iz_kosarice(sku):
     uporabnik = request.get_cookie("uporabnik")
     #artikel = repo.dobi_Artikel(sku)
     trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
-    kolicina = int(request.forms.get("kolicina_izbrisi_kosarica"))
+    if request.forms.get("kolicina_izbrisi_kosarica"):
+        kolicina = int(request.forms.get("kolicina_izbrisi_kosarica"))
+    else: kolicina = 0
     cena = trenutna_kosarica.to_dict()['izdelki'][sku]['cena']  / trenutna_kosarica.to_dict()['izdelki'][sku]['kolicina']
     celotna_cena = cena * kolicina
     izdelek = {
