@@ -225,7 +225,7 @@ def izbrisi_iz_kosarice(sku):
     trenutna_kosarica = repo.kosarica_nalozi(uporabnik)
     if request.forms.get("kolicina_izbrisi_kosarica"):
         kolicina = int(request.forms.get("kolicina_izbrisi_kosarica"))
-    else: kolicina = 0
+    else: kolicina = trenutna_kosarica.to_dict()['izdelki'][sku]['kolicina']
     cena = trenutna_kosarica.to_dict()['izdelki'][sku]['cena']  / trenutna_kosarica.to_dict()['izdelki'][sku]['kolicina']
     celotna_cena = cena * kolicina
     izdelek = {
@@ -501,8 +501,6 @@ def autorizacija():
 def print():
     printek = request.forms.get('print')
     
-
-
 conn = psycopg2.connect(database=Data.auth.db, host=Data.auth.host,
                         user=Data.auth.user, password=Data.auth.password, port=DB_PORT)
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)

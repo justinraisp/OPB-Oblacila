@@ -24,25 +24,6 @@ T = TypeVar(
     "T",
     Glavna,
     Artikel,
-    Barva,
-    Barvne_lastnosti,
-    Barvni_tip,
-    Cena,
-    Drzava_izvora,
-    Ean,
-    Firma,
-    Je_barve,
-    Je_stila,
-    Kolicina_v_kartonu,
-    Kolicina_v_paketu,
-    Opis_anglescina,
-    Status,
-    Stil,
-    Stran_kataloga,
-    Teza,
-    Velikost,
-    Velikostni_tip,
-    Vrsta_produkta,
     Uporabnik,
     UporabnikDto,
     Kosarica, 
@@ -736,7 +717,7 @@ class Repo:
             return None
             
     def generiraj_nakljucne_ocene(self, st_ocen):
-        self.cur.execute("""SELECT "Sku" FROM glavna;""")
+        self.cur.execute("""SELECT sku FROM glavna;""")
         artikli = self.cur.fetchall()
         self.cur.execute("DELETE FROM ocene_predmetov;")
         for artikel in artikli:
@@ -750,7 +731,7 @@ class Repo:
         self.conn.commit()
 
     def generiraj_nakljucno_zalogo(self, max_kolicina):
-        self.cur.execute("""SELECT "Sku" FROM glavna;""")
+        self.cur.execute("""SELECT sku FROM glavna;""")
         artikli = self.cur.fetchall()
         for artikel in artikli:
             kolicina = random.randint(max_kolicina //2, max_kolicina)
