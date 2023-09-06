@@ -715,6 +715,11 @@ class Repo:
             return uporabnik,  uporabnik_mesec
         else:
             return None
+        
+    def count_glavna(self, stolpec="*"):
+        self.cur.execute("SELECT COUNT(%s) FROM glavna;", (stolpec,))
+        stevilo = self.cur.fetchone()[0]
+        return stevilo
             
     def generiraj_nakljucne_ocene(self, st_ocen):
         self.cur.execute("""SELECT sku FROM glavna;""")

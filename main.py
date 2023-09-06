@@ -60,7 +60,7 @@ def prikaz_strani_artikel():
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
-    max_stran = ceil(106871 / artikli_na_stran)
+    max_stran = ceil(repo.count_glavna() / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1))
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
@@ -81,7 +81,7 @@ def glavna():
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
-    max_stran = ceil(106871 / artikli_na_stran)
+    max_stran = ceil(repo.count_glavna() / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
@@ -274,7 +274,7 @@ def oceni_artikel(sku):
 @cookie_required
 def zaloga():
     artikli_na_stran = 10
-    max_stran = ceil(106871 / artikli_na_stran)
+    max_stran = ceil(repo.count_glavna() / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1)) #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
@@ -349,7 +349,7 @@ def poizvedba():
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
-    max_stran = ceil(106871 / artikli_na_stran)
+    max_stran = ceil(repo.count_glavna() / artikli_na_stran)
     trenutna_stran =  int(request.query.get("stran", 1)) #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
@@ -387,7 +387,7 @@ def poizvedba_zaloga():
     stanje = repo.dobi_stanje(uporabnik)
     rola= request.get_cookie("rola")
     artikli_na_stran = 10
-    max_stran = ceil(106871 / artikli_na_stran)
+    max_stran = ceil(repo.count_glavna() / artikli_na_stran)
     trenutna_stran = int(request.query.get("stran", 1))  #Default stran je prva
     zacetni_indeks = (trenutna_stran - 1) * artikli_na_stran
     koncni_indeks = zacetni_indeks + artikli_na_stran
