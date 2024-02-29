@@ -138,7 +138,10 @@ def artikel(sku):
 def kosarica():
     uporabnik = request.get_cookie("uporabnik")
     kosarica = repo.kosarica_nalozi(uporabnik)
-    artikli = kosarica.to_dict()['izdelki']
+    if kosarica:
+        artikli = kosarica.to_dict()['izdelki']
+    else:
+        artikli = None
     rola= request.get_cookie("rola")
     stanje= repo.dobi_stanje(uporabnik)
     return template("kosarica.html",filtri1=filtri11,filtri2=filtri22, artikli=artikli,rola=rola,uporabnik=uporabnik, stanje=stanje, napaka=None)
@@ -426,13 +429,14 @@ def registracija_post():
                 return template("registracija.html", napaka="Uporabnik s tem imenom že obstaja")
         except Exception as e:
                 if rola == "guest":
-                    auth.dodaj_uporabnika(username,rola,password)
+                    auth.dodaj_uporabnika(username,"guest",password)
                     nova_kosarica = Kosarica(uporabnik=username)
-                    repo.dodaj_gen(nova_kosarica)
+                    repo.dodaj_gen(nova_kosarica,serial_col=None)
                     novo_stanje = Stanje(uporabnik=username)
                     repo.dodaj_gen(novo_stanje,serial_col=None)
                     nove_ocene = Uporabnik_ocene(uporabnik=username)
                     repo.dodaj_gen(nove_ocene,serial_col=None)
+                    return template("prijava.html", napaka=None)
 
                 if rola == "admin":
                     return template("autorizacija.html", napaka=None, username=username, rola=rola, password=password)
